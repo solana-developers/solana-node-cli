@@ -1,0 +1,31 @@
+{
+  "name": "nsolana",
+  "version": "0.0.1",
+  "description": "",
+  "license": "MIT",
+  "type": "module",
+  "main": "./bin/index.mjs",
+  "bin": {
+    "nsolana": "./bin/index.mjs",
+    "solana-node": "./bin/index.mjs"
+  },
+  "files": [
+    "/bin"
+  ],
+  "keywords": [],
+  "homepage": "https://github.com/solana-developers/solana-node-cli#readme",
+  "bugs": {
+    "url": "https://github.com/solana-developers/solana-node-cli/issues"
+  },
+  "repository": {
+    "name": "solana-developers/solana-node-cli",
+    "type": "git",
+    "url": "https://github.com/solana-developers/solana-node-cli"
+  },
+  "contributors": [
+    {
+      "name": "Nick Frostbutter",
+      "url": "https://github.com/nickfrosty"
+    }
+  ]
+}
