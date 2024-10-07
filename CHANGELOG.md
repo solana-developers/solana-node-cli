@@ -1,5 +1,11 @@
 # solana
 
+## 2.0.4
+
+### Patch Changes
+
+- fix erroneous injection of help flag
+
 ## 2.0.3
 
 ### Patch Changes
