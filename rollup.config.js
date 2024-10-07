@@ -14,6 +14,7 @@ export default {
   plugins: [
     commonjs(),
     nodeResolve({
+      exportConditions: ["node"], // add node option here,
       preferBuiltins: true,
     }),
     json(),
