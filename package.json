@@ -10,9 +10,8 @@
     "build": "rollup -c",
     "watch": "rollup -c --watch",
     "solana": "node ./bin/index.mjs",
-    "nsolana": "node ./bin/index.mjs",
     "version": "changeset version && git add -A && git commit -m \"chore: version\"",
-    "publish": "pnpm build:release && changeset publish"
+    "publish": "pnpm build && changeset publish"
   },
   "bin": {
     "nsolana": "./bin/index.mjs",
@@ -26,13 +25,13 @@
     "@inquirer/prompts": "^6.0.1",
     "commander": "^12.1.0",
     "dotenv": "^16.4.1",
-    "execa": "^8.0.1",
     "inquirer": "^10.1.4",
     "ora": "^8.0.1",
     "picocolors": "^1.0.0",
     "shell-exec": "^1.1.2"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.8",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -41,7 +40,6 @@
     "@types/bn.js": "^5.1.5",
     "@types/commander": "^2.12.2",
     "@types/inquirer": "^9.0.7",
-    "@changesets/cli": "^2.27.8",
     "@types/node": "^20.11.16",
     "@types/prompts": "^2.4.9",
     "rollup": "^4.9.6",
