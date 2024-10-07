@@ -6,7 +6,7 @@ import {
   cancelMessage,
   titleMessage,
 } from "@/lib/cli.js";
-import { appendPathAndSourceIt, detectOperatingSystem } from "@/lib/shell";
+import { detectOperatingSystem } from "@/lib/shell";
 import {
   checkInstalledTools,
   installAnchorVersionManager,
@@ -20,18 +20,15 @@ type ToolNames = "all" | "rust" | "solana" | "avm" | "anchor";
 const toolNames: Array<ToolNames> = ["all", "rust", "solana", "avm", "anchor"];
 
 /**
- * Command: `setup`
+ * Command: `install`
  *
  * Setup your local machine for Solana development
  */
 export default function installCommand() {
-  // set the default action: `help` (without an error)
-  // if (process.argv.length === 3) {
-  // process.argv.push("all");
-  // process.argv.push("--help");
-  // }
-
-  // todo: handle a default install command
+  // set the default tool to `all`
+  if (process.argv.length === 3) {
+    process.argv.push("all");
+  }
 
   return (
     new Command("install")
@@ -49,10 +46,6 @@ export default function installCommand() {
       // )
       .action(async (toolName, version, options) => {
         titleMessage("Install Solana development tooling");
-
-        // console.log("run the install commands");
-        // console.log("toolName:", toolName);
-        // console.log("options:", options);
 
         const os = detectOperatingSystem();
 
