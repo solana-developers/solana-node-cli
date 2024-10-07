@@ -92,7 +92,7 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
 
     let installedVersion = await installedToolVersion("rust");
     if (installedVersion) {
-      spinner.succeed(`rust ${installedVersion} is already installed`);
+      spinner.info(`rust ${installedVersion} is already installed`);
       // todo: detect if the $PATH is actually loaded
       return true;
     }
@@ -133,7 +133,7 @@ export async function installSolana({
 
     let installedVersion = await installedToolVersion("solana");
     if (installedVersion) {
-      spinner.succeed(`solana ${installedVersion} is already installed`);
+      spinner.info(`solana ${installedVersion} is already installed`);
       // todo: detect if the $PATH is actually loaded
       return true;
     }
@@ -184,7 +184,7 @@ export async function installAnchorVersionManager({
 
     let installedVersion = await installedToolVersion("avm");
     if (installedVersion) {
-      spinner.succeed(`avm ${installedVersion} is already installed`);
+      spinner.info(`avm ${installedVersion} is already installed`);
       // todo: do we want to help people update avm?
       return true;
     }
@@ -240,31 +240,38 @@ export async function installAnchorUsingAvm({
   version = "latest",
 }: InstallCommandPropsBase = {}) {
   try {
-    const spinner = ora("Installing Anchor using AVM...").start();
+    const spinner = ora("Installing anchor using avm...").start();
 
     let installedVersion = await installedToolVersion("anchor");
     if (installedVersion && installedVersion == version) {
-      spinner.succeed(`anchor ${installedVersion} is already installed`);
+      spinner.info(`anchor ${installedVersion} is already installed`);
       return true;
     }
 
-    if (verifyParentCommand) {
-      spinner.text = `Verifying avm is installed`;
+    spinner.text = `Verifying avm is installed`;
+    const avmVersion = await installedToolVersion("avm");
 
-      const isParentInstalled = await installedToolVersion("avm");
-      if (!isParentInstalled) {
-        // todo: smart install avm?
-        spinner.fail(`avm is not already installed`);
-        // todo: better error response handling
-        return false;
-      }
+    if (!avmVersion) {
+      // todo: smart install avm?
+      spinner.fail(`avm is NOT already installed`);
+      // todo: better error response handling
+      return false;
+    } else {
+      // todo: support other versions of anchor via avm
+      version = avmVersion;
+    }
+
+    // note: intentionally recheck the version due to avm allowing tags like `stable`
+    if (installedVersion && installedVersion == version) {
+      spinner.info(`anchor ${installedVersion} is already installed`);
+      return true;
     }
 
     // let result: ExecaReturnValue<string> | undefined;
     let result: Awaited<ReturnType<typeof shellExec>>;
 
     try {
-      spinner.text = `Installing Anchor version '${version}'. This may take a few minutes...`;
+      spinner.text = `Installing anchor version '${version}'. This may take a few minutes...`;
 
       result = await shellExec(`avm install ${version}`);
     } catch (err) {
@@ -273,17 +280,17 @@ export async function installAnchorUsingAvm({
     }
 
     try {
-      spinner.text = "Setting anchor version with AVM";
+      spinner.text = "Setting anchor version with avm";
       result = await shellExec(`avm use ${version}`);
     } catch (err) {
       spinner.fail("Unable to execute `avm use`");
       errorMessage(err);
     }
 
-    spinner.text = "Verifying Anchor was installed";
+    spinner.text = "Verifying anchor was installed";
     installedVersion = await installedToolVersion("anchor");
     if (installedVersion) {
-      spinner.succeed(`anchor ${installedVersion} installed using AVM`);
+      spinner.succeed(`anchor ${installedVersion} installed using avm`);
       return installedVersion;
     } else {
       spinner.fail("anchor failed to install");
