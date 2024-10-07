@@ -2,32 +2,13 @@
  * Helpers for setting up a user's local environment
  */
 
-import { InstallCommandPropsBase, ToolCommandConfig, ToolNames } from "@/types";
+import { InstallCommandPropsBase, ToolNames } from "@/types";
 import { appendPathToRCFiles, installedToolVersion } from "./shell";
 import picocolors from "picocolors";
 import shellExec from "shell-exec";
 import { errorMessage } from "./cli";
 import ora from "ora";
-
-export const TOOL_CONFIG: { [key in ToolNames]: ToolCommandConfig } = {
-  rust: {
-    pathSource: "$HOME/.cargo/env",
-    version: "rustc --version",
-  },
-  solana: {
-    pathSource: "$HOME/.local/share/solana/install/active_release/bin",
-    version: "solana --version",
-  },
-  avm: {
-    version: "avm --version",
-  },
-  anchor: {
-    version: "anchor --version",
-  },
-  yarn: {
-    version: "yarn --version",
-  },
-};
+import { TOOL_CONFIG } from "@/const/setup";
 
 /**
  * Check for each of the installed tools on the user system

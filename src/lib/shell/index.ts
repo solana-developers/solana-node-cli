@@ -1,9 +1,9 @@
 import os, { userInfo } from "node:os";
 import { PlatformOS, ToolNames } from "@/types";
-import { TOOL_CONFIG } from "../setup";
 import fs from "fs";
 import path from "path";
 import shellExec from "shell-exec";
+import { TOOL_CONFIG } from "@/const/setup";
 
 /**
  * Check if a given command name is installed and available on the system
