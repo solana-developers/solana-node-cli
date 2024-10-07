@@ -1,5 +1,11 @@
 # solana
 
+## 2.0.3
+
+### Patch Changes
+
+- anchor version default to same as avm
+
 ## 2.0.2
 
 ### Patch Changes
