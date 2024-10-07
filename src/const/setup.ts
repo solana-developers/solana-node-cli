@@ -19,3 +19,10 @@ export const TOOL_CONFIG: { [key in ToolNames]: ToolCommandConfig } = {
     version: "yarn --version",
   },
 };
+
+export enum PathSourceStatus {
+  SUCCESS,
+  FAILED,
+  OUTPUT_MISMATCH,
+  MISSING_PATH,
+}

@@ -1,4 +1,4 @@
-import os, { userInfo } from "node:os";
+import os from "node:os";
 import { PlatformOS, ToolNames } from "@/types";
 import fs from "fs";
 import path from "path";
@@ -111,8 +111,6 @@ export function appendPathToRCFiles(
         // Append the new export path to the RC file
         fs.appendFileSync(rcFile, exportLine);
         // console.log(`Appended PATH to ${rcFile}`);
-
-        console.log("Run:\n", `export PATH=${newPath}:\$PATH\n`);
       } else {
         // console.log(`The path is already present in ${rcFile}`);
       }

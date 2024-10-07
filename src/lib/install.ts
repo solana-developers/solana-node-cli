@@ -16,6 +16,9 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
   try {
     const spinner = ora("Installing the rust toolchain using Rustup").start();
 
+    // we ALWAYS check for and update the PATH in the bashrc file
+    appendPathToRCFiles(TOOL_CONFIG.rust.pathSource, "rust");
+
     let installedVersion = await installedToolVersion("rust");
     if (installedVersion) {
       spinner.info(`rust ${installedVersion} is already installed`);
@@ -31,11 +34,6 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
     installedVersion = await installedToolVersion("rust");
     if (installedVersion) {
       spinner.succeed(`rust ${installedVersion} installed`);
-      // todo: display the source $PATH command
-      // TOOL_CONFIG.rust.pathSource
-
-      appendPathToRCFiles(TOOL_CONFIG.rust.pathSource, "rust");
-
       return installedVersion;
     } else {
       spinner.fail("rust failed to install");
@@ -57,6 +55,9 @@ export async function installSolana({
   try {
     const spinner = ora("Installing the Solana CLI tool suite...").start();
 
+    // we ALWAYS check for and update the PATH in the bashrc file
+    appendPathToRCFiles(TOOL_CONFIG.solana.pathSource, "solana");
+
     let installedVersion = await installedToolVersion("solana");
     if (installedVersion) {
       spinner.info(`solana ${installedVersion} is already installed`);
@@ -77,11 +78,6 @@ export async function installSolana({
     installedVersion = await installedToolVersion("solana");
     if (installedVersion) {
       spinner.succeed(`solana ${installedVersion} installed`);
-      // todo: display the source $PATH command
-      // TOOL_CONFIG.solana.pathSource
-
-      appendPathToRCFiles(TOOL_CONFIG.solana.pathSource, "solana");
-
       return installedVersion;
     } else {
       spinner.fail("solana failed to install");

@@ -13,7 +13,8 @@ import {
   installSolana,
   installAnchorUsingAvm,
 } from "@/lib/install";
-import { checkInstalledTools } from "@/lib/setup";
+import { checkInstalledTools, checkShellPathSource } from "@/lib/setup";
+import { PathSourceStatus, TOOL_CONFIG } from "@/const/setup";
 
 type ToolNames = "all" | "rust" | "solana" | "avm" | "anchor";
 
@@ -56,21 +57,38 @@ export default function installCommand() {
           outputToolStatus: false,
         });
 
-        // if (tools.allInstalled) {
-        //   return successOutro("All tools are installed!");
-        // }
+        // track which commands may require a path/session refresh
+        const pathsToRefresh: string[] = [];
 
         if (toolName == "rust" || toolName == "all") {
           await installRust({
             os,
             version,
           });
+
+          await checkShellPathSource(
+            TOOL_CONFIG.rust.version,
+            TOOL_CONFIG.rust.pathSource,
+          ).then((status) =>
+            status == PathSourceStatus.MISSING_PATH
+              ? pathsToRefresh.push(TOOL_CONFIG.rust.pathSource)
+              : true,
+          );
         }
         if (toolName == "solana" || toolName == "all") {
           await installSolana({
             os,
             version,
           });
+
+          await checkShellPathSource(
+            TOOL_CONFIG.solana.version,
+            TOOL_CONFIG.solana.pathSource,
+          ).then((status) =>
+            status == PathSourceStatus.MISSING_PATH
+              ? pathsToRefresh.push(TOOL_CONFIG.solana.pathSource)
+              : true,
+          );
         }
         if (toolName == "avm" || toolName == "all") {
           // const version = "0.28.0"; //"latest"; // v0.29.0 has the "ahash yanked" issue
@@ -84,6 +102,15 @@ export default function installCommand() {
             os,
             version,
           });
+        }
+
+        if (pathsToRefresh.length > 0) {
+          console.log(
+            "\nClose and reopen your terminal to apply the required",
+            "PATH changes \nor run the following in your existing shell:",
+            "\n",
+          );
+          console.log(`export PATH="${pathsToRefresh.join(":")}:$PATH"`, "\n");
         }
 
         // if (tools.allInstalled) {
