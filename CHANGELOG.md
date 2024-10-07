@@ -1,5 +1,11 @@
 # solana
 
+## 2.0.5
+
+### Patch Changes
+
+- detect missing PATH data and present a message
+
 ## 2.0.4
 
 ### Patch Changes
