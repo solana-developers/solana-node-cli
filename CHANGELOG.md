@@ -1,5 +1,11 @@
 # solana
 
+## 2.0.2
+
+### Patch Changes
+
+- building for node
+
 ## 2.0.1
 
 ### Patch Changes
