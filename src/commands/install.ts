@@ -25,16 +25,11 @@ const toolNames: Array<ToolNames> = ["all", "rust", "solana", "avm", "anchor"];
  * Setup your local machine for Solana development
  */
 export default function installCommand() {
-  // set the default tool to `all`
-  if (process.argv.length === 3) {
-    process.argv.push("all");
-  }
-
   return (
     new Command("install")
       .configureOutput(cliOutputConfig)
       .description("install Solana development tooling")
-      .addArgument(new Argument("<tool>", "tool name").choices(toolNames))
+      .addArgument(new Argument("[tool]", "tool name").choices(toolNames))
       .addArgument(new Argument("[version]", "desired tool version to install"))
       // .addOption(
       //   new Option(
@@ -44,7 +39,7 @@ export default function installCommand() {
       //     drink: "small",
       //   }),
       // )
-      .action(async (toolName, version, options) => {
+      .action(async (toolName = "all", version, options) => {
         titleMessage("Install Solana development tooling");
 
         const os = detectOperatingSystem();

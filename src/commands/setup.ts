@@ -16,11 +16,6 @@ import installCommand from "./install";
  * Setup your local machine for Solana development
  */
 export default function setupCommand() {
-  // set the default action: `help` (without an error)
-  if (process.argv.length === 3) {
-    process.argv.push("--help");
-  }
-
   return (
     new Command("setup")
       .configureOutput(cliOutputConfig)
