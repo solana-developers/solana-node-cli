@@ -1,16 +1,18 @@
 {
   "name": "solana",
-  "version": "0.0.1",
+  "version": "1.9999.0",
   "description": "",
   "license": "MIT",
   "type": "module",
   "main": "./bin/index.mjs",
   "scripts": {
+    "dev": "yarn build && yarn nsolana",
     "build": "rollup -c",
     "watch": "rollup -c --watch",
     "solana": "node ./bin/index.mjs",
     "nsolana": "node ./bin/index.mjs",
-    "dev": "yarn build && yarn nsolana"
+    "version": "changeset version && git add -A && git commit -m \"chore: version\"",
+    "publish": "pnpm build:release && changeset publish"
   },
   "bin": {
     "nsolana": "./bin/index.mjs",
