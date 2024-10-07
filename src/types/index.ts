@@ -3,6 +3,8 @@ export type PlatformOS = "unknown" | "linux" | "mac" | "windows";
 export type ToolNames = "rust" | "solana" | "avm" | "anchor" | "yarn";
 
 export type ToolCommandConfig = {
+  /** $PATH location for the command's tools */
+  pathSource?: string;
   /** command to get the tool version */
   version: string;
   /** command to install the tool */

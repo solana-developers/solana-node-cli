@@ -1,6 +1,5 @@
-import os from "node:os";
+import os, { userInfo } from "node:os";
 import { PlatformOS, ToolNames } from "@/types";
-import { execa } from "execa";
 import { TOOL_CONFIG } from "../setup";
 import fs from "fs";
 import path from "path";
@@ -15,6 +14,10 @@ export async function installedToolVersion(name: ToolNames) {
 
   if (Object.prototype.hasOwnProperty.call(TOOL_CONFIG, name)) {
     command = TOOL_CONFIG[name].version;
+    // auto source the command's binary dir into the $PATH
+    if (TOOL_CONFIG[name].pathSource) {
+      command = `export PATH="${TOOL_CONFIG[name].pathSource}:$PATH" && ${command}`;
+    }
   }
 
   if (!command) return false;
@@ -28,13 +31,9 @@ export async function installedToolVersion(name: ToolNames) {
 /**
  * Attempt to run the given shell command, detecting if the command is available on the system
  */
-export async function checkCommand(cmd: string[] | string) {
+export async function checkCommand(cmd: string) {
   try {
-    if (typeof cmd == "string") cmd = cmd.split(" ");
-
-    const { stdout } = await execa(cmd[0], cmd.slice(1), {
-      stdio: "pipe",
-    });
+    const { stdout } = await shellExec(cmd);
 
     if (stdout) {
       return stdout.trim();
@@ -113,8 +112,7 @@ export function appendPathToRCFiles(
         fs.appendFileSync(rcFile, exportLine);
         // console.log(`Appended PATH to ${rcFile}`);
 
-        // refresh the path: `source ~/.bashrc`
-        // await shellExec(`. "$HOME/.cargo/env"`);
+        console.log("Run:\n", `export PATH=${newPath}:\$PATH\n`);
       } else {
         // console.log(`The path is already present in ${rcFile}`);
       }
@@ -122,22 +120,4 @@ export function appendPathToRCFiles(
       // console.log(`${rcFile} not found.`);
     }
   });
-}
-
-export async function appendPathAndSourceIt(
-  newPath: string,
-  name: string | undefined = undefined,
-) {
-  appendPathToRCFiles(newPath, name);
-
-  return Promise.all([
-    //
-    shellExec(`export PATH="${newPath}"`),
-    shellExec(
-      `[[ -f ~/.bashrc ]] && source ~/.bashrc || echo "~/.bashrc not found"`,
-    ),
-    shellExec(
-      `[[ -f ~/.zshrc ]] && source ~/.zshrc || echo "~/.zshrc not found"`,
-    ),
-  ]);
 }

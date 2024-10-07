@@ -1,10 +1,9 @@
-import { ExecaReturnValue, execa } from "execa";
 /**
  * Helpers for setting up a user's local environment
  */
 
 import { InstallCommandPropsBase, ToolCommandConfig, ToolNames } from "@/types";
-import { appendPathAndSourceIt, installedToolVersion } from "./shell";
+import { appendPathToRCFiles, installedToolVersion } from "./shell";
 import picocolors from "picocolors";
 import shellExec from "shell-exec";
 import { errorMessage } from "./cli";
@@ -12,9 +11,11 @@ import ora from "ora";
 
 export const TOOL_CONFIG: { [key in ToolNames]: ToolCommandConfig } = {
   rust: {
+    pathSource: "$HOME/.cargo/env",
     version: "rustc --version",
   },
   solana: {
+    pathSource: "$HOME/.local/share/solana/install/active_release/bin",
     version: "solana --version",
   },
   avm: {
@@ -92,20 +93,23 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
     let installedVersion = await installedToolVersion("rust");
     if (installedVersion) {
       spinner.succeed(`rust ${installedVersion} is already installed`);
+      // todo: detect if the $PATH is actually loaded
       return true;
     }
 
-    let res = await shellExec(
+    await shellExec(
       `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`,
     );
-
-    // force update the new PATH info into the terminal
-    await appendPathAndSourceIt("$HOME/.cargo/bin", "rust");
 
     spinner.text = "Verifying rust was installed";
     installedVersion = await installedToolVersion("rust");
     if (installedVersion) {
       spinner.succeed(`rust ${installedVersion} installed`);
+      // todo: display the source $PATH command
+      // TOOL_CONFIG.rust.pathSource
+
+      appendPathToRCFiles(TOOL_CONFIG.rust.pathSource, "rust");
+
       return installedVersion;
     } else {
       spinner.fail("rust failed to install");
@@ -130,6 +134,7 @@ export async function installSolana({
     let installedVersion = await installedToolVersion("solana");
     if (installedVersion) {
       spinner.succeed(`solana ${installedVersion} is already installed`);
+      // todo: detect if the $PATH is actually loaded
       return true;
     }
     version = version.toLowerCase();
@@ -137,24 +142,23 @@ export async function installSolana({
       spinner.fail(`Invalid version: '${version}'`);
     }
 
-    let res = await shellExec(
+    await shellExec(
       // `sh -c "$(curl -sSfL https://release.solana.com/${version}/install)"`,
       `sh -c "$(curl -sSfL https://release.anza.xyz/${version}/install)"`,
     );
 
-    // force update the new PATH info into the terminal
-    await appendPathAndSourceIt(
-      "$HOME/.local/share/solana/install/active_release/bin",
-      "solana",
-    );
-
-    spinner.text = "Verifying rust was installed";
-    installedVersion = await installedToolVersion("rust");
+    spinner.text = "Verifying solana was installed";
+    installedVersion = await installedToolVersion("solana");
     if (installedVersion) {
-      spinner.succeed(`rust ${installedVersion} installed`);
+      spinner.succeed(`solana ${installedVersion} installed`);
+      // todo: display the source $PATH command
+      // TOOL_CONFIG.solana.pathSource
+
+      appendPathToRCFiles(TOOL_CONFIG.solana.pathSource, "solana");
+
       return installedVersion;
     } else {
-      spinner.fail("rust failed to install");
+      spinner.fail("solana failed to install");
       return false;
     }
   } catch (err) {
@@ -263,11 +267,6 @@ export async function installAnchorUsingAvm({
       spinner.text = `Installing Anchor version '${version}'. This may take a few minutes...`;
 
       result = await shellExec(`avm install ${version}`);
-
-      // result = await execa("avm", ["install", version], {
-      //   stdio: "pipe",
-      // });
-      // console.log(result);
     } catch (err) {
       spinner.fail("Unable to execute `avm install`");
       errorMessage(err);
@@ -276,11 +275,6 @@ export async function installAnchorUsingAvm({
     try {
       spinner.text = "Setting anchor version with AVM";
       result = await shellExec(`avm use ${version}`);
-
-      // result = await execa("avm", ["use", version], {
-      //   stdio: "pipe",
-      // });
-      // console.log(result);
     } catch (err) {
       spinner.fail("Unable to execute `avm use`");
       errorMessage(err);
