@@ -7,13 +7,7 @@ import {
   titleMessage,
 } from "@/lib/cli.js";
 import { detectOperatingSystem } from "@/lib/shell";
-import {
-  checkInstalledTools,
-  installAnchorVersionManager,
-  installRust,
-  installSolana,
-  installAnchorUsingAvm,
-} from "@/lib/setup";
+import { checkInstalledTools } from "@/lib/setup";
 import installCommand from "./install";
 
 /**

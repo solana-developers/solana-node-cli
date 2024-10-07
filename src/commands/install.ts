@@ -1,4 +1,4 @@
-import { Argument, Command, Option } from "@commander-js/extra-typings";
+import { Argument, Command } from "@commander-js/extra-typings";
 import {
   cliOutputConfig,
   successOutro,
@@ -8,12 +8,12 @@ import {
 } from "@/lib/cli.js";
 import { detectOperatingSystem } from "@/lib/shell";
 import {
-  checkInstalledTools,
   installAnchorVersionManager,
   installRust,
   installSolana,
   installAnchorUsingAvm,
-} from "@/lib/setup";
+} from "@/lib/install";
+import { checkInstalledTools } from "@/lib/setup";
 
 type ToolNames = "all" | "rust" | "solana" | "avm" | "anchor";
 
@@ -103,74 +103,3 @@ export default function installCommand() {
 
   // .addCommand(setupInstallCommand())
 }
-
-// /**
-//  * Command: `install install`
-//  *
-//  * Install new versions of various Solana development tooling
-//  */
-// export function installCommand() {
-//   return new Command("install")
-//     .configureOutput(cliOutputConfig)
-//     .description("install Solana development tooling")
-//     .action(async () => {
-//       titleMessage("Install Solana development tooling");
-
-//       const os = detectOperatingSystem();
-
-//       if (os == "windows") {
-//         warnMessage(
-//           "Windows is not yet natively supported for the rust based tooling.\n" +
-//             "We recommend using WSL inside your Windows terminal.",
-//         );
-//       }
-
-//       const tools = await checkInstalledTools({
-//         outputToolStatus: true,
-//       });
-
-//       if (tools.allInstalled) {
-//         return successOutro("All tools are installed!");
-//       }
-
-//       // todo: allow a command flag to force install
-
-//       const install = await confirm({
-//         message: "Install the missing tools?",
-//         initialValue: true,
-//       });
-
-//       if (isCancel(install) || !install) {
-//         cancelMessage();
-//       }
-
-//       // initialize a universal spinner to pass around
-//       const progressSpinner = spinner();
-//       progressSpinner.start("Starting tooling installation");
-
-//       if (!tools.status.rust) {
-//         const rustRes = await installRust({ spinner: progressSpinner });
-//         console.log();
-//       }
-
-//       if (!tools.status.solana) {
-//         const solanaRes = await installSolana({ spinner: progressSpinner });
-//       }
-
-//       if (!tools.status.avm) {
-//         const avmRes = await installAnchorVersionManager({
-//           spinner: progressSpinner,
-//         });
-//       }
-
-//       if (!tools.status.anchor) {
-//         const anchorRes = await installAnchorUsingAvm({
-//           spinner: progressSpinner,
-//         });
-//       }
-
-//       progressSpinner.stop("Tooling installed!");
-
-//       successOutro();
-//     });
-// }
