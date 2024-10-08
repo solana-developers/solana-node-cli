@@ -1,5 +1,11 @@
 # solana
 
+## 2.1.0
+
+### Minor Changes
+
+- add support to install yarn
+
 ## 2.0.5
 
 ### Patch Changes
