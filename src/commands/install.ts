@@ -12,13 +12,21 @@ import {
   installRust,
   installSolana,
   installAnchorUsingAvm,
+  installYarn,
 } from "@/lib/install";
 import { checkInstalledTools, checkShellPathSource } from "@/lib/setup";
 import { PathSourceStatus, TOOL_CONFIG } from "@/const/setup";
 
-type ToolNames = "all" | "rust" | "solana" | "avm" | "anchor";
+type ToolNames = "all" | "rust" | "solana" | "avm" | "anchor" | "yarn";
 
-const toolNames: Array<ToolNames> = ["all", "rust", "solana", "avm", "anchor"];
+const toolNames: Array<ToolNames> = [
+  "all",
+  "rust",
+  "solana",
+  "avm",
+  "anchor",
+  "yarn",
+];
 
 /**
  * Command: `install`
@@ -99,6 +107,12 @@ export default function installCommand() {
         }
         if (toolName == "anchor" || toolName == "all") {
           await installAnchorUsingAvm({
+            os,
+            version,
+          });
+        }
+        if (toolName == "yarn" || toolName == "all") {
+          await installYarn({
             os,
             version,
           });

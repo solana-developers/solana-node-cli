@@ -187,7 +187,6 @@ export async function installAnchorUsingAvm({
       return true;
     }
 
-    // let result: ExecaReturnValue<string> | undefined;
     let result: Awaited<ReturnType<typeof shellExec>>;
 
     try {
@@ -219,4 +218,36 @@ export async function installAnchorUsingAvm({
   } catch (err) {
     throw Error("Unable to install anchor using avm");
   }
+}
+
+/**
+ * Install the yarn package manager (since anchor uses yarn by default still)
+ * note: we have to assume `npm` is already available
+ */
+export async function installYarn({}: InstallCommandPropsBase = {}) {
+  try {
+    const spinner = ora("Installing yarn package manager...").start();
+
+    let installedVersion = await installedToolVersion("yarn");
+    if (installedVersion) {
+      spinner.info(`yarn ${installedVersion} is already installed`);
+      return true;
+    }
+
+    await shellExec(`npm install -g yarn`);
+
+    spinner.text = "Verifying yarn was installed";
+    installedVersion = await installedToolVersion("yarn");
+    if (installedVersion) {
+      spinner.succeed(`yarn ${installedVersion} installed`);
+      return installedVersion;
+    } else {
+      spinner.fail("yarn package manager failed to install");
+      return false;
+    }
+  } catch (err) {
+    console.warn("Unable to install yarn package manager");
+  }
+
+  return false;
 }
