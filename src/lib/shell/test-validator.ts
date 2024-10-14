@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import {
   createFolders,
-  doesFileExist,
+  directoryExists,
   loadFileNamesToMap,
   moveFiles,
 } from "../utils";
@@ -29,7 +29,7 @@ export function buildTestValidatorCommand({
   if (accountDir) {
     accountDir = resolve(accountDir);
 
-    if (doesFileExist(accountDir)) {
+    if (directoryExists(accountDir)) {
       // clone the dir to a different temp location
       const tmpDir = resolve(".cache/load/accounts");
       createFolders(tmpDir, false);
@@ -62,7 +62,10 @@ export function buildTestValidatorCommand({
       });
 
       // todo: support loading in local binaries via `--bpf-program`
-    } else console.warn("Account dir does not exist:", accountDir);
+    } else {
+      console.warn("Account dir does not exist:", accountDir);
+      console.warn("Skipping cloning accounts");
+    }
   }
 
   if (ledgerDir) {
@@ -81,6 +84,8 @@ type RunTestValidatorInput = {
 };
 
 export function runTestValidator({ command, args }: RunTestValidatorInput) {
+  console.log(""); // print a line separator
+
   // Spawn a child process
   const child = spawn(command, args, {
     detached: false, // run the command in the same session

@@ -83,6 +83,19 @@ export function doesFileExist(...filePath: string[]): boolean {
 }
 
 /**
+ * Check if a directory exists
+ */
+export function directoryExists(directoryPath: string): boolean {
+  try {
+    const stat = fs.statSync(directoryPath);
+    return stat.isDirectory();
+  } catch (err) {
+    // if there's an error, assume directory doesn't exist
+    return false;
+  }
+}
+
+/**
  *
  */
 export function moveFiles(
@@ -90,11 +103,16 @@ export function moveFiles(
   destinationDir: string,
   overwrite: boolean = false,
 ): void {
+  if (!directoryExists(sourceDir)) {
+    console.warn("[moveFiles]", "Source directory does not exist:", sourceDir);
+    return;
+  }
+
   // Read all the files in the source directory
   const files = fs.readdirSync(sourceDir);
 
   // Create destination directory if it doesn't exist
-  if (!fs.existsSync(destinationDir)) {
+  if (!directoryExists(destinationDir)) {
     createFolders(destinationDir);
   }
 
@@ -128,6 +146,8 @@ export function loadFileNamesToMap(
   extension?: string,
 ): Map<string, string> {
   const fileMap = new Map<string, string>();
+
+  if (!directoryExists(dir)) return fileMap;
 
   // Read all files from the specified directory
   const files = fs.readdirSync(dir);
