@@ -51,7 +51,7 @@ export function cancelMessage(msg: string = "Operation canceled") {
  * (including a process exit code)
  */
 export function cancelOutro(msg: string = "Operation canceled") {
-  console.log(picocolors.inverse(` ${msg} `));
+  console.log(picocolors.inverse(` ${msg} `), "\n");
   // outro(picocolors.inverse(` ${msg} `));
   process.exit(0);
 }
@@ -62,7 +62,7 @@ export function cancelOutro(msg: string = "Operation canceled") {
  */
 export function noticeOutro(msg: string) {
   // outro(picocolors.bgBlue(` ${msg} `));
-  console.log(picocolors.bgBlue(` ${msg} `));
+  console.log(picocolors.bgBlue(` ${msg} `), "\n");
   process.exit(0);
 }
 
@@ -71,7 +71,7 @@ export function noticeOutro(msg: string) {
  * (including a process exit code)
  */
 export function successOutro(msg: string = "Operation successful") {
-  console.log(picocolors.bgGreen(` ${msg} `));
+  console.log(picocolors.bgGreen(` ${msg} `), "\n");
   // outro(picocolors.bgGreen(` ${msg} `));
   process.exit(0);
 }
@@ -80,9 +80,11 @@ export function successOutro(msg: string = "Operation successful") {
  * Print a red error message using clack's `outro`
  * (including a process exit code)
  */
-export function errorOutro(msg: string) {
-  console.log(picocolors.bgRed(` ${msg} `));
-  // outro(picocolors.bgRed(` ${msg} `));
+export function errorOutro(msg: string, title: string | null = null) {
+  if (title) {
+    console.log(picocolors.bgRed(` ${title} `));
+    console.log(msg, "\n");
+  } else console.log(picocolors.bgRed(` ${msg} `), "\n");
   process.exit(1);
 }
 
@@ -93,12 +95,11 @@ export function errorOutro(msg: string) {
 export function errorMessage(err: any, title: string = "An error occurred") {
   let message = "Unknown error";
 
-  if (err instanceof Error) {
+  if (typeof err == "string") {
+    message = err;
+  } else if (err instanceof Error) {
     message = err.message;
   }
 
-  // note(`${message}`, picocolors.bgRed(` ${title} `));
-  console.log(`${message}`, picocolors.bgRed(` ${title} `));
-  // console.log();
-  process.exit(1);
+  errorOutro(message, title);
 }
