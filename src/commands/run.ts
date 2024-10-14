@@ -13,119 +13,25 @@ import {
   loadTomlFile,
   moveFiles,
 } from "@/lib/utils";
-import path, { resolve } from "path";
-import { MintLayout, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import path from "path";
 import type { CloneSettings, SolanaToml } from "@/types/config";
 import {
   cloneAccount,
   cloneProgram,
   cloneProgramsFromConfig,
   cloneTokensFromConfig,
-  JsonAccountStruct,
 } from "@/lib/shell/clone";
-import { unlinkSync } from "fs";
-import {
-  buildTestValidatorCommand,
-  runTestValidator,
-} from "@/lib/shell/test-validator";
-import { loadKeypairFromFile } from "@/lib/solana";
-// import { MintLayout } from "@/programs/token";
 
 /**
  * Command: `run`
  *
- * Run the 'solana-test-validator' on your local machine
+ * Run various helper tools on your local machine
  */
 export default function runCommand() {
   return new Command("run")
     .configureOutput(cliOutputConfig)
-    .description("run the 'solana-test-validator' on your local machine")
-    .addCommand(runCloneCommand())
-    .action(async () => {
-      titleMessage("solana-test-validator");
-
-      //   // todo: do we need to detect windows things here?
-      //   // const os = detectOperatingSystem();
-
-      const hasCommand = await checkCommand("solana-test-validator --version");
-
-      if (!hasCommand) {
-        return console.error(
-          "Unable to detect the 'solana-test-validator'. Do you have it installed?",
-        );
-      }
-
-      const explorerUrl = new URL(
-        "https://explorer.solana.com/?cluster=custom",
-      );
-      // explorerUrl.searchParams.set("customUrl", "http://localhost:8899");
-      console.log("\nSolana Explorer for your local test-validator:");
-      console.log(
-        "(on Brave Browser, you may need to turn Shields down for the Explorer website)",
-      );
-      console.log(explorerUrl.toString(), "\n");
-
-      const accountDir = "temp/accounts";
-
-      const runCommand = buildTestValidatorCommand({
-        reset: true,
-        accountDir,
-        // todo: allow setting the authority from the cli args
-        // authority: loadKeypairFromFile().publicKey.toBase58(),
-      });
-
-      console.log(
-        "Loaded",
-        loadFileNamesToMap(accountDir, ".json").size,
-        "accounts into the local validator",
-      );
-      console.log(
-        "Loaded",
-        loadFileNamesToMap(accountDir, ".so").size,
-        "programs into the local validator",
-      );
-      // console.log(`Command to run:\n------\n${runCommand}\n------`);
-
-      // return;
-
-      // todo: display some details about the command about to be run?
-      // todo: maybe even info about the accounts loaded? and which were modified?
-
-      runTestValidator({
-        command: runCommand,
-      });
-
-      return;
-
-      //   // const accountJson = loadJsonFile<AccountJsonStruct>(
-      //   //   path.resolve(
-      //   //     "/home/nick/code/test-validator-shenanigans",
-      //   //     "accounts",
-      //   //     "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v.json",
-      //   //   ),
-      //   // );
-      //   // console.log(accountJson);
-
-      //   // console.log("data:");
-
-      //   // console.log(accountJson.account.data[0]);
-      //   // console.log("owner:", accountJson.account.owner);
-      //   // const buffer = Buffer.from(accountJson.account.data[0], "base64");
-      //   // console.log("buffer");
-      //   // console.log(buffer);
-      //   // // console.log("length:", buffer.length);
-
-      //   // const mint = MintLayout.decode(buffer);
-      //   // // console.log("mint:", mint);
-      //   // // console.log(mint);
-
-      //   // const newData = Buffer.alloc(buffer.length);
-      //   // console.log("pre encode:");
-      //   // console.log(newData);
-      //   // MintLayout.encode(mint, newData);
-      //   // console.log("post encode:");
-      //   // console.log(newData);
-    });
+    .description("run various helper tools on your local machine")
+    .addCommand(runCloneCommand());
 }
 
 /**
@@ -137,7 +43,7 @@ export function runCloneCommand() {
   return new Command("clone")
     .configureOutput(cliOutputConfig)
     .description(
-      "Clone all the accounts and programs listed in the Solana.toml file",
+      "clone all the accounts and programs listed in the Solana.toml file",
     )
     .addOption(
       new Option("--force", "force clone all accounts, even if they exist"),
@@ -148,9 +54,9 @@ export function runCloneCommand() {
     .addOption(
       new Option(
         "-c --config <path>",
-        "path to a solana.toml config file",
-      ).default("temp/solana.toml"),
-      // .default("solana.toml"), // todo: use this
+        "path to a Solana.toml config file",
+      ).default("temp/Solana.toml"),
+      // .default("Solana.toml"), // todo: use this
     )
     .addOption(
       new Option(
@@ -169,9 +75,9 @@ export function runCloneCommand() {
         );
       }
 
-      // todo: accept both `solana.toml` and `Solana.toml`
+      // todo: accept both `Solana.toml` and `Solana.toml`
       options.config = path.resolve(options.config);
-      if (!doesFileExist(options.config)) {
+      if (!doesFileExist(options.config, false)) {
         return console.error("Unable to locate config file:", options.config);
       }
 
