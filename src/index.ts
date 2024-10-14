@@ -8,6 +8,7 @@ import { Command } from "@commander-js/extra-typings";
 import ora from "ora";
 import { input } from "@inquirer/prompts";
 import runCommand from "./commands/run";
+import testValidatorCommand from "./commands/test-validator";
 
 async function main() {
   try {
@@ -52,6 +53,7 @@ async function main() {
       .addCommand(installCommand())
       // note: enables a shorter command for installing
       .addCommand(setupCommand())
+      .addCommand(testValidatorCommand())
       .addCommand(runCommand());
 
     // set the default action: `help` (without an error)

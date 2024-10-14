@@ -9,6 +9,7 @@ import { resolve } from "path";
 import { loadKeypairFromFile } from "../solana";
 
 type BuildTestValidatorCommandInput = {
+  verbose?: boolean;
   reset?: boolean;
   accountDir?: string;
   ledgerDir?: string;
@@ -16,6 +17,7 @@ type BuildTestValidatorCommandInput = {
 };
 
 export function buildTestValidatorCommand({
+  verbose = false,
   reset,
   accountDir = "accounts",
   ledgerDir = "test-ledger",
@@ -63,8 +65,10 @@ export function buildTestValidatorCommand({
 
       // todo: support loading in local binaries via `--bpf-program`
     } else {
-      console.warn("Account dir does not exist:", accountDir);
-      console.warn("Skipping cloning accounts");
+      if (verbose) {
+        console.warn("Account dir does not exist:", accountDir);
+        console.warn("Skipping cloning accounts");
+      }
     }
   }
 
