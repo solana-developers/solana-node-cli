@@ -79,8 +79,9 @@ export function doesFileExist(
   resolve: boolean = true,
 ): boolean {
   try {
+    filePath = resolveTilde(filePath);
     if (resolve) filePath = path.resolve(filePath);
-    fs.statfsSync(resolveTilde(filePath));
+    fs.statfsSync(filePath);
     return true;
   } catch (err) {}
   return false;
