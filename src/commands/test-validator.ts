@@ -12,6 +12,7 @@ import {
   buildTestValidatorCommand,
   runTestValidator,
 } from "@/lib/shell/test-validator";
+import { COMMON_OPTIONS } from "@/const/commands";
 
 /**
  * Command: `test-validator`
@@ -45,13 +46,8 @@ export default function testValidatorCommand() {
         ).default("temp/accounts"),
         // .default("accounts"), // todo: use this default
       )
-      .addOption(
-        new Option(
-          "-c --config <path>",
-          "path to a Solana.toml config file",
-        ).default("temp/Solana.toml"),
-        // .default("Solana.toml"), // todo: use this
-      )
+      .addOption(COMMON_OPTIONS.config)
+      .addOption(COMMON_OPTIONS.url)
       .action(async (options) => {
         titleMessage("solana-test-validator");
 
@@ -68,8 +64,9 @@ export default function testValidatorCommand() {
           );
         }
 
+        // todo: build the options from combining the cli args and the config file
+
         const command = buildTestValidatorCommand({
-          //
           verbose: !options.output,
           reset: options.reset || false,
           accountDir: options.accountDir,

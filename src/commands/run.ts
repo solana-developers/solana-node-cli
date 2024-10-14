@@ -16,11 +16,10 @@ import {
 import path from "path";
 import type { CloneSettings, SolanaToml } from "@/types/config";
 import {
-  cloneAccount,
-  cloneProgram,
   cloneProgramsFromConfig,
   cloneTokensFromConfig,
 } from "@/lib/shell/clone";
+import { COMMON_OPTIONS } from "@/const/commands";
 
 /**
  * Command: `run`
@@ -51,19 +50,8 @@ export function runCloneCommand() {
     .addOption(
       new Option("--prompt", "prompt to override any existing cloned accounts"),
     )
-    .addOption(
-      new Option(
-        "-c --config <path>",
-        "path to a Solana.toml config file",
-      ).default("temp/Solana.toml"),
-      // .default("Solana.toml"), // todo: use this
-    )
-    .addOption(
-      new Option(
-        "-u --url <URL_OR_MONIKER>",
-        "URL for Solana's JSON RPC or moniker",
-      ),
-    )
+    .addOption(COMMON_OPTIONS.config)
+    .addOption(COMMON_OPTIONS.url)
     .action(async (options) => {
       titleMessage("Clone accounts and programs");
       // console.log("Clone accounts and programs", "\n");
