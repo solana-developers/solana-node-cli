@@ -1,4 +1,3 @@
-import { spawn } from "child_process";
 import path from "path";
 import shellExec from "shell-exec";
 import {
@@ -232,11 +231,15 @@ export async function cloneTokensFromConfig(
         url: token.cluster || settings.url,
       });
 
-      if (doesFileExist(settings.saveDirTemp, `${token.address}.json`)) {
+      if (
+        doesFileExist(path.join(settings.saveDirTemp, `${token.address}.json`))
+      ) {
         if (token.clone === "always" || settings.force == true) {
           // do nothing since we are going to force clone/refresh
         } else if (
-          doesFileExist(settings.saveDirFinal, `${token.address}.json`)
+          doesFileExist(
+            path.join(settings.saveDirFinal, `${token.address}.json`),
+          )
         ) {
           // detect diff from any existing accounts already cloned
           const newFile = loadJsonFile<JsonAccountStruct>(

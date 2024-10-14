@@ -12,7 +12,7 @@ export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 /**
  * Resolve tilde based file paths for the current user's home directory
  */
-export function resolveTilde(filePath) {
+export function resolveTilde(filePath: string) {
   if (filePath.startsWith("~")) {
     return path.join(homedir(), filePath.slice(1));
   }
@@ -74,9 +74,13 @@ export function createFolders(filePath: string, resolve: boolean = true) {
 /**
  * Check if a file exists in the local file system
  */
-export function doesFileExist(...filePath: string[]): boolean {
+export function doesFileExist(
+  filePath: string,
+  resolve: boolean = true,
+): boolean {
   try {
-    fs.statfsSync(path.resolve(...resolveTilde(filePath)));
+    if (resolve) filePath = path.resolve(filePath);
+    fs.statfsSync(resolveTilde(filePath));
     return true;
   } catch (err) {}
   return false;
