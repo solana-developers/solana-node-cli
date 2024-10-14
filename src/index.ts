@@ -7,6 +7,7 @@ import { errorMessage } from "@/lib/cli";
 import { Command } from "@commander-js/extra-typings";
 import ora from "ora";
 import { input } from "@inquirer/prompts";
+import runCommand from "./commands/run";
 
 async function main() {
   try {
@@ -50,7 +51,8 @@ async function main() {
     program
       .addCommand(installCommand())
       // note: enables a shorter command for installing
-      .addCommand(setupCommand());
+      .addCommand(setupCommand())
+      .addCommand(runCommand());
 
     // set the default action: `help` (without an error)
     if (process.argv.length === 2) {
