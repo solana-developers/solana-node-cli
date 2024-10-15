@@ -14,7 +14,8 @@ import { DEFAULT_CONFIG_FILE } from "@/const/solana";
 export function loadConfigToml(configPath: string = DEFAULT_CONFIG_FILE) {
   // todo: accept both `Solana.toml` and `solana.toml` (case insensitive)
   if (!doesFileExist(configPath, true)) {
-    return console.error("Unable to locate config TOML file:", configPath);
+    console.error("Unable to locate config TOML file:", configPath);
+    process.exit(1);
   }
 
   return loadTomlFile<SolanaToml>(configPath);

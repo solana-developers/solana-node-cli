@@ -5,16 +5,11 @@ import {
   warnMessage,
   cancelMessage,
   titleMessage,
+  loadConfigToml,
 } from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
-import {
-  doesFileExist,
-  loadFileNamesToMap,
-  loadTomlFile,
-  moveFiles,
-} from "@/lib/utils";
-import path from "path";
-import type { CloneSettings, SolanaToml } from "@/types/config";
+import { loadFileNamesToMap, moveFiles } from "@/lib/utils";
+import type { CloneSettings } from "@/types/config";
 import {
   cloneProgramsFromConfig,
   cloneTokensFromConfig,
@@ -63,13 +58,7 @@ export function runCloneCommand() {
         );
       }
 
-      // todo: accept both `Solana.toml` and `solana.toml` (case insensitive)
-      options.config = path.resolve(options.config);
-      if (!doesFileExist(options.config, false)) {
-        return console.error("Unable to locate config file:", options.config);
-      }
-
-      const config = loadTomlFile<SolanaToml>(options.config);
+      const config = loadConfigToml(options.config);
 
       // todo: this should be loaded from the config file or the cli args
       const saveDirFinal = "temp/accounts";
