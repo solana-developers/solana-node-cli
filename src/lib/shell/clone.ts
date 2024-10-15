@@ -7,6 +7,7 @@ import {
   loadJsonFile,
 } from "../utils";
 import { CloneSettings, SolanaCluster, SolanaToml } from "@/types/config";
+import { parseRpcUrlOrMoniker } from "../solana";
 
 export type JsonAccountStruct = {
   pubkey: string;
@@ -58,8 +59,7 @@ export async function cloneAccount({
    * todo: we might want to force use a specific one or not. need to do more research/thinking on it
    */
   if (url) {
-    if (url.startsWith("local")) url = "localhost";
-    command.push(`--url ${url}`);
+    command.push(`--url ${parseRpcUrlOrMoniker(url)}`);
   }
 
   /**
@@ -109,8 +109,7 @@ export async function cloneProgram({
    * todo: we might want to force use a specific one or not. need to do more research/thinking on it
    */
   if (url) {
-    if (url.startsWith("local")) url = "localhost";
-    command.push(`--url ${url}`);
+    command.push(`--url ${parseRpcUrlOrMoniker(url)}`);
   }
 
   // console.log(`Command to run:\n\n${command.join(" ")}`, "\n\n");
