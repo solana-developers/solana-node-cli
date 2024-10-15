@@ -7,12 +7,13 @@ import {
   titleMessage,
 } from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
-import { loadFileNamesToMap } from "@/lib/utils";
+import { doesFileExist, loadFileNamesToMap } from "@/lib/utils";
 import {
   buildTestValidatorCommand,
   runTestValidator,
 } from "@/lib/shell/test-validator";
 import { COMMON_OPTIONS } from "@/const/commands";
+import { loadKeypairFromFile } from "@/lib/solana";
 
 /**
  * Command: `test-validator`
@@ -47,6 +48,7 @@ export default function testValidatorCommand() {
         // .default("accounts"), // todo: use this default
       )
       .addOption(COMMON_OPTIONS.config)
+      .addOption(COMMON_OPTIONS.authority)
       .addOption(COMMON_OPTIONS.url)
       .action(async (options) => {
         titleMessage("solana-test-validator");
@@ -66,12 +68,24 @@ export default function testValidatorCommand() {
 
         // todo: build the options from combining the cli args and the config file
 
+        let authorityAddress: string | null = null;
+
+        if (options.keypair) {
+          if (doesFileExist(options.keypair)) {
+            authorityAddress = loadKeypairFromFile(
+              options.keypair,
+            )?.publicKey.toBase58();
+          } else {
+            console.warn("Unable to locate keypair file:", options.keypair);
+          }
+        }
+
         const command = buildTestValidatorCommand({
           verbose: !options.output,
           reset: options.reset || false,
           accountDir: options.accountDir,
           // todo: allow setting the authority from the cli args
-          // authority: loadKeypairFromFile().publicKey.toBase58(),
+          authority: authorityAddress,
         });
 
         // only log the "run validator" command, do not execute it

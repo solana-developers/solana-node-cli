@@ -6,7 +6,6 @@ import {
   moveFiles,
 } from "../utils";
 import { resolve } from "path";
-import { loadKeypairFromFile } from "../solana";
 
 type BuildTestValidatorCommandInput = {
   verbose?: boolean;
@@ -21,7 +20,7 @@ export function buildTestValidatorCommand({
   reset,
   accountDir = "accounts",
   ledgerDir = "test-ledger",
-  authority = loadKeypairFromFile().publicKey.toBase58(),
+  authority,
 }: BuildTestValidatorCommandInput = {}) {
   const command: string[] = ["solana-test-validator"];
 
