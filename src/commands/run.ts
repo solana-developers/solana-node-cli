@@ -63,7 +63,7 @@ export function runCloneCommand() {
         );
       }
 
-      // todo: accept both `Solana.toml` and `Solana.toml`
+      // todo: accept both `Solana.toml` and `solana.toml` (case insensitive)
       options.config = path.resolve(options.config);
       if (!doesFileExist(options.config, false)) {
         return console.error("Unable to locate config file:", options.config);
@@ -79,7 +79,6 @@ export function runCloneCommand() {
 
       const cloneSettings: CloneSettings = {
         ...options,
-        url: options.url as any,
         saveDirFinal,
         saveDirTemp,
       };
