@@ -1,16 +1,38 @@
 export type SolanaToml = {
-  clone?: SolanaTomlClone;
+  settings?: Partial<{
+    /**
+     * default cluster to use for all operations.
+     * when not set, fallback to the Solana CLI cluster
+     */
+    cluster: SolanaCluster;
+    /**
+     * custom rpc urls for each network that will be used to override the default public endpoints
+     */
+    networks: Partial<{
+      mainnet: string;
+      devnet: string;
+      testnet: string;
+      localnet: string;
+    }>;
+  }>;
+  clone?: Partial<SolanaTomlClone>;
 };
 
-export type SolanaCluster = "mainnet-beta" | "devnet" | "testnet" | "localhost";
+export type SolanaCluster =
+  | "mainnet"
+  | "mainnet-beta"
+  | "devnet"
+  | "testnet"
+  | "localhost"
+  | "localnet";
 
 type SolanaTomlClone = {
-  settings?: {
-    cluster?: SolanaCluster;
+  settings: {
+    cluster: SolanaCluster;
     // todo: we could allow people to manually override any cluster url from within the toml file
     // todo: including using loading env vars
   };
-  program?: {
+  program: {
     [key: string]: {
       address: string;
       name?: string;
@@ -18,7 +40,7 @@ type SolanaTomlClone = {
       clone?: "always" | "prompt";
     };
   };
-  token?: {
+  token: {
     [key: string]: {
       address: string;
       cluster?: SolanaCluster;
