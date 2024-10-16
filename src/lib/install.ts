@@ -13,9 +13,8 @@ import { TOOL_CONFIG } from "@/const/setup";
  * Install the rust toolchain with Rustup
  */
 export async function installRust({ version }: InstallCommandPropsBase = {}) {
+  const spinner = ora("Installing the rust toolchain using Rustup").start();
   try {
-    const spinner = ora("Installing the rust toolchain using Rustup").start();
-
     // we ALWAYS check for and update the PATH in the bashrc file
     appendPathToRCFiles(TOOL_CONFIG.rust.pathSource, "rust");
 
@@ -40,7 +39,7 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
       return false;
     }
   } catch (err) {
-    console.warn("Unable to install rust");
+    spinner.fail("Unable to install rust");
   }
 
   return false;
@@ -52,9 +51,8 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
 export async function installSolana({
   version = "stable",
 }: InstallCommandPropsBase = {}) {
+  const spinner = ora("Installing the Solana CLI tool suite...").start();
   try {
-    const spinner = ora("Installing the Solana CLI tool suite...").start();
-
     // we ALWAYS check for and update the PATH in the bashrc file
     appendPathToRCFiles(TOOL_CONFIG.solana.pathSource, "solana");
 
@@ -84,7 +82,7 @@ export async function installSolana({
       return false;
     }
   } catch (err) {
-    console.warn("Unable to install the Solana CLI tool suite");
+    spinner.fail("Unable to install the Solana CLI tool suite");
   }
 
   return false;
@@ -96,9 +94,8 @@ export async function installSolana({
 export async function installAnchorVersionManager({
   version = "latest",
 }: InstallCommandPropsBase = {}) {
+  const spinner = ora("Installing avm (anchor version manager)").start();
   try {
-    const spinner = ora("Installing avm (anchor version manager)").start();
-
     let installedVersion = await installedToolVersion("avm");
     if (installedVersion) {
       spinner.info(`avm ${installedVersion} is already installed`);
@@ -146,7 +143,7 @@ export async function installAnchorVersionManager({
     //   return true;
     // }
   } catch (err) {
-    console.warn("Unable to install avm");
+    spinner.fail("Unable to install avm");
   }
 
   return false;
@@ -159,9 +156,8 @@ export async function installAnchorUsingAvm({
   verifyParentCommand = true,
   version = "latest",
 }: InstallCommandPropsBase = {}) {
+  const spinner = ora("Installing anchor using avm...").start();
   try {
-    const spinner = ora("Installing anchor using avm...").start();
-
     let installedVersion = await installedToolVersion("anchor");
     if (installedVersion && installedVersion == version) {
       spinner.info(`anchor ${installedVersion} is already installed`);
@@ -216,7 +212,7 @@ export async function installAnchorUsingAvm({
       return false;
     }
   } catch (err) {
-    throw Error("Unable to install anchor using avm");
+    spinner.fail("Unable to install anchor using avm");
   }
 }
 
@@ -225,9 +221,8 @@ export async function installAnchorUsingAvm({
  * note: we have to assume `npm` is already available
  */
 export async function installYarn({}: InstallCommandPropsBase = {}) {
+  const spinner = ora("Installing yarn package manager...").start();
   try {
-    const spinner = ora("Installing yarn package manager...").start();
-
     let installedVersion = await installedToolVersion("yarn");
     if (installedVersion) {
       spinner.info(`yarn ${installedVersion} is already installed`);
@@ -246,7 +241,7 @@ export async function installYarn({}: InstallCommandPropsBase = {}) {
       return false;
     }
   } catch (err) {
-    console.warn("Unable to install yarn package manager");
+    spinner.fail("Unable to install yarn package manager");
   }
 
   return false;
