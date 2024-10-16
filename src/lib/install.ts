@@ -40,7 +40,7 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
       return false;
     }
   } catch (err) {
-    console.warn("Unable to install the rust");
+    console.warn("Unable to install rust");
   }
 
   return false;
