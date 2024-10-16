@@ -146,7 +146,7 @@ export async function installAnchorVersionManager({
     //   return true;
     // }
   } catch (err) {
-    console.warn("Unable to install the Solana CLI tool suite");
+    console.warn("Unable to install avm");
   }
 
   return false;
