@@ -7,6 +7,7 @@ import {
   titleMessage,
 } from "@/lib/cli.js";
 import { detectOperatingSystem } from "@/lib/shell";
+import type { ToolNames } from "@/types";
 import {
   installAnchorVersionManager,
   installRust,
@@ -17,9 +18,7 @@ import {
 import { checkInstalledTools, checkShellPathSource } from "@/lib/setup";
 import { PathSourceStatus, TOOL_CONFIG } from "@/const/setup";
 
-type ToolNames = "all" | "rust" | "solana" | "avm" | "anchor" | "yarn";
-
-const toolNames: Array<ToolNames> = [
+const toolNames: Array<ToolNames | "all"> = [
   "all",
   "rust",
   "solana",
