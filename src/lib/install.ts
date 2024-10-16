@@ -246,3 +246,47 @@ export async function installYarn({}: InstallCommandPropsBase = {}) {
 
   return false;
 }
+
+/**
+ * Install the trident fuzzer
+ */
+export async function installTrident({
+  version = "latest",
+  verifyParentCommand = true,
+}: InstallCommandPropsBase = {}): Promise<boolean | string> {
+  const spinner = ora("Installing trident fuzzer").start();
+  try {
+    let installedVersion = await installedToolVersion("trident");
+    if (installedVersion) {
+      spinner.info(`trident ${installedVersion} is already installed`);
+      return true;
+    }
+
+    if (verifyParentCommand) {
+      const isParentInstalled = await installedToolVersion("rust");
+      if (!isParentInstalled) {
+        spinner.fail("Rust/cargo was not found");
+        throw "parent command not found";
+      }
+    }
+
+    // note: trident requires `honggfuzz`
+    const res = await shellExec(`cargo install honggfuzz trident-cli`);
+
+    spinner.text = "Verifying trident was installed";
+
+    installedVersion = await installedToolVersion("trident");
+
+    if (installedVersion) {
+      spinner.succeed(`trident ${installedVersion} installed`);
+      return installedVersion;
+    } else {
+      spinner.fail("trident failed to install");
+      return false;
+    }
+  } catch (err) {
+    spinner.fail("Unable to install the trident fuzzer");
+  }
+
+  return false;
+}

@@ -14,6 +14,7 @@ import {
   installSolana,
   installAnchorUsingAvm,
   installYarn,
+  installTrident,
 } from "@/lib/install";
 import { checkInstalledTools, checkShellPathSource } from "@/lib/setup";
 import { PathSourceStatus, TOOL_CONFIG } from "@/const/setup";
@@ -25,6 +26,7 @@ const toolNames: Array<ToolNames | "all"> = [
   "avm",
   "anchor",
   "yarn",
+  "trident",
 ];
 
 /**
@@ -106,6 +108,12 @@ export default function installCommand() {
         }
         if (toolName == "anchor" || toolName == "all") {
           await installAnchorUsingAvm({
+            os,
+            version,
+          });
+        }
+        if (toolName == "trident" || toolName == "all") {
+          await installTrident({
             os,
             version,
           });
