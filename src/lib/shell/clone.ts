@@ -53,11 +53,7 @@ export async function cloneAccount({
     // "--output json-compact",
   ];
 
-  /**
-   * note: when no cluster is specified, the users `solana config` url will be used
-   *
-   * todo: we might want to force use a specific one or not. need to do more research/thinking on it
-   */
+  // note: when no url/cluster is specified, the user's `solana config` url will be used
   if (url) {
     command.push(`--url ${parseRpcUrlOrMoniker(url)}`);
   }
@@ -103,11 +99,7 @@ export async function cloneProgram({
   createFolders(saveDir);
   command.push(address, saveDir);
 
-  /**
-   * note: when no cluster is specified, the users `solana config` url will be used
-   *
-   * todo: we might want to force use a specific one or not. need to do more research/thinking on it
-   */
+  // note: when no url/cluster is specified, the user's `solana config` url will be used
   if (url) {
     command.push(`--url ${parseRpcUrlOrMoniker(url)}`);
   }
@@ -165,8 +157,7 @@ export async function cloneProgramsFromConfig(
     await cloneProgram({
       address: program.address,
       saveDir: settings.saveDirTemp,
-      // todo: what order of precedence should we use here?
-      url: program.cluster || settings.url,
+      url: program.cluster || config.settings.cluster,
       // saveDir: path.resolve(saveDirTemp, "program")
     });
 
@@ -226,8 +217,7 @@ export async function cloneTokensFromConfig(
       await cloneAccount({
         saveDir: settings.saveDirTemp,
         address: token.address,
-        // todo: what order of precedence should we use here?
-        url: token.cluster || settings.url,
+        url: token.cluster || config.settings.cluster,
       });
 
       if (

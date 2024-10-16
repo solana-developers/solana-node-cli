@@ -58,7 +58,7 @@ export function runCloneCommand() {
         );
       }
 
-      const config = loadConfigToml(options.config);
+      const config = loadConfigToml(options.config, options);
 
       // todo: this should be loaded from the config file or the cli args
       const saveDirFinal = "temp/accounts";
