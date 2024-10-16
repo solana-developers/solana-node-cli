@@ -8,7 +8,6 @@ import {
 } from "@/lib/cli.js";
 import { detectOperatingSystem } from "@/lib/shell";
 import { checkInstalledTools } from "@/lib/setup";
-import installCommand from "./install";
 
 /**
  * Command: `setup`
@@ -16,17 +15,13 @@ import installCommand from "./install";
  * Setup your local machine for Solana development
  */
 export default function setupCommand() {
-  return (
-    new Command("setup")
-      .configureOutput(cliOutputConfig)
-      .description(
-        "setup your local machine for Solana development",
-        // "Install the local tooling and setup your local machine for Solana development",
-      )
-      // note: this enables the install command to also be a subcommand of setup
-      .addCommand(installCommand())
-      .addCommand(setupListCommand())
-  );
+  return new Command("setup")
+    .configureOutput(cliOutputConfig)
+    .description(
+      "setup your local machine for Solana development",
+      // "Install the local tooling and setup your local machine for Solana development",
+    )
+    .addCommand(setupListCommand());
 }
 
 /**
