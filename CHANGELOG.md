@@ -1,5 +1,11 @@
 # solana
 
+## 2.2.1
+
+### Patch Changes
+
+- refactor default installing all tools
+
 ## 2.2.0
 
 ### Minor Changes
