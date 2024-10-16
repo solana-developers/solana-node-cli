@@ -1,5 +1,15 @@
 # solana
 
+## 2.2.0
+
+### Minor Changes
+
+- added installer for trident
+
+### Patch Changes
+
+- fix install spinners and messages
+
 ## 2.1.0
 
 ### Minor Changes
