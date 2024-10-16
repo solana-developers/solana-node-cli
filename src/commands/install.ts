@@ -19,14 +19,13 @@ import {
 import { checkInstalledTools, checkShellPathSource } from "@/lib/setup";
 import { PathSourceStatus, TOOL_CONFIG } from "@/const/setup";
 
-const toolNames: Array<ToolNames | "all"> = [
-  "all",
+const toolNames: Array<ToolNames> = [
   "rust",
   "solana",
   "avm",
   "anchor",
-  "yarn",
   "trident",
+  "yarn",
 ];
 
 /**
@@ -39,8 +38,17 @@ export default function installCommand() {
     new Command("install")
       .configureOutput(cliOutputConfig)
       .description("install Solana development tooling")
-      .addArgument(new Argument("[tool]", "tool name").choices(toolNames))
-      .addArgument(new Argument("[version]", "desired tool version to install"))
+      .addArgument(
+        new Argument("<tool>", "tool to install (default: all)")
+          .choices(toolNames)
+          .argOptional(),
+      )
+      .addArgument(
+        new Argument(
+          "<version>",
+          "desired tool version to install (default: stable)",
+        ).argOptional(),
+      )
       // .addOption(
       //   new Option(
       //     "--dry-run",
@@ -49,7 +57,7 @@ export default function installCommand() {
       //     drink: "small",
       //   }),
       // )
-      .action(async (toolName = "all", version, options) => {
+      .action(async (toolName, version, options) => {
         titleMessage("Install Solana development tooling");
 
         const os = detectOperatingSystem();
@@ -69,7 +77,7 @@ export default function installCommand() {
         // track which commands may require a path/session refresh
         const pathsToRefresh: string[] = [];
 
-        if (toolName == "rust" || toolName == "all") {
+        if (!toolName || toolName == "rust") {
           await installRust({
             os,
             version,
@@ -84,7 +92,7 @@ export default function installCommand() {
               : true,
           );
         }
-        if (toolName == "solana" || toolName == "all") {
+        if (!toolName || toolName == "solana") {
           await installSolana({
             os,
             version,
@@ -99,26 +107,26 @@ export default function installCommand() {
               : true,
           );
         }
-        if (toolName == "avm" || toolName == "all") {
+        if (!toolName || toolName == "avm") {
           // const version = "0.28.0"; //"latest"; // v0.29.0 has the "ahash yanked" issue
           await installAnchorVersionManager({
             os,
             version,
           });
         }
-        if (toolName == "anchor" || toolName == "all") {
+        if (!toolName || toolName == "anchor") {
           await installAnchorUsingAvm({
             os,
             version,
           });
         }
-        if (toolName == "trident" || toolName == "all") {
+        if (!toolName || toolName == "trident") {
           await installTrident({
             os,
             version,
           });
         }
-        if (toolName == "yarn" || toolName == "all") {
+        if (!toolName || toolName == "yarn") {
           await installYarn({
             os,
             version,
