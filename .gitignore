@@ -44,3 +44,8 @@ next-env.d.ts
 # sitemaps / robots
 public/sitemap*
 public/robot*
+
+test-ledger
+temp
+
+.cache
