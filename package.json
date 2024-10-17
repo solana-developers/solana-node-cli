@@ -4,6 +4,9 @@
   "description": "",
   "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./bin/index.mjs",
   "scripts": {
     "dev": "yarn build && yarn nsolana",
@@ -14,8 +17,8 @@
     "publish": "pnpm build && changeset publish"
   },
   "bin": {
-    "nsolana": "./bin/index.mjs",
-    "solana-node": "./bin/index.mjs"
+    "nsolana": "bin/index.mjs",
+    "solana-node": "bin/index.mjs"
   },
   "files": [
     "/bin"
@@ -59,7 +62,7 @@
   "repository": {
     "name": "solana-developers/solana-node-cli",
     "type": "git",
-    "url": "https://github.com/solana-developers/solana-node-cli"
+    "url": "git+https://github.com/solana-developers/solana-node-cli.git"
   },
   "contributors": [
     {
