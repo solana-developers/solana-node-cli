@@ -46,17 +46,13 @@ export default function testValidatorCommand() {
       .action(async (options) => {
         titleMessage("solana-test-validator");
 
-        const config = loadConfigToml(options.config, options);
-
-        const hasCommand = await checkCommand(
-          "solana-test-validator --version",
-        );
-
-        if (!hasCommand) {
-          return console.error(
+        await checkCommand("solana-test-validator --version", {
+          exit: true,
+          message:
             "Unable to detect the 'solana-test-validator'. Do you have it installed?",
-          );
-        }
+        });
+
+        const config = loadConfigToml(options.config, options);
 
         let authorityAddress: string | null = null;
         if (config.settings.keypair) {

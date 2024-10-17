@@ -48,12 +48,11 @@ export function runCloneCommand() {
       // console.log("options:");
       // console.log(options);
 
-      const hasCommand = await checkCommand("solana account --help");
-      if (!hasCommand) {
-        return console.error(
+      await checkCommand("solana account --help", {
+        exit: true,
+        message:
           "Unable to detect the 'solana account' command. Do you have it installed?",
-        );
-      }
+      });
 
       const config = loadConfigToml(options.config, options);
 
