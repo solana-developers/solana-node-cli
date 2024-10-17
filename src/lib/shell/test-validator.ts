@@ -6,6 +6,8 @@ import {
   moveFiles,
 } from "../utils";
 import { resolve } from "path";
+import { DEFAULT_ACCOUNTS_DIR_LOADED } from "@/const/solana";
+import { rmSync } from "fs";
 
 type BuildTestValidatorCommandInput = {
   verbose?: boolean;
@@ -24,21 +26,33 @@ export function buildTestValidatorCommand({
 }: BuildTestValidatorCommandInput = {}) {
   const command: string[] = ["solana-test-validator"];
 
-  if (reset) command.push("--reset");
+  const stagingDir = resolve(DEFAULT_ACCOUNTS_DIR_LOADED);
+
+  if (reset) {
+    rmSync(stagingDir, {
+      recursive: true,
+      force: true,
+    });
+
+    command.push("--reset");
+  }
 
   // auto load in the account from the provided json files
   if (accountDir) {
     accountDir = resolve(accountDir);
 
+    console.log("accountDir:", accountDir);
+
     if (directoryExists(accountDir)) {
+      console.log("accountDir exists");
       // clone the dir to a different temp location
-      const tmpDir = resolve(".cache/load/accounts");
-      createFolders(tmpDir, false);
-      moveFiles(accountDir, tmpDir, true);
+
+      createFolders(stagingDir, false);
+      moveFiles(accountDir, stagingDir, true);
 
       // todo: update/reset the required account values (like `data` and maybe `owners`)
 
-      command.push(`--account-dir ${tmpDir}`);
+      command.push(`--account-dir ${stagingDir}`);
 
       // get the list of all the local binaries
       const clonedPrograms = loadFileNamesToMap(accountDir, ".so");

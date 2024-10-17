@@ -72,7 +72,7 @@ export default function testValidatorCommand() {
         const command = buildTestValidatorCommand({
           verbose: !options.output,
           reset: options.reset || false,
-          accountDir: options.accountDir,
+          accountDir: config.settings.accountDir,
           // todo: allow setting the authority from the cli args
           authority: authorityAddress,
         });
@@ -85,12 +85,12 @@ export default function testValidatorCommand() {
         if (options.reset) {
           console.log(
             "Loaded",
-            loadFileNamesToMap(options.accountDir, ".json").size,
+            loadFileNamesToMap(config.settings.accountDir, ".json").size,
             "accounts into the local validator",
           );
           console.log(
             "Loaded",
-            loadFileNamesToMap(options.accountDir, ".so").size,
+            loadFileNamesToMap(config.settings.accountDir, ".so").size,
             "programs into the local validator",
           );
         }
