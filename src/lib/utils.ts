@@ -92,7 +92,7 @@ export function doesFileExist(
  */
 export function directoryExists(directoryPath: string): boolean {
   try {
-    const stat = fs.statSync(directoryPath);
+    const stat = fs.statSync(resolveTilde(directoryPath));
     return stat.isDirectory();
   } catch (err) {
     // if there's an error, assume directory doesn't exist

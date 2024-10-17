@@ -4,9 +4,10 @@
 
 import { OutputConfiguration } from "@commander-js/extra-typings";
 import picocolors from "picocolors";
-import { doesFileExist, loadTomlFile } from "./utils";
+import { directoryExists, doesFileExist, loadTomlFile } from "./utils";
 import { SolanaToml } from "@/types/config";
 import { DEFAULT_CONFIG_FILE } from "@/const/solana";
+import { join } from "path";
 
 /**
  *
@@ -15,6 +16,11 @@ export function loadConfigToml(
   configPath: string = DEFAULT_CONFIG_FILE,
   settings: object = null,
 ) {
+  // allow the config path to be a directory, with a Solana.toml in it
+  if (directoryExists(configPath)) {
+    configPath = join(configPath, DEFAULT_CONFIG_FILE);
+  }
+
   // todo: accept both `Solana.toml` and `solana.toml` (case insensitive)
   if (!doesFileExist(configPath, true)) {
     console.error("Unable to locate config TOML file:", configPath);
