@@ -15,7 +15,7 @@ import { COMMON_OPTIONS } from "@/const/commands";
  */
 export function loadConfigToml(
   configPath: string = DEFAULT_CONFIG_FILE,
-  settings: object = null,
+  settings: object = {},
 ) {
   // allow the config path to be a directory, with a Solana.toml in it
   if (directoryExists(configPath)) {
@@ -30,9 +30,16 @@ export function loadConfigToml(
 
   let config = loadTomlFile<SolanaToml>(configPath);
 
-  if (settings) {
-    config = deconflictConfig(config, settings);
-  }
+  // set default values
+  settings = Object.assign(
+    {
+      cluster: COMMON_OPTIONS.url.defaultValue,
+      accountDir: COMMON_OPTIONS.accountDir.defaultValue,
+    },
+    settings,
+  );
+
+  config = deconflictConfig(config, settings);
 
   return config;
 }

@@ -8,6 +8,7 @@ import {
 } from "../utils";
 import { CloneSettings, SolanaCluster, SolanaToml } from "@/types/config";
 import { parseRpcUrlOrMoniker } from "../solana";
+import { DEFAULT_ACCOUNTS_DIR_TEMP } from "@/const/solana";
 
 export type JsonAccountStruct = {
   pubkey: string;
@@ -123,7 +124,7 @@ export async function cloneProgramsFromConfig(
   if (!config.clone.program) return null;
 
   if (!currentAccounts) {
-    currentAccounts = loadFileNamesToMap(settings.saveDirFinal);
+    currentAccounts = loadFileNamesToMap(config.settings.accountDir);
   }
 
   for (const key in config.clone.program) {
@@ -138,9 +139,10 @@ export async function cloneProgramsFromConfig(
     // set the default info
     if (!program?.name) program.name = key;
 
-    if (settings.force === true || program.clone === "always") {
-      // console.log("Force refresh", token.address);
-      // do nothing here so we can force the update
+    if (program.clone === "always") {
+      console.log("Always clone:", program.address);
+    } else if (settings.force === true) {
+      console.log("Force clone:", program.address);
     } else if (settings.prompt === true || program.clone == "prompt") {
       // console.log(
       //   "Prompt the user to select to refresh or not",
@@ -156,7 +158,7 @@ export async function cloneProgramsFromConfig(
 
     await cloneProgram({
       address: program.address,
-      saveDir: settings.saveDirTemp,
+      saveDir: DEFAULT_ACCOUNTS_DIR_TEMP,
       url: program.cluster || config.settings.cluster,
       // saveDir: path.resolve(saveDirTemp, "program")
     });
@@ -176,7 +178,7 @@ export async function cloneTokensFromConfig(
   if (!config.clone.token) return null;
 
   if (!currentAccounts) {
-    currentAccounts = loadFileNamesToMap(settings.saveDirFinal);
+    currentAccounts = loadFileNamesToMap(config.settings.accountDir);
   }
 
   for (const key in config.clone.token) {
@@ -187,9 +189,10 @@ export async function cloneTokensFromConfig(
       // set the default token info
       if (!token?.name) token.name = key;
 
-      if (settings.force === true || token.clone === "always") {
-        // console.log("Force refresh", token.address);
-        // do nothing here so we can force the update
+      if (token.clone === "always") {
+        console.log("Always clone:", token.address);
+      } else if (settings.force === true) {
+        console.log("Force clone:", token.address);
       } else if (settings.prompt === true || token.clone == "prompt") {
         // console.log(
         //   "Prompt the user to select to refresh or not",
@@ -215,27 +218,29 @@ export async function cloneTokensFromConfig(
       // todo: if cloning lots of accounts, we can likely make this more efficient
       // todo: handle errors on cloning (like if the clone failed and the json file does not exist)
       await cloneAccount({
-        saveDir: settings.saveDirTemp,
+        saveDir: DEFAULT_ACCOUNTS_DIR_TEMP,
         address: token.address,
         url: token.cluster || config.settings.cluster,
       });
 
       if (
-        doesFileExist(path.join(settings.saveDirTemp, `${token.address}.json`))
+        doesFileExist(
+          path.join(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
+        )
       ) {
         if (token.clone === "always" || settings.force == true) {
           // do nothing since we are going to force clone/refresh
         } else if (
           doesFileExist(
-            path.join(settings.saveDirFinal, `${token.address}.json`),
+            path.join(config.settings.accountDir, `${token.address}.json`),
           )
         ) {
           // detect diff from any existing accounts already cloned
           const newFile = loadJsonFile<JsonAccountStruct>(
-            path.resolve(settings.saveDirTemp, `${token.address}.json`),
+            path.resolve(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
           );
           const oldFile = loadJsonFile<JsonAccountStruct>(
-            path.resolve(settings.saveDirFinal, `${token.address}.json`),
+            path.resolve(config.settings.accountDir, `${token.address}.json`),
           );
 
           if (JSON.stringify(newFile) !== JSON.stringify(oldFile)) {

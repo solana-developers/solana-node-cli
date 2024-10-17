@@ -69,6 +69,4 @@ type SolanaTomlClone = {
 export type CloneSettings = {
   force?: boolean;
   prompt?: boolean;
-  saveDirFinal: string;
-  saveDirTemp: string;
 };

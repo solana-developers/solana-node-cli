@@ -1,20 +1,13 @@
 import { Command, Option } from "@commander-js/extra-typings";
-import {
-  cliOutputConfig,
-  successOutro,
-  warnMessage,
-  cancelMessage,
-  titleMessage,
-  loadConfigToml,
-} from "@/lib/cli.js";
+import { cliOutputConfig, titleMessage, loadConfigToml } from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
 import { loadFileNamesToMap, moveFiles } from "@/lib/utils";
-import type { CloneSettings } from "@/types/config";
 import {
   cloneProgramsFromConfig,
   cloneTokensFromConfig,
 } from "@/lib/shell/clone";
 import { COMMON_OPTIONS } from "@/const/commands";
+import { DEFAULT_ACCOUNTS_DIR_TEMP } from "@/const/solana";
 
 /**
  * Command: `run`
@@ -45,11 +38,15 @@ export function runCloneCommand() {
     .addOption(
       new Option("--prompt", "prompt to override any existing cloned accounts"),
     )
+    .addOption(COMMON_OPTIONS.accountDir)
     .addOption(COMMON_OPTIONS.config)
     .addOption(COMMON_OPTIONS.url)
     .action(async (options) => {
       titleMessage("Clone accounts and programs");
       // console.log("Clone accounts and programs", "\n");
+
+      // console.log("options:");
+      // console.log(options);
 
       const hasCommand = await checkCommand("solana account --help");
       if (!hasCommand) {
@@ -60,24 +57,14 @@ export function runCloneCommand() {
 
       const config = loadConfigToml(options.config, options);
 
-      // todo: this should be loaded from the config file or the cli args
-      const saveDirFinal = "temp/accounts";
-      const saveDirTemp = ".cache/temp/accounts";
+      const currentAccounts = loadFileNamesToMap(config.settings.accountDir);
 
-      const currentAccounts = loadFileNamesToMap(saveDirFinal);
+      await cloneProgramsFromConfig(config, options, currentAccounts);
 
-      const cloneSettings: CloneSettings = {
-        ...options,
-        saveDirFinal,
-        saveDirTemp,
-      };
-
-      await cloneProgramsFromConfig(config, cloneSettings, currentAccounts);
-
-      await cloneTokensFromConfig(config, cloneSettings, currentAccounts);
+      await cloneTokensFromConfig(config, options, currentAccounts);
 
       // now that all the files have been deconflicted, we can move them to their final home
-      moveFiles(saveDirTemp, saveDirFinal, true);
+      moveFiles(DEFAULT_ACCOUNTS_DIR_TEMP, config.settings.accountDir, true);
 
       // todo: should we remove the entire temp cache dir? no matter what?
 
@@ -86,7 +73,7 @@ export function runCloneCommand() {
         Object.keys(config.clone.token).length +
         Object.keys(config.clone.program).length;
 
-      const newAccounts = loadFileNamesToMap(saveDirFinal);
+      const newAccounts = loadFileNamesToMap(config.settings.accountDir);
 
       if (expectedCount === newAccounts.size) {
         console.log(
@@ -97,7 +84,7 @@ export function runCloneCommand() {
 
         // todo: perform a final sanity check to ensure the correct quantity of accounts were cloned
         // if (expectedCount === "")
-        // todo: count how many json files exist in the saveDirFinal
+        // todo: count how many json files exist in the `config.settings.accountDir`
       } else {
         console.warn(
           `Completed cloning accounts.`,
