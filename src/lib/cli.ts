@@ -22,13 +22,14 @@ export function loadConfigToml(
     configPath = join(configPath, DEFAULT_CONFIG_FILE);
   }
 
-  // todo: accept both `Solana.toml` and `solana.toml` (case insensitive)
-  if (!doesFileExist(configPath, true)) {
-    console.error("Unable to locate config TOML file:", configPath);
-    process.exit(1);
-  }
+  let config: SolanaToml = {};
 
-  let config = loadTomlFile<SolanaToml>(configPath);
+  // todo: accept both `Solana.toml` and `solana.toml` (case insensitive)
+  if (doesFileExist(configPath, true)) {
+    config = loadTomlFile<SolanaToml>(configPath) || {};
+  } else {
+    console.warn(`No Solana.toml config file found. Skipping.`);
+  }
 
   const defaultSettings: SolanaToml["settings"] = {
     cluster: COMMON_OPTIONS.url.defaultValue,
