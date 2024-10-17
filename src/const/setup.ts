@@ -18,6 +18,9 @@ export const TOOL_CONFIG: { [key in ToolNames]: ToolCommandConfig } = {
   yarn: {
     version: "yarn --version",
   },
+  trident: {
+    version: "trident --version",
+  },
 };
 
 export enum PathSourceStatus {

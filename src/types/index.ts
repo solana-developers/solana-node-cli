@@ -1,6 +1,12 @@
 export type PlatformOS = "unknown" | "linux" | "mac" | "windows";
 
-export type ToolNames = "rust" | "solana" | "avm" | "anchor" | "yarn";
+export type ToolNames =
+  | "rust"
+  | "solana"
+  | "avm"
+  | "anchor"
+  | "yarn"
+  | "trident";
 
 export type ToolCommandConfig = {
   /** $PATH location for the command's tools */
