@@ -104,6 +104,15 @@ export function cancelMessage(msg: string = "Operation canceled") {
 }
 
 /**
+ * Show a cancel outro and exit the cli process
+ */
+export function warningOutro(msg: string = "Operation canceled") {
+  console.warn(msg);
+  // cancel(msg);
+  process.exit();
+}
+
+/**
  * Print a plain message using clack's `outro`
  * (including a process exit code)
  */
