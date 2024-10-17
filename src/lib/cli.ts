@@ -8,6 +8,7 @@ import { directoryExists, doesFileExist, loadTomlFile } from "./utils";
 import { SolanaToml } from "@/types/config";
 import { DEFAULT_CONFIG_FILE } from "@/const/solana";
 import { join } from "path";
+import { COMMON_OPTIONS } from "@/const/commands";
 
 /**
  *
@@ -37,7 +38,9 @@ export function loadConfigToml(
 }
 
 export function deconflictConfig(config: SolanaToml, settings: any) {
-  if (settings?.url) config.settings.cluster = settings.url;
+  if (settings?.url && settings.url !== COMMON_OPTIONS.url.defaultValue) {
+    config.settings.cluster = settings.url;
+  }
 
   return config;
 }
