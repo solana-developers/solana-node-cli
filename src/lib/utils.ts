@@ -1,5 +1,4 @@
 import fs from "fs";
-import { readFileSync } from "fs";
 import * as toml from "@iarna/toml";
 import path from "path";
 import { homedir } from "os";
@@ -24,7 +23,7 @@ export function resolveTilde(filePath: string) {
  */
 export function loadJsonFile<T = object>(filePath: string): T | null {
   try {
-    const data = readFileSync(resolveTilde(filePath), "utf-8");
+    const data = fs.readFileSync(resolveTilde(filePath), "utf-8");
     const parsedData: T = JSON.parse(data);
     return parsedData;
   } catch (error) {
@@ -44,7 +43,7 @@ export function loadJsonFile<T = object>(filePath: string): T | null {
  */
 export function loadTomlFile<T>(filePath: string): T | null {
   try {
-    const data = readFileSync(resolveTilde(filePath), "utf-8");
+    const data = fs.readFileSync(resolveTilde(filePath), "utf-8");
     // const parsedData: T = JSON.parse(data);
 
     // Parse the TOML content

@@ -8,7 +8,7 @@ import {
 } from "@/lib/shell/clone";
 import { COMMON_OPTIONS } from "@/const/commands";
 import { DEFAULT_ACCOUNTS_DIR_TEMP } from "@/const/solana";
-import { rmSync, unlinkSync } from "fs";
+import { rmSync } from "fs";
 
 /**
  * Command: `run`

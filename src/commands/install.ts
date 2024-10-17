@@ -1,11 +1,5 @@
 import { Argument, Command } from "@commander-js/extra-typings";
-import {
-  cliOutputConfig,
-  successOutro,
-  warnMessage,
-  cancelMessage,
-  titleMessage,
-} from "@/lib/cli.js";
+import { cliOutputConfig, warnMessage, titleMessage } from "@/lib/cli.js";
 import { detectOperatingSystem } from "@/lib/shell";
 import type { ToolNames } from "@/types";
 import {
