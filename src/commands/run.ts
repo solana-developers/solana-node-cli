@@ -55,7 +55,11 @@ export function runCloneCommand() {
           "Unable to detect the 'solana account' command. Do you have it installed?",
       });
 
-      const config = loadConfigToml(options.config, options);
+      const config = loadConfigToml(
+        options.config,
+        options,
+        true /* config required */,
+      );
 
       rmSync(DEFAULT_ACCOUNTS_DIR_TEMP, {
         recursive: true,

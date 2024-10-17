@@ -11,11 +11,12 @@ import { join } from "path";
 import { COMMON_OPTIONS } from "@/const/commands";
 
 /**
- *
+ * Load the Solana.toml config file and handle the default settings overrides
  */
 export function loadConfigToml(
   configPath: string = DEFAULT_CONFIG_FILE,
   settings: object = {},
+  isConfigRequired: boolean = false,
 ): SolanaToml {
   // allow the config path to be a directory, with a Solana.toml in it
   if (directoryExists(configPath)) {
@@ -28,7 +29,9 @@ export function loadConfigToml(
   if (doesFileExist(configPath, true)) {
     config = loadTomlFile<SolanaToml>(configPath) || {};
   } else {
-    console.warn(`No Solana.toml config file found. Skipping.`);
+    if (isConfigRequired) {
+      warningOutro(`No Solana.toml config file found. Operation canceled.`);
+    } else console.warn(`No Solana.toml config file found. Skipping.`);
   }
 
   const defaultSettings: SolanaToml["settings"] = {
