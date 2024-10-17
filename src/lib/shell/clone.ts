@@ -121,7 +121,7 @@ export async function cloneProgramsFromConfig(
   settings: CloneSettings,
   currentAccounts?: ReturnType<typeof loadFileNamesToMap>,
 ) {
-  if (!config.clone.program) return null;
+  if (!config?.clone?.program) return null;
 
   if (!currentAccounts) {
     currentAccounts = loadFileNamesToMap(config.settings.accountDir);
@@ -175,7 +175,7 @@ export async function cloneTokensFromConfig(
   settings: CloneSettings,
   currentAccounts?: ReturnType<typeof loadFileNamesToMap>,
 ) {
-  if (!config.clone.token) return null;
+  if (!config?.clone?.token) return null;
 
   if (!currentAccounts) {
     currentAccounts = loadFileNamesToMap(config.settings.accountDir);

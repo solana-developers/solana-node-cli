@@ -68,9 +68,12 @@ export function runCloneCommand() {
       // todo: should we remove the entire temp cache dir? no matter what?
 
       // perform a final sanity check to ensure the correct quantity of accounts were cloned
-      const expectedCount: number =
-        Object.keys(config.clone.token).length +
-        Object.keys(config.clone.program).length;
+      let expectedCount: number = 0;
+
+      if (config?.clone?.token)
+        expectedCount += Object.keys(config.clone.token).length;
+      if (config?.clone?.program)
+        expectedCount += Object.keys(config.clone.program).length;
 
       const newAccounts = loadFileNamesToMap(config.settings.accountDir);
 
