@@ -8,6 +8,7 @@ import {
 } from "@/lib/shell/clone";
 import { COMMON_OPTIONS } from "@/const/commands";
 import { DEFAULT_ACCOUNTS_DIR_TEMP } from "@/const/solana";
+import { rmSync, unlinkSync } from "fs";
 
 /**
  * Command: `run`
@@ -56,6 +57,11 @@ export function runCloneCommand() {
 
       const config = loadConfigToml(options.config, options);
 
+      rmSync(DEFAULT_ACCOUNTS_DIR_TEMP, {
+        recursive: true,
+        force: true,
+      });
+
       const currentAccounts = loadFileNamesToMap(config.settings.accountDir);
 
       await cloneProgramsFromConfig(config, options, currentAccounts);
@@ -66,6 +72,10 @@ export function runCloneCommand() {
       moveFiles(DEFAULT_ACCOUNTS_DIR_TEMP, config.settings.accountDir, true);
 
       // todo: should we remove the entire temp cache dir? no matter what?
+      rmSync(DEFAULT_ACCOUNTS_DIR_TEMP, {
+        recursive: true,
+        force: true,
+      });
 
       // perform a final sanity check to ensure the correct quantity of accounts were cloned
       let expectedCount: number = 0;
