@@ -7,6 +7,8 @@ export type SolanaToml = {
     cluster: SolanaCluster;
     /** local directory path to store any cloned accounts */
     accountDir: string;
+    /** path to the local authority keypair */
+    keypair: string;
     /**
      * custom rpc urls for each network that will be used to override the default public endpoints
      */

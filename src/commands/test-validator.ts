@@ -1,10 +1,9 @@
 import { Command, Option } from "@commander-js/extra-typings";
 import {
   cliOutputConfig,
-  successOutro,
-  warnMessage,
-  cancelMessage,
   titleMessage,
+  loadConfigToml,
+  cancelMessage,
 } from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
 import { doesFileExist, loadFileNamesToMap } from "@/lib/utils";
@@ -42,13 +41,12 @@ export default function testValidatorCommand() {
       )
       .addOption(COMMON_OPTIONS.accountDir)
       .addOption(COMMON_OPTIONS.config)
-      .addOption(COMMON_OPTIONS.authority)
+      .addOption(COMMON_OPTIONS.keypair)
       .addOption(COMMON_OPTIONS.url)
       .action(async (options) => {
         titleMessage("solana-test-validator");
 
-        // console.log("options:");
-        // console.log(options);
+        const config = loadConfigToml(options.config, options);
 
         const hasCommand = await checkCommand(
           "solana-test-validator --version",
@@ -60,17 +58,18 @@ export default function testValidatorCommand() {
           );
         }
 
-        // todo: build the options from combining the cli args and the config file
-
         let authorityAddress: string | null = null;
-
-        if (options.keypair) {
-          if (doesFileExist(options.keypair)) {
+        if (config.settings.keypair) {
+          if (doesFileExist(config.settings.keypair)) {
             authorityAddress = loadKeypairFromFile(
-              options.keypair,
+              config.settings.keypair,
             )?.publicKey.toBase58();
           } else {
-            console.warn("Unable to locate keypair file:", options.keypair);
+            console.warn(
+              "Unable to locate keypair file:",
+              config.settings.keypair,
+            );
+            console.warn("Skipping auto creation and setting authorities");
           }
         }
 
@@ -84,8 +83,7 @@ export default function testValidatorCommand() {
 
         // only log the "run validator" command, do not execute it
         if (options.output) {
-          console.log(`\n${command}`);
-          return;
+          return cancelMessage(`\n${command}`);
         }
 
         if (options.reset) {

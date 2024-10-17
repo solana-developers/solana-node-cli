@@ -21,10 +21,9 @@ export const COMMON_OPTIONS = {
   /**
    * path to the local authority keypair
    */
-  authority: new Option(
-    "--keypair <path>",
-    "path to a Solana.toml config file",
-  ).default(DEFAULT_KEYPAIR_PATH),
+  keypair: new Option("--keypair <path>", "path to a keypair file").default(
+    DEFAULT_KEYPAIR_PATH,
+  ),
   /**
    * rpc url or moniker to use
    */
