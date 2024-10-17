@@ -41,6 +41,12 @@ export function deconflictConfig(config: SolanaToml, settings: any) {
   if (settings?.url && settings.url !== COMMON_OPTIONS.url.defaultValue) {
     config.settings.cluster = settings.url;
   }
+  if (
+    settings?.accountDir &&
+    settings.accountDir !== COMMON_OPTIONS.accountDir.defaultValue
+  ) {
+    config.settings.accountDir = settings.accountDir;
+  }
 
   return config;
 }

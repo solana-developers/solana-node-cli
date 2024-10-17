@@ -5,6 +5,8 @@ export type SolanaToml = {
      * when not set, fallback to the Solana CLI cluster
      */
     cluster: SolanaCluster;
+    /** local directory path to store any cloned accounts */
+    accountDir: string;
     /**
      * custom rpc urls for each network that will be used to override the default public endpoints
      */
