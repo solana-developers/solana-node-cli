@@ -31,7 +31,7 @@ export const COMMON_OPTIONS = {
   url: new Option(
     "-u --url <URL_OR_MONIKER>",
     "URL for Solana's JSON RPC or moniker",
-  ),
+  ).default("mainnet"),
   /**
    * local directory path to store and load any cloned accounts
    */
