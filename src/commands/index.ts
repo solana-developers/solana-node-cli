@@ -1,6 +1,6 @@
 import { Command } from "@commander-js/extra-typings";
-import { getAppInfo } from "@/lib/getAppInfo.js";
 import { cliOutputConfig } from "@/lib/cli";
+import { getAppInfo } from "@/lib/app-info";
 
 export default function cliProgramRoot() {
   // get app info from package.json
