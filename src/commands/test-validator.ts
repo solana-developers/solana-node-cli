@@ -40,13 +40,7 @@ export default function testValidatorCommand() {
           "reset the test-validator to genesis, reloading all preloaded accounts",
         ),
       )
-      .addOption(
-        new Option(
-          "--account-dir <ACCOUNT_DIR>",
-          "load all the accounts located in this directory",
-        ).default("temp/accounts"),
-        // .default("accounts"), // todo: use this default
-      )
+      .addOption(COMMON_OPTIONS.accountDir)
       .addOption(COMMON_OPTIONS.config)
       .addOption(COMMON_OPTIONS.authority)
       .addOption(COMMON_OPTIONS.url)

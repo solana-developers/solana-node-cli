@@ -1,5 +1,9 @@
 import { Option } from "@commander-js/extra-typings";
-import { DEFAULT_CONFIG_FILE, DEFAULT_KEYPAIR_PATH } from "./solana";
+import {
+  DEFAULT_ACCOUNTS_DIR,
+  DEFAULT_CONFIG_FILE,
+  DEFAULT_KEYPAIR_PATH,
+} from "./solana";
 
 /**
  * Listing of the common and reusable command options
@@ -28,4 +32,11 @@ export const COMMON_OPTIONS = {
     "-u --url <URL_OR_MONIKER>",
     "URL for Solana's JSON RPC or moniker",
   ),
+  /**
+   * local directory path to store and load any cloned accounts
+   */
+  accountDir: new Option(
+    "--account-dir <ACCOUNT_DIR>",
+    "local directory path to store any cloned accounts",
+  ).default(DEFAULT_ACCOUNTS_DIR),
 };
