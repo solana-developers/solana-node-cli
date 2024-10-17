@@ -16,7 +16,7 @@ import { COMMON_OPTIONS } from "@/const/commands";
 export function loadConfigToml(
   configPath: string = DEFAULT_CONFIG_FILE,
   settings: object = {},
-) {
+): SolanaToml {
   // allow the config path to be a directory, with a Solana.toml in it
   if (directoryExists(configPath)) {
     configPath = join(configPath, DEFAULT_CONFIG_FILE);
@@ -30,29 +30,32 @@ export function loadConfigToml(
 
   let config = loadTomlFile<SolanaToml>(configPath);
 
-  // set default values
-  settings = Object.assign(
-    {
-      cluster: COMMON_OPTIONS.url.defaultValue,
-      accountDir: COMMON_OPTIONS.accountDir.defaultValue,
-    },
-    settings,
-  );
+  const defaultSettings: SolanaToml["settings"] = {
+    cluster: COMMON_OPTIONS.url.defaultValue,
+    accountDir: COMMON_OPTIONS.accountDir.defaultValue,
+    keypair: COMMON_OPTIONS.keypair.defaultValue,
+  };
+
+  config.settings = Object.assign(defaultSettings, config.settings || {});
 
   config = deconflictConfig(config, settings);
 
   return config;
 }
 
-export function deconflictConfig(config: SolanaToml, settings: any) {
-  if (settings?.url && settings.url !== COMMON_OPTIONS.url.defaultValue) {
-    config.settings.cluster = settings.url;
+export function deconflictConfig(config: SolanaToml, args: any) {
+  if (args?.url && args.url !== COMMON_OPTIONS.url.defaultValue) {
+    config.settings.cluster = args.url;
   }
   if (
-    settings?.accountDir &&
-    settings.accountDir !== COMMON_OPTIONS.accountDir.defaultValue
+    args?.accountDir &&
+    args.accountDir !== COMMON_OPTIONS.accountDir.defaultValue
   ) {
-    config.settings.accountDir = settings.accountDir;
+    config.settings.accountDir = args.accountDir;
+  }
+
+  if (args?.keypair && args.keypair !== COMMON_OPTIONS.keypair.defaultValue) {
+    config.settings.keypair = args.keypair;
   }
 
   return config;
