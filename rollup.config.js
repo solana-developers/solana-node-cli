@@ -14,8 +14,9 @@ export default {
   plugins: [
     commonjs(),
     nodeResolve({
-      exportConditions: ["node"], // add node option here,
-      preferBuiltins: true,
+      exportConditions: ["node"],
+      // prevent using the deprecated punycode module
+      preferBuiltins: (module) => module != "punycode",
     }),
     json(),
     typescript(),
