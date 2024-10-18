@@ -120,13 +120,9 @@ export async function cloneProgram({
 export async function cloneProgramsFromConfig(
   config: SolanaToml,
   settings: CloneSettings,
-  currentAccounts?: ReturnType<typeof loadFileNamesToMap>,
+  currentAccounts: ReturnType<typeof loadFileNamesToMap>,
 ) {
   if (!config?.clone?.program) return null;
-
-  if (!currentAccounts) {
-    currentAccounts = loadFileNamesToMap(config.settings.accountDir);
-  }
 
   for (const key in config.clone.program) {
     if (!config.clone.program.hasOwnProperty(key)) {
@@ -141,9 +137,9 @@ export async function cloneProgramsFromConfig(
     if (!program?.name) program.name = key;
 
     if (program.clone === "always") {
-      console.log("Always clone:", program.address);
+      console.log("Always clone program:", program.address);
     } else if (settings.force === true) {
-      console.log("Force clone:", program.address);
+      console.log("Force clone program:", program.address);
     } else if (settings.prompt === true || program.clone == "prompt") {
       // console.log(
       //   "Prompt the user to select to refresh or not",
@@ -174,13 +170,9 @@ export async function cloneProgramsFromConfig(
 export async function cloneTokensFromConfig(
   config: SolanaToml,
   settings: CloneSettings,
-  currentAccounts?: ReturnType<typeof loadFileNamesToMap>,
+  currentAccounts: ReturnType<typeof loadFileNamesToMap>,
 ) {
   if (!config?.clone?.token) return null;
-
-  if (!currentAccounts) {
-    currentAccounts = loadFileNamesToMap(config.settings.accountDir);
-  }
 
   for (const key in config.clone.token) {
     if (!config.clone.token.hasOwnProperty(key)) {
@@ -194,9 +186,9 @@ export async function cloneTokensFromConfig(
     if (!token?.name) token.name = key;
 
     if (token.clone === "always") {
-      console.log("Always clone:", token.address);
+      console.log("Always clone token:", token.address);
     } else if (settings.force === true) {
-      console.log("Force clone:", token.address);
+      console.log("Force clone token:", token.address);
     } else if (settings.prompt === true || token.clone == "prompt") {
       // console.log(
       //   "Prompt the user to select to refresh or not",
@@ -271,6 +263,6 @@ export async function cloneTokensFromConfig(
       }
 
       // safe to move to final dir
-    } else console.error("Failed to clone account:", token.address);
+    } else console.error("Failed to clone token:", token.address);
   }
 }
