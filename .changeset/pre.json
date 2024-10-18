@@ -5,6 +5,7 @@
     "solana": "2.2.1"
   },
   "changesets": [
+    "dirty-worms-run",
     "silent-elephants-join"
   ]
 }

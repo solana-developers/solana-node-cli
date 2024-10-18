@@ -1,5 +1,12 @@
 # solana
 
+## 2.3.0-tv.6
+
+### Patch Changes
+
+- auto detect account owner and clone it
+- cloning general accounts
+
 ## 2.3.0-tv.0
 
 ### Minor Changes
