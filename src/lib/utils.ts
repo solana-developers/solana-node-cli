@@ -41,16 +41,12 @@ export function loadPlaintextFile(filePath: string): string | null {
  */
 export function loadJsonFile<T = object>(filePath: string): T | null {
   try {
-    const data = fs.readFileSync(resolveTilde(filePath), "utf-8");
+    const data = loadPlaintextFile(filePath);
     const parsedData: T = JSON.parse(data);
     return parsedData;
   } catch (error) {
     if (error instanceof SyntaxError) {
       console.error("Error parsing JSON:", error.message);
-    } else if (error.code === "ENOENT") {
-      console.error("JSON file not found:", filePath);
-    } else {
-      console.error("Error reading JSON file:", error.message);
     }
     return null;
   }
@@ -61,19 +57,12 @@ export function loadJsonFile<T = object>(filePath: string): T | null {
  */
 export function loadTomlFile<T>(filePath: string): T | null {
   try {
-    const data = fs.readFileSync(resolveTilde(filePath), "utf-8");
-    // const parsedData: T = JSON.parse(data);
-
-    // Parse the TOML content
+    const data = loadPlaintextFile(filePath);
     const parsedData = toml.parse(data);
     return parsedData as T;
   } catch (error) {
     if (error instanceof SyntaxError) {
       console.error("Error parsing TOML:", error.message);
-    } else if (error.code === "ENOENT") {
-      console.error("TOML file not found:", filePath);
-    } else {
-      console.error("Error reading TOML file:", error.message);
     }
     return null;
   }
