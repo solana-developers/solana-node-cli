@@ -30,26 +30,22 @@ export type SolanaCluster =
   | "localhost"
   | "localnet";
 
+type SolanaTomlCloneConfig = {
+  address: string;
+  name?: string;
+  cluster?: SolanaCluster;
+  clone?: "always" | "prompt";
+};
+
 type SolanaTomlClone = {
-  settings: {
-    cluster: SolanaCluster;
-    // todo: we could allow people to manually override any cluster url from within the toml file
-    // todo: including using loading env vars
-  };
   program: {
-    [key: string]: {
-      address: string;
-      name?: string;
-      cluster?: SolanaCluster;
-      clone?: "always" | "prompt";
-    };
+    [key: string]: SolanaTomlCloneConfig;
+  };
+  account: {
+    [key: string]: SolanaTomlCloneConfig;
   };
   token: {
-    [key: string]: {
-      address: string;
-      cluster?: SolanaCluster;
-      clone?: "always" | "prompt";
-      name?: string;
+    [key: string]: SolanaTomlCloneConfig & {
       amount?: number;
       mintAuthority?: string;
       freezeAuthority?: string;
@@ -59,13 +55,6 @@ type SolanaTomlClone = {
       }>;
     };
   };
-  // todo: support generic accounts, and maybe handle anchor idl things
-  //   account?: {
-  //     [key: string]: {
-  //       address: string;
-  //       name?: string;
-  //     };
-  //   };
 };
 
 export type CloneSettings = {
