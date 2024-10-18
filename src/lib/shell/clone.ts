@@ -8,7 +8,10 @@ import {
 } from "../utils";
 import { CloneSettings, SolanaCluster, SolanaToml } from "@/types/config";
 import { parseRpcUrlOrMoniker } from "../solana";
-import { DEFAULT_ACCOUNTS_DIR_TEMP } from "@/const/solana";
+import {
+  DEFAULT_ACCOUNTS_DIR,
+  DEFAULT_ACCOUNTS_DIR_TEMP,
+} from "@/const/solana";
 import { warnMessage } from "../cli";
 
 export type JsonAccountStruct = {
@@ -44,7 +47,7 @@ type CloneProgramInput = {
 export async function cloneAccount({
   address,
   save,
-  saveDir = "accounts",
+  saveDir = DEFAULT_ACCOUNTS_DIR,
   url,
 }: CloneAccountInput | undefined) {
   let command: string[] = [
@@ -140,17 +143,11 @@ export async function cloneProgramsFromConfig(
       console.log("Always clone program:", program.address);
     } else if (settings.force === true) {
       console.log("Force clone program:", program.address);
-    } else if (settings.prompt === true || program.clone == "prompt") {
-      // console.log(
-      //   "Prompt the user to select to refresh or not",
-      //   token.address,
-      // );
-      // do nothing here so we can prompt the user later
-    }
-    // do not clone/refresh if the account already exists and we are not force updating
-    else if (currentAccounts.has(program.address)) {
+    } else if (currentAccounts.has(program.address)) {
       console.log("Skipping clone program:", program.address);
       continue;
+    } else {
+      console.log("Clone program:", program.address);
     }
 
     await cloneProgram({
@@ -189,17 +186,11 @@ export async function cloneTokensFromConfig(
       console.log("Always clone token:", token.address);
     } else if (settings.force === true) {
       console.log("Force clone token:", token.address);
-    } else if (settings.prompt === true || token.clone == "prompt") {
-      // console.log(
-      //   "Prompt the user to select to refresh or not",
-      //   token.address,
-      // );
-      // do nothing here so we can prompt the user later
-    }
-    // do not clone/refresh if the account already exists and we are not force updating
-    else if (currentAccounts.has(token.address)) {
+    } else if (currentAccounts.has(token.address)) {
       console.log("Skipping clone token:", token.address);
       continue;
+    } else {
+      console.log("Clone token:", token.address);
     }
 
     /**
@@ -220,49 +211,156 @@ export async function cloneTokensFromConfig(
     });
 
     if (
-      doesFileExist(
+      !doesFileExist(
         path.join(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
       )
     ) {
-      if (token.clone === "always" || settings.force == true) {
-        // do nothing since we are going to force clone/refresh
-      } else if (
-        doesFileExist(
-          path.join(config.settings.accountDir, `${token.address}.json`),
-        )
-      ) {
-        // detect diff from any existing accounts already cloned
-        const newFile = loadJsonFile<JsonAccountStruct>(
-          path.resolve(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
-        );
-        const oldFile = loadJsonFile<JsonAccountStruct>(
-          path.resolve(config.settings.accountDir, `${token.address}.json`),
-        );
+      console.error("Failed to clone token:", token.address);
+      continue;
+    }
 
-        if (JSON.stringify(newFile) !== JSON.stringify(oldFile)) {
-          warnMessage(`${token.address} already exists`);
+    /**
+     * todo: we should ensure the cloned account's `owner` program is auto cloned
+     * - from the same network as the token
+     * - not to override any manually defined configs settings
+     */
 
-          // warnMessage("The accounts are different!!");
-          // todo: handle an arg flag to auto update or prompt for update
+    if (token.clone === "always" || settings.force == true) {
+      // do nothing since we are going to force clone/refresh
+    } else if (
+      doesFileExist(
+        path.join(config.settings.accountDir, `${token.address}.json`),
+      )
+    ) {
+      // detect diff from any existing accounts already cloned
+      const newFile = loadJsonFile<JsonAccountStruct>(
+        path.resolve(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
+      );
+      const oldFile = loadJsonFile<JsonAccountStruct>(
+        path.resolve(config.settings.accountDir, `${token.address}.json`),
+      );
 
-          console.log(
-            "todo: prompt the user to determine if they want to clone",
-          );
-          continue;
+      if (JSON.stringify(newFile) !== JSON.stringify(oldFile)) {
+        warnMessage(`${token.address} already exists`);
 
-          // return console.error(
-          //   "The accounts are different, stopping here",
-          // );
-        } else {
-          // console.log(token.address, "did not change");
-          // delete the new file one to avoid dirtying the git history
-          // unlinkSync(
-          //   path.resolve(saveDirTemp, `${token.address}.json`),
-          // );
-        }
+        // warnMessage("The accounts are different!!");
+        // todo: handle an arg flag to auto update or prompt for update
+
+        console.log("todo: prompt the user to determine if they want to clone");
+        continue;
+
+        // return console.error(
+        //   "The accounts are different, stopping here",
+        // );
+      } else {
+        // console.log(token.address, "did not change");
+        // delete the new file one to avoid dirtying the git history
+        // unlinkSync(
+        //   path.resolve(saveDirTemp, `${token.address}.json`),
+        // );
       }
+    }
+  }
+}
 
-      // safe to move to final dir
-    } else console.error("Failed to clone token:", token.address);
+/**
+ * Clone all the accounts listed in the config toml file
+ */
+export async function cloneAccountsFromConfig(
+  config: SolanaToml,
+  settings: CloneSettings,
+  currentAccounts: ReturnType<typeof loadFileNamesToMap>,
+) {
+  if (!config?.clone?.account) return null;
+
+  for (const key in config.clone.account) {
+    if (!config.clone.account.hasOwnProperty(key)) {
+      continue;
+    }
+
+    const account = config.clone.account[key];
+    // todo: should we validate any of the data?
+
+    // set the default account info
+    if (!account?.name) account.name = key;
+
+    if (account.clone === "always") {
+      console.log("Always clone account:", account.address);
+    } else if (settings.force === true) {
+      console.log("Force clone account:", account.address);
+    } else if (currentAccounts.has(account.address)) {
+      console.log("Skipping clone account:", account.address);
+      continue;
+    } else {
+      console.log("Clone account:", account.address);
+    }
+
+    /**
+     * todo: we should likely check if any of the accounts are already cloned
+     * - for ones that are already cloned:
+     *    - default not reclone
+     *    - have some options to control when to clone and when to notify the user
+     *       -
+     * - if they do not exist, clone them
+     */
+
+    // todo: if cloning lots of accounts, we can likely make this more efficient
+    // todo: handle errors on cloning (like if the clone failed and the json file does not exist)
+    await cloneAccount({
+      saveDir: DEFAULT_ACCOUNTS_DIR_TEMP,
+      address: account.address,
+      url: account.cluster || config.settings.cluster,
+    });
+
+    if (
+      !doesFileExist(
+        path.join(DEFAULT_ACCOUNTS_DIR_TEMP, `${account.address}.json`),
+      )
+    ) {
+      console.error("Failed to clone token:", account.address);
+      continue;
+    }
+
+    /**
+     * todo: we should ensure the cloned account's `owner` program is auto cloned
+     * - from the same network as the account
+     * - not to override any manually defined configs settings
+     */
+
+    if (account.clone === "always" || settings.force == true) {
+      // do nothing since we are going to force clone/refresh
+    } else if (
+      doesFileExist(
+        path.join(config.settings.accountDir, `${account.address}.json`),
+      )
+    ) {
+      // detect diff from any existing accounts already cloned
+      const newFile = loadJsonFile<JsonAccountStruct>(
+        path.resolve(DEFAULT_ACCOUNTS_DIR_TEMP, `${account.address}.json`),
+      );
+      const oldFile = loadJsonFile<JsonAccountStruct>(
+        path.resolve(config.settings.accountDir, `${account.address}.json`),
+      );
+
+      if (JSON.stringify(newFile) !== JSON.stringify(oldFile)) {
+        warnMessage(`${account.address} already exists`);
+
+        // warnMessage("The accounts are different!!");
+        // todo: handle an arg flag to auto update or prompt for update
+
+        console.log("todo: prompt the user to determine if they want to clone");
+        continue;
+
+        // return console.error(
+        //   "The accounts are different, stopping here",
+        // );
+      } else {
+        // console.log(account.address, "did not change");
+        // delete the new file one to avoid dirtying the git history
+        // unlinkSync(
+        //   path.resolve(saveDirTemp, `${account.address}.json`),
+        // );
+      }
+    }
   }
 }

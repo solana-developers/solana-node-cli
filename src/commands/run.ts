@@ -8,6 +8,7 @@ import {
 import { checkCommand } from "@/lib/shell";
 import { loadFileNamesToMap, moveFiles, updateGitignore } from "@/lib/utils";
 import {
+  cloneAccountsFromConfig,
   cloneProgramsFromConfig,
   cloneTokensFromConfig,
 } from "@/lib/shell/clone";
@@ -79,9 +80,13 @@ export function runCloneCommand() {
 
       const currentAccounts = loadFileNamesToMap(config.settings.accountDir);
 
-      await cloneProgramsFromConfig(config, options, currentAccounts);
-
+      /**
+       * we clone the accounts in the order of: accounts, tokens, then programs
+       * in order to perform any special processing on them
+       */
+      await cloneAccountsFromConfig(config, options, currentAccounts);
       await cloneTokensFromConfig(config, options, currentAccounts);
+      await cloneProgramsFromConfig(config, options, currentAccounts);
 
       // now that all the files have been deconflicted, we can move them to their final home
       moveFiles(DEFAULT_ACCOUNTS_DIR_TEMP, config.settings.accountDir, true);
@@ -95,6 +100,8 @@ export function runCloneCommand() {
       // perform a final sanity check to ensure the correct quantity of accounts were cloned
       let expectedCount: number = 0;
 
+      if (config?.clone?.account)
+        expectedCount += Object.keys(config.clone.account).length;
       if (config?.clone?.token)
         expectedCount += Object.keys(config.clone.token).length;
       if (config?.clone?.program)
