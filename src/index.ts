@@ -10,9 +10,6 @@ import testValidatorCommand from "@/commands/test-validator";
 
 async function main() {
   try {
-    // display a spacer at the top
-    console.log();
-
     const program = cliProgramRoot();
 
     program
