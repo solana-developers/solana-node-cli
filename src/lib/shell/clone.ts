@@ -31,22 +31,19 @@ type JsonAccountInfo = {
 
 // todo: create interface for common Clone input fields
 type CloneAccountInput = {
-  save?: true;
-  saveDir?: string;
+  saveDir: string;
   address: string;
   url?: SolanaCluster | string;
 };
 
 type CloneProgramInput = {
-  save?: true;
-  saveDir?: string;
+  saveDir: string;
   address: string;
   url?: SolanaCluster | string;
 };
 
 export async function cloneAccount({
   address,
-  save,
   saveDir = DEFAULT_ACCOUNTS_DIR,
   url,
 }: CloneAccountInput | undefined) {
@@ -68,22 +65,18 @@ export async function cloneAccount({
    *
    * todo: we could also help detect drift from an existing locally cached account and any new ones pulled in
    */
-  if (save || saveDir) {
-    if (saveDir) {
-      saveDir = path.resolve(saveDir, `${address}.json`);
-      createFolders(saveDir);
-      command.push(`--output-file ${saveDir}`);
-    } else {
-      command.push(`--output-file ${address}.json`);
-    }
+  const saveFile = path.resolve(saveDir, `${address}.json`);
+  createFolders(saveFile);
+  command.push(`--output-file ${saveFile}`);
+
+  await shellExec(command.join(" "));
+
+  if (doesFileExist(saveFile)) {
+    return loadJsonFile<JsonAccountStruct>(saveFile) || false;
+  } else {
+    // console.error("Failed to clone:", address);
+    return false;
   }
-
-  // console.log(`Command to run:\n\n${command.join(" ")}`, "\n\n");
-
-  //   const res = await shellExec(command.join(" "));
-  //   console.log(res);
-  //   return res;
-  return shellExec(command.join(" "));
 }
 
 /**
@@ -91,7 +84,6 @@ export async function cloneAccount({
  */
 export async function cloneProgram({
   address,
-  save,
   saveDir = "programs",
   url,
 }: CloneProgramInput | undefined) {
@@ -100,7 +92,7 @@ export async function cloneProgram({
     `solana program dump`,
   ];
 
-  saveDir = path.resolve(saveDir, `${address}.so`);
+  const saveFile = path.resolve(saveDir, `${address}.so`);
   createFolders(saveDir);
   command.push(address, saveDir);
 
@@ -109,12 +101,14 @@ export async function cloneProgram({
     command.push(`--url ${parseRpcUrlOrMoniker(url)}`);
   }
 
-  // console.log(`Command to run:\n\n${command.join(" ")}`, "\n\n");
+  await shellExec(command.join(" "));
 
-  //   const res = await shellExec(command.join(" "));
-  //   console.log(res);
-  //   return res;
-  return shellExec(command.join(" "));
+  if (doesFileExist(saveFile)) {
+    return true;
+  } else {
+    // console.error("Failed to program:", address);
+    return false;
+  }
 }
 
 /**
@@ -204,17 +198,13 @@ export async function cloneTokensFromConfig(
 
     // todo: if cloning lots of accounts, we can likely make this more efficient
     // todo: handle errors on cloning (like if the clone failed and the json file does not exist)
-    await cloneAccount({
+    const newAccount = await cloneAccount({
       saveDir: DEFAULT_ACCOUNTS_DIR_TEMP,
       address: token.address,
       url: token.cluster || config.settings.cluster,
     });
 
-    if (
-      !doesFileExist(
-        path.join(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
-      )
-    ) {
+    if (!newAccount) {
       console.error("Failed to clone token:", token.address);
       continue;
     }
@@ -225,7 +215,7 @@ export async function cloneTokensFromConfig(
      * - not to override any manually defined configs settings
      */
 
-    if (token.clone === "always" || settings.force == true) {
+    if (settings.force == true) {
       // do nothing since we are going to force clone/refresh
     } else if (
       doesFileExist(
@@ -233,14 +223,11 @@ export async function cloneTokensFromConfig(
       )
     ) {
       // detect diff from any existing accounts already cloned
-      const newFile = loadJsonFile<JsonAccountStruct>(
-        path.resolve(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
-      );
-      const oldFile = loadJsonFile<JsonAccountStruct>(
+      const oldAccount = loadJsonFile<JsonAccountStruct>(
         path.resolve(config.settings.accountDir, `${token.address}.json`),
       );
 
-      if (JSON.stringify(newFile) !== JSON.stringify(oldFile)) {
+      if (JSON.stringify(newAccount) !== JSON.stringify(oldAccount)) {
         warnMessage(`${token.address} already exists`);
 
         // warnMessage("The accounts are different!!");
@@ -253,7 +240,7 @@ export async function cloneTokensFromConfig(
         //   "The accounts are different, stopping here",
         // );
       } else {
-        // console.log(token.address, "did not change");
+        // console.log("  ", token.address, "did not change");
         // delete the new file one to avoid dirtying the git history
         // unlinkSync(
         //   path.resolve(saveDirTemp, `${token.address}.json`),
@@ -306,18 +293,14 @@ export async function cloneAccountsFromConfig(
 
     // todo: if cloning lots of accounts, we can likely make this more efficient
     // todo: handle errors on cloning (like if the clone failed and the json file does not exist)
-    await cloneAccount({
+    const newAccount = await cloneAccount({
       saveDir: DEFAULT_ACCOUNTS_DIR_TEMP,
       address: account.address,
       url: account.cluster || config.settings.cluster,
     });
 
-    if (
-      !doesFileExist(
-        path.join(DEFAULT_ACCOUNTS_DIR_TEMP, `${account.address}.json`),
-      )
-    ) {
-      console.error("Failed to clone token:", account.address);
+    if (!newAccount) {
+      console.error("Failed to clone account:", account.address);
       continue;
     }
 
@@ -327,22 +310,18 @@ export async function cloneAccountsFromConfig(
      * - not to override any manually defined configs settings
      */
 
-    if (account.clone === "always" || settings.force == true) {
+    if (settings.force == true) {
       // do nothing since we are going to force clone/refresh
     } else if (
       doesFileExist(
         path.join(config.settings.accountDir, `${account.address}.json`),
       )
     ) {
-      // detect diff from any existing accounts already cloned
-      const newFile = loadJsonFile<JsonAccountStruct>(
-        path.resolve(DEFAULT_ACCOUNTS_DIR_TEMP, `${account.address}.json`),
-      );
-      const oldFile = loadJsonFile<JsonAccountStruct>(
+      const oldAccount = loadJsonFile<JsonAccountStruct>(
         path.resolve(config.settings.accountDir, `${account.address}.json`),
       );
 
-      if (JSON.stringify(newFile) !== JSON.stringify(oldFile)) {
+      if (JSON.stringify(newAccount) !== JSON.stringify(oldAccount)) {
         warnMessage(`${account.address} already exists`);
 
         // warnMessage("The accounts are different!!");
@@ -355,7 +334,7 @@ export async function cloneAccountsFromConfig(
         //   "The accounts are different, stopping here",
         // );
       } else {
-        // console.log(account.address, "did not change");
+        // console.log("  ", account.address, "did not change");
         // delete the new file one to avoid dirtying the git history
         // unlinkSync(
         //   path.resolve(saveDirTemp, `${account.address}.json`),
