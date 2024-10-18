@@ -6,7 +6,12 @@ import {
   loadFileNamesToMap,
   loadJsonFile,
 } from "../utils";
-import { CloneSettings, SolanaCluster, SolanaToml } from "@/types/config";
+import {
+  CloneSettings,
+  SolanaCluster,
+  SolanaToml,
+  SolanaTomlCloneConfig,
+} from "@/types/config";
 import { parseRpcUrlOrMoniker } from "../solana";
 import {
   DEFAULT_ACCOUNTS_DIR,
@@ -263,7 +268,7 @@ export async function cloneAccountsFromConfig(
   if (!config?.clone?.account) return null;
 
   // accumulator to track any `owner`s (aka programs) that will need to be cloned
-  const owners = new Map<string, boolean>();
+  const owners = new Map<string, SolanaTomlCloneConfig["cluster"]>();
   const changedAccounts = new Map<string, JsonAccountStruct>();
 
   for (const key in config.clone.account) {
@@ -315,7 +320,10 @@ export async function cloneAccountsFromConfig(
      * - from the same network as the account
      * - not to override any manually defined configs settings
      */
-    owners.set(newAccount.account.owner, true);
+    owners.set(
+      newAccount.account.owner,
+      account.cluster || config.settings.cluster,
+    );
 
     if (settings.force == true) {
       // do nothing since we are going to force clone/refresh
@@ -361,7 +369,7 @@ export async function cloneAccountsFromConfig(
  * Merge a hashmap of owners into the TOML config format
  */
 export function mergeOwnersMapWithConfig(
-  owners: Map<string, boolean>,
+  owners: Map<string, SolanaTomlCloneConfig["cluster"]>,
   config: SolanaToml["clone"]["program"] = {},
 ): SolanaToml["clone"]["program"] {
   // force remove the default programs
@@ -369,9 +377,10 @@ export function mergeOwnersMapWithConfig(
 
   if (owners.size == 0) return config;
 
-  owners.forEach((_, address) => {
+  owners.forEach((cluster, address) => {
     config[address] = {
       address: address,
+      cluster: cluster,
     };
   });
 

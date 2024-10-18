@@ -30,14 +30,14 @@ export type SolanaCluster =
   | "localhost"
   | "localnet";
 
-type SolanaTomlCloneConfig = {
+export type SolanaTomlCloneConfig = {
   address: string;
   name?: string;
   cluster?: SolanaCluster;
   clone?: "always" | "prompt";
 };
 
-type SolanaTomlClone = {
+export type SolanaTomlClone = {
   program: {
     [key: string]: SolanaTomlCloneConfig;
   };
