@@ -11,6 +11,7 @@ import {
   cloneAccountsFromConfig,
   cloneProgramsFromConfig,
   cloneTokensFromConfig,
+  mergeOwnersMapWithConfig,
 } from "@/lib/shell/clone";
 import { COMMON_OPTIONS } from "@/const/commands";
 import {
@@ -73,6 +74,7 @@ export function runCloneCommand() {
         options,
         true /* config required */,
       );
+      // options = Object.assign({}, config.settings, options);
 
       updateGitignore([DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR]);
 
@@ -87,8 +89,22 @@ export function runCloneCommand() {
        * we clone the accounts in the order of: accounts, tokens, then programs
        * in order to perform any special processing on them
        */
-      await cloneAccountsFromConfig(config, options, currentAccounts);
+
+      const accounts = await cloneAccountsFromConfig(
+        config,
+        options,
+        currentAccounts,
+      );
       await cloneTokensFromConfig(config, options, currentAccounts);
+
+      const detectedPrograms = mergeOwnersMapWithConfig(accounts.owners);
+      await cloneProgramsFromConfig(
+        { settings: config.settings, clone: { program: detectedPrograms } },
+        { ...options, autoClone: true },
+        currentAccounts,
+      );
+
+      // always clone the config-declared programs last (in order to override the detected ones)
       await cloneProgramsFromConfig(config, options, currentAccounts);
 
       // now that all the files have been deconflicted, we can move them to their final home
@@ -109,6 +125,14 @@ export function runCloneCommand() {
         expectedCount += Object.keys(config.clone.token).length;
       if (config?.clone?.program)
         expectedCount += Object.keys(config.clone.program).length;
+      if (Object.keys(detectedPrograms).length) {
+        warnMessage(
+          `Auto detected and cloned ${
+            Object.keys(detectedPrograms).length
+          } programs`,
+        );
+        expectedCount += Object.keys(detectedPrograms).length;
+      }
 
       const newAccounts = loadFileNamesToMap(config.settings.accountDir);
 

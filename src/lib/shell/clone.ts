@@ -94,7 +94,7 @@ export async function cloneProgram({
 
   const saveFile = path.resolve(saveDir, `${address}.so`);
   createFolders(saveDir);
-  command.push(address, saveDir);
+  command.push(address, saveFile);
 
   // note: when no url/cluster is specified, the user's `solana config` url will be used
   if (url) {
@@ -106,7 +106,7 @@ export async function cloneProgram({
   if (doesFileExist(saveFile)) {
     return true;
   } else {
-    // console.error("Failed to program:", address);
+    // console.error("Failed to clone program:", address);
     return false;
   }
 }
@@ -133,7 +133,9 @@ export async function cloneProgramsFromConfig(
     // set the default info
     if (!program?.name) program.name = key;
 
-    if (program.clone === "always") {
+    if (settings.autoClone) {
+      warnMessage(`Auto clone program: ${program.address}`);
+    } else if (program.clone === "always") {
       console.log("Always clone program:", program.address);
     } else if (settings.force === true) {
       console.log("Force clone program:", program.address);
@@ -147,7 +149,7 @@ export async function cloneProgramsFromConfig(
     await cloneProgram({
       address: program.address,
       saveDir: DEFAULT_ACCOUNTS_DIR_TEMP,
-      url: program.cluster || config.settings.cluster,
+      url: program.cluster || config?.settings?.cluster,
       // saveDir: path.resolve(saveDirTemp, "program")
     });
 
@@ -260,6 +262,10 @@ export async function cloneAccountsFromConfig(
 ) {
   if (!config?.clone?.account) return null;
 
+  // accumulator to track any `owner`s (aka programs) that will need to be cloned
+  const owners = new Map<string, boolean>();
+  const changedAccounts = new Map<string, JsonAccountStruct>();
+
   for (const key in config.clone.account) {
     if (!config.clone.account.hasOwnProperty(key)) {
       continue;
@@ -309,6 +315,7 @@ export async function cloneAccountsFromConfig(
      * - from the same network as the account
      * - not to override any manually defined configs settings
      */
+    owners.set(newAccount.account.owner, true);
 
     if (settings.force == true) {
       // do nothing since we are going to force clone/refresh
@@ -327,6 +334,7 @@ export async function cloneAccountsFromConfig(
         // todo: do we want to support another options to error on diff?
 
         if (settings.prompt) {
+          changedAccounts.set(newAccount.account.owner, newAccount);
           // console.log(
           //   "todo: prompt the user to determine if they want to clone",
           // );
@@ -342,4 +350,30 @@ export async function cloneAccountsFromConfig(
       }
     }
   }
+
+  return {
+    owners,
+    changedAccounts,
+  };
+}
+
+/**
+ * Merge a hashmap of owners into the TOML config format
+ */
+export function mergeOwnersMapWithConfig(
+  owners: Map<string, boolean>,
+  config: SolanaToml["clone"]["program"] = {},
+): SolanaToml["clone"]["program"] {
+  // force remove the default programs
+  owners.delete("11111111111111111111111111111111");
+
+  if (owners.size == 0) return config;
+
+  owners.forEach((_, address) => {
+    config[address] = {
+      address: address,
+    };
+  });
+
+  return config;
 }

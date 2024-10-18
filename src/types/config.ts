@@ -58,6 +58,7 @@ type SolanaTomlClone = {
 };
 
 export type CloneSettings = {
+  autoClone?: boolean;
   force?: boolean;
   prompt?: boolean;
 };
