@@ -228,17 +228,17 @@ export async function cloneTokensFromConfig(
       );
 
       if (JSON.stringify(newAccount) !== JSON.stringify(oldAccount)) {
-        warnMessage(`${token.address} already exists`);
+        warnMessage(`${token.address} has changed`);
 
-        // warnMessage("The accounts are different!!");
-        // todo: handle an arg flag to auto update or prompt for update
+        // todo: do we want to support another options to error on diff?
 
-        console.log("todo: prompt the user to determine if they want to clone");
+        if (settings.prompt) {
+          // console.log(
+          //   "todo: prompt the user to determine if they want to clone",
+          // );
+        }
+
         continue;
-
-        // return console.error(
-        //   "The accounts are different, stopping here",
-        // );
       } else {
         // console.log("  ", token.address, "did not change");
         // delete the new file one to avoid dirtying the git history
@@ -322,17 +322,17 @@ export async function cloneAccountsFromConfig(
       );
 
       if (JSON.stringify(newAccount) !== JSON.stringify(oldAccount)) {
-        warnMessage(`${account.address} already exists`);
+        warnMessage(`${account.address} has changed`);
 
-        // warnMessage("The accounts are different!!");
-        // todo: handle an arg flag to auto update or prompt for update
+        // todo: do we want to support another options to error on diff?
 
-        console.log("todo: prompt the user to determine if they want to clone");
+        if (settings.prompt) {
+          // console.log(
+          //   "todo: prompt the user to determine if they want to clone",
+          // );
+        }
+
         continue;
-
-        // return console.error(
-        //   "The accounts are different, stopping here",
-        // );
       } else {
         // console.log("  ", account.address, "did not change");
         // delete the new file one to avoid dirtying the git history

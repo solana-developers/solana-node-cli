@@ -47,7 +47,10 @@ export function runCloneCommand() {
       new Option("--force", "force clone all accounts, even if they exist"),
     )
     .addOption(
-      new Option("--prompt", "prompt to override any existing cloned accounts"),
+      new Option(
+        "--no-prompt",
+        "skip the prompts to override any existing cloned accounts",
+      ),
     )
     .addOption(COMMON_OPTIONS.accountDir)
     .addOption(COMMON_OPTIONS.config)
