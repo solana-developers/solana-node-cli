@@ -24,9 +24,10 @@ export default {
       format: {
         comments: "some",
         beautify: true,
-        // ecma: "2022",
       },
-      compress: false,
+      compress: {
+        drop_console: ["warn"],
+      },
       mangle: false,
       module: true,
     }),

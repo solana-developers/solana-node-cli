@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import shellExec from "shell-exec";
 import { TOOL_CONFIG } from "@/const/setup";
+import { warnMessage } from "../cli";
 
 /**
  * Check if a given command name is installed and available on the system
@@ -47,7 +48,7 @@ export async function checkCommand(
   } catch (err) {
     if (onError) {
       console.log("onError:", onError);
-      console.warn(
+      warnMessage(
         onError.message || `Unable to execute command: ${cmd.split(" ")[0]}`,
       );
       if (onError.exit) process.exit(1);

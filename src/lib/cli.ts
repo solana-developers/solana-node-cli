@@ -31,7 +31,7 @@ export function loadConfigToml(
   } else {
     if (isConfigRequired) {
       warningOutro(`No Solana.toml config file found. Operation canceled.`);
-    } else console.warn(`No Solana.toml config file found. Skipping.`);
+    } else warnMessage(`No Solana.toml config file found. Skipping.`);
   }
 
   const defaultSettings: SolanaToml["settings"] = {
@@ -93,8 +93,7 @@ export function titleMessage(msg: string) {
  * Display a yellow warning message without exiting the cli
  */
 export function warnMessage(msg: string, highlight: boolean = false) {
-  console.warn(picocolors.yellow(msg));
-  // log.warn(picocolors.yellow(msg));
+  console.log(picocolors.yellow(msg));
 }
 
 /**
@@ -110,8 +109,7 @@ export function cancelMessage(msg: string = "Operation canceled") {
  * Show a cancel outro and exit the cli process
  */
 export function warningOutro(msg: string = "Operation canceled") {
-  console.warn(msg);
-  // cancel(msg);
+  warnMessage(msg);
   process.exit();
 }
 

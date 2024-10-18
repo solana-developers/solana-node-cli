@@ -4,6 +4,7 @@ import {
   titleMessage,
   loadConfigToml,
   cancelMessage,
+  warnMessage,
 } from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
 import { doesFileExist, loadFileNamesToMap } from "@/lib/utils";
@@ -61,11 +62,10 @@ export default function testValidatorCommand() {
               config.settings.keypair,
             )?.publicKey.toBase58();
           } else {
-            console.warn(
-              "Unable to locate keypair file:",
-              config.settings.keypair,
+            warnMessage(
+              `Unable to locate keypair file: ${config.settings.keypair}`,
             );
-            console.warn("Skipping auto creation and setting authorities");
+            warnMessage("Skipping auto creation and setting authorities");
           }
         }
 

@@ -9,6 +9,7 @@ import {
 import { CloneSettings, SolanaCluster, SolanaToml } from "@/types/config";
 import { parseRpcUrlOrMoniker } from "../solana";
 import { DEFAULT_ACCOUNTS_DIR_TEMP } from "@/const/solana";
+import { warnMessage } from "../cli";
 
 export type JsonAccountStruct = {
   pubkey: string;
@@ -244,9 +245,9 @@ export async function cloneTokensFromConfig(
           );
 
           if (JSON.stringify(newFile) !== JSON.stringify(oldFile)) {
-            console.warn(token.address, "already exists");
+            warnMessage(`${token.address} already exists`);
 
-            // console.warn("The accounts are different!!");
+            // warnMessage("The accounts are different!!");
             // todo: handle an arg flag to auto update or prompt for update
 
             console.log(

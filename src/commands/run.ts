@@ -1,5 +1,10 @@
 import { Command, Option } from "@commander-js/extra-typings";
-import { cliOutputConfig, titleMessage, loadConfigToml } from "@/lib/cli.js";
+import {
+  cliOutputConfig,
+  titleMessage,
+  loadConfigToml,
+  warnMessage,
+} from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
 import { loadFileNamesToMap, moveFiles } from "@/lib/utils";
 import {
@@ -102,10 +107,8 @@ export function runCloneCommand() {
         // if (expectedCount === "")
         // todo: count how many json files exist in the `config.settings.accountDir`
       } else {
-        console.warn(
-          `Completed cloning accounts.`,
-          `Expected ${expectedCount} accounts,`,
-          `but ${newAccounts.size} found`,
+        warnMessage(
+          `Completed cloning accounts. Expected ${expectedCount} accounts, but ${newAccounts.size} found`,
         );
       }
     });

@@ -2,6 +2,7 @@ import { Keypair } from "@solana/web3.js";
 import { doesFileExist, loadJsonFile } from "./utils";
 import { DEFAULT_KEYPAIR_PATH } from "@/const/solana";
 import { SolanaCluster } from "@/types/config";
+import { warnMessage } from "./cli";
 
 export function loadKeypairFromFile(
   filePath: string = DEFAULT_KEYPAIR_PATH,
@@ -32,7 +33,7 @@ export function parseRpcUrlOrMoniker(url: string): SolanaCluster | string {
   } else if (url.startsWith("m")) {
     return "mainnet-beta";
   } else {
-    console.warn("Unable to ");
+    warnMessage("Unable to parse url or moniker. Falling back to mainnet");
     return "mainnet-beta";
   }
 }

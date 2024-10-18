@@ -8,6 +8,7 @@ import {
 import { resolve } from "path";
 import { DEFAULT_ACCOUNTS_DIR_LOADED } from "@/const/solana";
 import { rmSync } from "fs";
+import { warnMessage } from "../cli";
 
 type BuildTestValidatorCommandInput = {
   verbose?: boolean;
@@ -79,8 +80,8 @@ export function buildTestValidatorCommand({
       // todo: support loading in local binaries via `--bpf-program`
     } else {
       if (verbose) {
-        console.warn("Account dir does not exist:", accountDir);
-        console.warn("Skipping cloning accounts");
+        warnMessage(`Account dir does not exist: ${accountDir}`);
+        warnMessage("Skipping cloning accounts");
       }
     }
   }

@@ -2,6 +2,7 @@ import fs from "fs";
 import * as toml from "@iarna/toml";
 import path from "path";
 import { homedir } from "os";
+import { warnMessage } from "./cli";
 
 /**
  *
@@ -108,7 +109,7 @@ export function moveFiles(
   overwrite: boolean = false,
 ): void {
   if (!directoryExists(sourceDir)) {
-    console.warn("[moveFiles]", "Source directory does not exist:", sourceDir);
+    warnMessage(`[moveFiles] Source directory does not exist: ${sourceDir}`);
     return;
   }
 
