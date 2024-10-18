@@ -20,6 +20,23 @@ export function resolveTilde(filePath: string) {
 }
 
 /**
+ * Load a plaintext file from the local filesystem
+ */
+export function loadPlaintextFile(filePath: string): string | null {
+  try {
+    const data = fs.readFileSync(resolveTilde(filePath), "utf-8");
+    return data;
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      console.error("File not found:", filePath);
+    } else {
+      console.error("Error reading file:", error.message);
+    }
+    return null;
+  }
+}
+
+/**
  *
  */
 export function loadJsonFile<T = object>(filePath: string): T | null {
@@ -172,4 +189,34 @@ export function loadFileNamesToMap(
   });
 
   return fileMap;
+}
+
+/**
+ * Check/update a gitignore file for specific items
+ */
+export function updateGitignore(
+  items: string[],
+  gitignorePath: string = path.join(process.cwd(), ".gitignore"),
+): void {
+  let gitignoreContent: string = "";
+
+  if (doesFileExist(gitignorePath)) {
+    gitignoreContent = loadPlaintextFile(gitignorePath);
+  }
+
+  const gitignoreLines = gitignoreContent
+    .split("\n")
+    .map((line) => line.trim());
+  let updated = false;
+
+  items.forEach((item) => {
+    if (!gitignoreLines.includes(item.trim())) {
+      gitignoreContent += `\n${item.trim()}`;
+      updated = true;
+    }
+  });
+
+  if (updated) {
+    fs.writeFileSync(gitignorePath, gitignoreContent.trim() + "\n", "utf-8");
+  }
 }

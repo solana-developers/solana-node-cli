@@ -7,13 +7,18 @@ import {
   warnMessage,
 } from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
-import { doesFileExist, loadFileNamesToMap } from "@/lib/utils";
+import {
+  doesFileExist,
+  loadFileNamesToMap,
+  updateGitignore,
+} from "@/lib/utils";
 import {
   buildTestValidatorCommand,
   runTestValidator,
 } from "@/lib/shell/test-validator";
 import { COMMON_OPTIONS } from "@/const/commands";
 import { loadKeypairFromFile } from "@/lib/solana";
+import { DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR } from "@/const/solana";
 
 /**
  * Command: `test-validator`
@@ -54,6 +59,8 @@ export default function testValidatorCommand() {
         });
 
         const config = loadConfigToml(options.config, options);
+
+        updateGitignore([DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR]);
 
         let authorityAddress: string | null = null;
         if (config.settings.keypair) {

@@ -6,13 +6,17 @@ import {
   warnMessage,
 } from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
-import { loadFileNamesToMap, moveFiles } from "@/lib/utils";
+import { loadFileNamesToMap, moveFiles, updateGitignore } from "@/lib/utils";
 import {
   cloneProgramsFromConfig,
   cloneTokensFromConfig,
 } from "@/lib/shell/clone";
 import { COMMON_OPTIONS } from "@/const/commands";
-import { DEFAULT_ACCOUNTS_DIR_TEMP } from "@/const/solana";
+import {
+  DEFAULT_ACCOUNTS_DIR_TEMP,
+  DEFAULT_CACHE_DIR,
+  DEFAULT_TEST_LEDGER_DIR,
+} from "@/const/solana";
 import { rmSync } from "fs";
 
 /**
@@ -65,6 +69,8 @@ export function runCloneCommand() {
         options,
         true /* config required */,
       );
+
+      updateGitignore([DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR]);
 
       rmSync(DEFAULT_ACCOUNTS_DIR_TEMP, {
         recursive: true,

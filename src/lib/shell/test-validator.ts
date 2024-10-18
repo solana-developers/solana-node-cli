@@ -6,7 +6,11 @@ import {
   moveFiles,
 } from "../utils";
 import { resolve } from "path";
-import { DEFAULT_ACCOUNTS_DIR_LOADED } from "@/const/solana";
+import {
+  DEFAULT_ACCOUNTS_DIR,
+  DEFAULT_ACCOUNTS_DIR_LOADED,
+  DEFAULT_TEST_LEDGER_DIR,
+} from "@/const/solana";
 import { rmSync } from "fs";
 import { warnMessage } from "../cli";
 
@@ -19,10 +23,10 @@ type BuildTestValidatorCommandInput = {
 };
 
 export function buildTestValidatorCommand({
+  reset = false,
   verbose = false,
-  reset,
-  accountDir = "accounts",
-  ledgerDir = "test-ledger",
+  accountDir = DEFAULT_ACCOUNTS_DIR,
+  ledgerDir = DEFAULT_TEST_LEDGER_DIR,
   authority,
 }: BuildTestValidatorCommandInput = {}) {
   const command: string[] = ["solana-test-validator"];
@@ -42,10 +46,7 @@ export function buildTestValidatorCommand({
   if (accountDir) {
     accountDir = resolve(accountDir);
 
-    console.log("accountDir:", accountDir);
-
     if (directoryExists(accountDir)) {
-      console.log("accountDir exists");
       // clone the dir to a different temp location
 
       createFolders(stagingDir, false);
