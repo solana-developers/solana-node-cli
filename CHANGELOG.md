@@ -1,5 +1,14 @@
 # solana
 
+## 2.3.0-tv.0
+
+### Minor Changes
+
+- added test-validator support
+- added basic token account cloning
+- added Solana.toml support
+- add auto gitignore
+
 ## 2.2.1
 
 ### Patch Changes

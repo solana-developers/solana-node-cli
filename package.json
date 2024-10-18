@@ -1,6 +1,6 @@
 {
   "name": "solana",
-  "version": "2.3.0-tv.4",
+  "version": "2.3.0-tv.5",
   "description": "",
   "license": "MIT",
   "type": "module",
@@ -13,8 +13,9 @@
     "build": "rollup -c",
     "watch": "rollup -c --watch",
     "solana": "node ./bin/index.mjs",
-    "release": "changeset version && git add -A && git commit -m \"chore: version\" && git push",
-    "publish2": "pnpm build && changeset publish"
+    "changeset:release": "changeset version && git add -A && git commit -m \"chore: version\" && git push",
+    "changeset:publish": "pnpm build && changeset publish",
+    "postpublish": "git push --follow-tags"
   },
   "bin": {
     "nsolana": "bin/index.mjs",
