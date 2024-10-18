@@ -183,92 +183,94 @@ export async function cloneTokensFromConfig(
   }
 
   for (const key in config.clone.token) {
-    if (config.clone.token.hasOwnProperty(key)) {
-      const token = config.clone.token[key];
-      // todo: should we validate any of the data?
+    if (!config.clone.token.hasOwnProperty(key)) {
+      continue;
+    }
 
-      // set the default token info
-      if (!token?.name) token.name = key;
+    const token = config.clone.token[key];
+    // todo: should we validate any of the data?
 
-      if (token.clone === "always") {
-        console.log("Always clone:", token.address);
-      } else if (settings.force === true) {
-        console.log("Force clone:", token.address);
-      } else if (settings.prompt === true || token.clone == "prompt") {
-        // console.log(
-        //   "Prompt the user to select to refresh or not",
-        //   token.address,
-        // );
-        // do nothing here so we can prompt the user later
-      }
-      // do not clone/refresh if the account already exists and we are not force updating
-      else if (currentAccounts.has(token.address)) {
-        console.log("Skipping clone token:", token.address);
-        continue;
-      }
+    // set the default token info
+    if (!token?.name) token.name = key;
 
-      /**
-       * todo: we should likely check if any of the accounts are already cloned
-       * - for ones that are already cloned:
-       *    - default not reclone
-       *    - have some options to control when to clone and when to notify the user
-       *       -
-       * - if they do not exist, clone them
-       */
+    if (token.clone === "always") {
+      console.log("Always clone:", token.address);
+    } else if (settings.force === true) {
+      console.log("Force clone:", token.address);
+    } else if (settings.prompt === true || token.clone == "prompt") {
+      // console.log(
+      //   "Prompt the user to select to refresh or not",
+      //   token.address,
+      // );
+      // do nothing here so we can prompt the user later
+    }
+    // do not clone/refresh if the account already exists and we are not force updating
+    else if (currentAccounts.has(token.address)) {
+      console.log("Skipping clone token:", token.address);
+      continue;
+    }
 
-      // todo: if cloning lots of accounts, we can likely make this more efficient
-      // todo: handle errors on cloning (like if the clone failed and the json file does not exist)
-      await cloneAccount({
-        saveDir: DEFAULT_ACCOUNTS_DIR_TEMP,
-        address: token.address,
-        url: token.cluster || config.settings.cluster,
-      });
+    /**
+     * todo: we should likely check if any of the accounts are already cloned
+     * - for ones that are already cloned:
+     *    - default not reclone
+     *    - have some options to control when to clone and when to notify the user
+     *       -
+     * - if they do not exist, clone them
+     */
 
-      if (
+    // todo: if cloning lots of accounts, we can likely make this more efficient
+    // todo: handle errors on cloning (like if the clone failed and the json file does not exist)
+    await cloneAccount({
+      saveDir: DEFAULT_ACCOUNTS_DIR_TEMP,
+      address: token.address,
+      url: token.cluster || config.settings.cluster,
+    });
+
+    if (
+      doesFileExist(
+        path.join(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
+      )
+    ) {
+      if (token.clone === "always" || settings.force == true) {
+        // do nothing since we are going to force clone/refresh
+      } else if (
         doesFileExist(
-          path.join(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
+          path.join(config.settings.accountDir, `${token.address}.json`),
         )
       ) {
-        if (token.clone === "always" || settings.force == true) {
-          // do nothing since we are going to force clone/refresh
-        } else if (
-          doesFileExist(
-            path.join(config.settings.accountDir, `${token.address}.json`),
-          )
-        ) {
-          // detect diff from any existing accounts already cloned
-          const newFile = loadJsonFile<JsonAccountStruct>(
-            path.resolve(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
+        // detect diff from any existing accounts already cloned
+        const newFile = loadJsonFile<JsonAccountStruct>(
+          path.resolve(DEFAULT_ACCOUNTS_DIR_TEMP, `${token.address}.json`),
+        );
+        const oldFile = loadJsonFile<JsonAccountStruct>(
+          path.resolve(config.settings.accountDir, `${token.address}.json`),
+        );
+
+        if (JSON.stringify(newFile) !== JSON.stringify(oldFile)) {
+          warnMessage(`${token.address} already exists`);
+
+          // warnMessage("The accounts are different!!");
+          // todo: handle an arg flag to auto update or prompt for update
+
+          console.log(
+            "todo: prompt the user to determine if they want to clone",
           );
-          const oldFile = loadJsonFile<JsonAccountStruct>(
-            path.resolve(config.settings.accountDir, `${token.address}.json`),
-          );
+          continue;
 
-          if (JSON.stringify(newFile) !== JSON.stringify(oldFile)) {
-            warnMessage(`${token.address} already exists`);
-
-            // warnMessage("The accounts are different!!");
-            // todo: handle an arg flag to auto update or prompt for update
-
-            console.log(
-              "todo: prompt the user to determine if they want to clone",
-            );
-            continue;
-
-            // return console.error(
-            //   "The accounts are different, stopping here",
-            // );
-          } else {
-            // console.log(token.address, "did not change");
-            // delete the new file one to avoid dirtying the git history
-            // unlinkSync(
-            //   path.resolve(saveDirTemp, `${token.address}.json`),
-            // );
-          }
+          // return console.error(
+          //   "The accounts are different, stopping here",
+          // );
+        } else {
+          // console.log(token.address, "did not change");
+          // delete the new file one to avoid dirtying the git history
+          // unlinkSync(
+          //   path.resolve(saveDirTemp, `${token.address}.json`),
+          // );
         }
+      }
 
-        // safe to move to final dir
-      } else console.error("Failed to clone account:", token.address);
-    }
+      // safe to move to final dir
+    } else console.error("Failed to clone account:", token.address);
   }
 }
