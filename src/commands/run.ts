@@ -20,6 +20,7 @@ import {
   DEFAULT_TEST_LEDGER_DIR,
 } from "@/const/solana";
 import { rmSync } from "fs";
+import { deconflictAnchorTomlWithConfig, loadAnchorToml } from "@/lib/anchor";
 
 /**
  * Command: `run`
@@ -69,11 +70,17 @@ export function runCloneCommand() {
           "Unable to detect the 'solana account' command. Do you have it installed?",
       });
 
-      const config = loadConfigToml(
+      let config = loadConfigToml(
         options.config,
         options,
         true /* config required */,
       );
+
+      // attempt to load and combine the anchor toml clone settings
+      const anchorToml = loadAnchorToml(config.configPath);
+      if (anchorToml) {
+        config = deconflictAnchorTomlWithConfig(anchorToml, config);
+      }
 
       updateGitignore([DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR]);
 

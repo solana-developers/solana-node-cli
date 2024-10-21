@@ -34,7 +34,7 @@ export type SolanaCluster =
 export type SolanaTomlCloneConfig = {
   address: string;
   name?: string;
-  cluster?: SolanaCluster;
+  cluster?: SolanaCluster | string;
   clone?: "always" | "prompt";
 };
 
