@@ -1,5 +1,15 @@
 # solana
 
+## 2.3.0-tv.8
+
+### Minor Changes
+
+- added basic support for Anchor.toml based account/program cloning
+
+### Patch Changes
+
+- 0d4f25e: auto search and locate solana.toml
+
 ## 2.3.0-tv.6
 
 ### Patch Changes
