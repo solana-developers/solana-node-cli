@@ -1,4 +1,5 @@
 export type SolanaToml = {
+  configPath?: string;
   settings?: Partial<{
     /**
      * default cluster to use for all operations.

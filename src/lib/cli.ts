@@ -23,7 +23,8 @@ export function loadConfigToml(
   configPath: string = DEFAULT_CONFIG_FILE,
   settings: object = {},
   isConfigRequired: boolean = false,
-): SolanaToml {
+): Omit<SolanaToml, "configPath"> &
+  NonNullable<{ configPath: SolanaToml["configPath"] }> {
   // allow the config path to be a directory, with a Solana.toml in it
   if (directoryExists(configPath)) {
     configPath = join(configPath, DEFAULT_CONFIG_FILE);
@@ -39,10 +40,10 @@ export function loadConfigToml(
     }
   }
 
-  let config: SolanaToml = {};
+  let config: SolanaToml = { configPath };
 
   if (doesFileExist(configPath, true)) {
-    config = loadTomlFile<SolanaToml>(configPath) || {};
+    config = loadTomlFile<SolanaToml>(configPath) || config;
   } else {
     if (isConfigRequired) {
       warningOutro(`No Solana.toml config file found. Operation canceled.`);
@@ -59,7 +60,7 @@ export function loadConfigToml(
 
   config = deconflictConfig(config, settings);
 
-  return config;
+  return Object.assign(config, { configPath });
 }
 
 export function deconflictConfig(config: SolanaToml, args: any) {
