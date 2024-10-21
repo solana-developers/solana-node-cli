@@ -209,3 +209,72 @@ export function updateGitignore(
     fs.writeFileSync(gitignorePath, gitignoreContent.trim() + "\n", "utf-8");
   }
 }
+
+export function findFileInRepo(
+  targetFilename: string,
+  startDir: string = process.cwd(),
+  maxDepth: number = 5 /* depth=5 should be good enough to handle most repos? */,
+  skipDirs: string[] = ["node_modules", ".cache"],
+): string | null {
+  let currentDir = startDir;
+  let depth = 0;
+
+  while (depth < maxDepth) {
+    const filePath = findFileInDirectory(
+      currentDir,
+      targetFilename.toLowerCase(),
+      skipDirs,
+    );
+    if (filePath) return filePath;
+
+    // stop searching once we hit the repository root
+    const gitDir = path.join(currentDir, ".git");
+    if (fs.existsSync(gitDir) && fs.statSync(gitDir).isDirectory()) {
+      return null;
+    }
+
+    // Move up one directory
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) {
+      return null;
+    }
+
+    currentDir = parentDir;
+    depth++;
+  }
+
+  return null;
+}
+
+export function findFileInDirectory(
+  dir: string,
+  targetFilename: string,
+  skipDirs: string[],
+): string | null {
+  const files = fs.readdirSync(dir);
+
+  for (const file of files) {
+    const absolutePath = path.join(dir, file);
+
+    if (fs.statSync(absolutePath).isDirectory()) {
+      if (skipDirs.includes(file)) {
+        continue;
+      }
+
+      const result = findFileInDirectory(
+        absolutePath,
+        targetFilename,
+        skipDirs,
+      );
+      if (result) return result; // Found in a subdirectory
+    } else if (file.toLowerCase() === targetFilename) {
+      return absolutePath;
+    }
+  }
+
+  return null;
+}
+
+export function isInCurrentDir(filePath: string): boolean {
+  return path.resolve(process.cwd()) === path.resolve(path.dirname(filePath));
+}

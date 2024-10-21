@@ -4,7 +4,13 @@
 
 import { OutputConfiguration } from "@commander-js/extra-typings";
 import picocolors from "picocolors";
-import { directoryExists, doesFileExist, loadTomlFile } from "./utils";
+import {
+  directoryExists,
+  doesFileExist,
+  findFileInRepo,
+  isInCurrentDir,
+  loadTomlFile,
+} from "./utils";
 import { SolanaToml } from "@/types/config";
 import { DEFAULT_CONFIG_FILE } from "@/const/solana";
 import { join } from "path";
@@ -23,9 +29,18 @@ export function loadConfigToml(
     configPath = join(configPath, DEFAULT_CONFIG_FILE);
   }
 
+  // attempt to locate the closest config file
+  if (configPath === DEFAULT_CONFIG_FILE) {
+    // accept both `Solana.toml` and `solana.toml` (case insensitive)
+    configPath = findFileInRepo(DEFAULT_CONFIG_FILE);
+    if (!isInCurrentDir(configPath)) {
+      // todo: should we prompt the user if they want to use this one?
+      warnMessage(`Using closest Solana.toml located at: ${configPath}`);
+    }
+  }
+
   let config: SolanaToml = {};
 
-  // todo: accept both `Solana.toml` and `solana.toml` (case insensitive)
   if (doesFileExist(configPath, true)) {
     config = loadTomlFile<SolanaToml>(configPath) || {};
   } else {

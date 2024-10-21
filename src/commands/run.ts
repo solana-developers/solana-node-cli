@@ -74,7 +74,6 @@ export function runCloneCommand() {
         options,
         true /* config required */,
       );
-      // options = Object.assign({}, config.settings, options);
 
       updateGitignore([DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR]);
 
