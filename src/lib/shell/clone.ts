@@ -139,9 +139,12 @@ export async function cloneProgramsFromConfig(
     // set the default info
     if (!program?.name) program.name = key;
 
+    // the auto clone message is intentionally displayed separate
+    // so we can potentially skip recloning
     if (settings.autoClone) {
       warnMessage(`Auto clone program: ${program.address}`);
-    } else if (program.clone === "always") {
+    }
+    if (program.clone === "always") {
       console.log("Always clone program:", program.address);
     } else if (settings.force === true) {
       console.log("Force clone program:", program.address);
