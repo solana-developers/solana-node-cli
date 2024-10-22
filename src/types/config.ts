@@ -1,3 +1,5 @@
+import { JsonAccountStruct } from "@/lib/shell/clone";
+
 export type SolanaToml = {
   configPath?: string;
   settings?: Partial<{
@@ -62,4 +64,9 @@ export type CloneSettings = {
   autoClone?: boolean;
   force?: boolean;
   prompt?: boolean;
+};
+
+export type CloneAccountsFromConfigResult = {
+  owners: Map<string, SolanaTomlCloneConfig["cluster"]>;
+  changedAccounts: Map<string, JsonAccountStruct>;
 };

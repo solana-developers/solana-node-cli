@@ -7,6 +7,7 @@ import {
   loadJsonFile,
 } from "../utils";
 import {
+  CloneAccountsFromConfigResult,
   CloneSettings,
   SolanaCluster,
   SolanaToml,
@@ -264,8 +265,8 @@ export async function cloneAccountsFromConfig(
   config: SolanaToml,
   settings: CloneSettings,
   currentAccounts: ReturnType<typeof loadFileNamesToMap>,
-) {
-  if (!config?.clone?.account) return null;
+): Promise<CloneAccountsFromConfigResult | false> {
+  if (!config?.clone?.account) return false;
 
   // accumulator to track any `owner`s (aka programs) that will need to be cloned
   const owners = new Map<string, SolanaTomlCloneConfig["cluster"]>();
@@ -372,6 +373,8 @@ export function mergeOwnersMapWithConfig(
   owners: Map<string, SolanaTomlCloneConfig["cluster"]>,
   config: SolanaToml["clone"]["program"] = {},
 ): SolanaToml["clone"]["program"] {
+  if (!owners) return config;
+
   // force remove the default programs
   owners.delete("11111111111111111111111111111111");
 

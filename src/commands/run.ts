@@ -114,12 +114,15 @@ export function runCloneCommand() {
       );
       await cloneTokensFromConfig(config, options, currentAccounts);
 
-      const detectedPrograms = mergeOwnersMapWithConfig(accounts.owners);
-      await cloneProgramsFromConfig(
-        { settings: config.settings, clone: { program: detectedPrograms } },
-        { ...options, autoClone: true },
-        currentAccounts,
-      );
+      let detectedPrograms: ReturnType<typeof mergeOwnersMapWithConfig> = {};
+      if (accounts) {
+        detectedPrograms = mergeOwnersMapWithConfig(accounts.owners);
+        await cloneProgramsFromConfig(
+          { settings: config.settings, clone: { program: detectedPrograms } },
+          { ...options, autoClone: true },
+          currentAccounts,
+        );
+      }
 
       // always clone the config-declared programs last (in order to override the detected ones)
       await cloneProgramsFromConfig(config, options, currentAccounts);
