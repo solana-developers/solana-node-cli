@@ -1,5 +1,11 @@
 # solana
 
+## 2.3.0-tv.9
+
+### Patch Changes
+
+- fix config not found
+
 ## 2.3.0-tv.8
 
 ### Minor Changes
