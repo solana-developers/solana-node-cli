@@ -152,12 +152,17 @@ export async function cloneProgramsFromConfig(
       console.log("Clone program:", program.address);
     }
 
-    await cloneProgram({
+    const newProgram = await cloneProgram({
       address: program.address,
       saveDir: DEFAULT_ACCOUNTS_DIR_TEMP,
       url: program.cluster || config?.settings?.cluster,
       // saveDir: path.resolve(saveDirTemp, "program")
     });
+
+    if (!newProgram) {
+      console.error("Failed to clone program:", program.address);
+      continue;
+    }
 
     // todo: handle the diff and deconflict
   }
