@@ -33,10 +33,13 @@ export function loadConfigToml(
   // attempt to locate the closest config file
   if (configPath === DEFAULT_CONFIG_FILE) {
     // accept both `Solana.toml` and `solana.toml` (case insensitive)
-    configPath = findFileInRepo(DEFAULT_CONFIG_FILE);
-    if (!isInCurrentDir(configPath)) {
-      // todo: should we prompt the user if they want to use this one?
-      warnMessage(`Using closest Solana.toml located at: ${configPath}`);
+    const newPath = findFileInRepo(DEFAULT_CONFIG_FILE);
+    if (newPath) {
+      configPath = newPath;
+      if (!isInCurrentDir(newPath)) {
+        // todo: should we prompt the user if they want to use this one?
+        warnMessage(`Using closest Solana.toml located at: ${newPath}`);
+      }
     }
   }
 
