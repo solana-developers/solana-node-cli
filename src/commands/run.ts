@@ -6,7 +6,12 @@ import {
   warnMessage,
 } from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
-import { loadFileNamesToMap, moveFiles, updateGitignore } from "@/lib/utils";
+import {
+  createFolders,
+  loadFileNamesToMap,
+  moveFiles,
+  updateGitignore,
+} from "@/lib/utils";
 import {
   cloneAccountsFromConfig,
   cloneProgramsFromConfig,
@@ -94,7 +99,6 @@ export function runCloneCommand() {
       }
 
       updateGitignore([DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR]);
-
       rmSync(DEFAULT_ACCOUNTS_DIR_TEMP, {
         recursive: true,
         force: true,
@@ -128,9 +132,9 @@ export function runCloneCommand() {
       await cloneProgramsFromConfig(config, options, currentAccounts);
 
       // now that all the files have been deconflicted, we can move them to their final home
+      createFolders(DEFAULT_ACCOUNTS_DIR_TEMP);
       moveFiles(DEFAULT_ACCOUNTS_DIR_TEMP, config.settings.accountDir, true);
 
-      // todo: should we remove the entire temp cache dir? no matter what?
       rmSync(DEFAULT_ACCOUNTS_DIR_TEMP, {
         recursive: true,
         force: true,

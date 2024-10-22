@@ -73,7 +73,11 @@ export function loadTomlFile<T>(filePath: string): T | null {
  */
 export function createFolders(filePath: string, resolve: boolean = true) {
   filePath = resolveTilde(filePath);
-  if (resolve) filePath = path.dirname(path.resolve(filePath));
+  if (resolve) {
+    filePath = path.resolve(filePath);
+    if (path.basename(filePath).includes("."))
+      filePath = path.dirname(filePath);
+  }
   return fs.mkdirSync(filePath, { recursive: true });
 }
 
