@@ -1,5 +1,11 @@
 # solana
 
+## 2.3.0-tv.10
+
+### Patch Changes
+
+- fix directory vs file creation
+
 ## 2.3.0-tv.9
 
 ### Patch Changes
