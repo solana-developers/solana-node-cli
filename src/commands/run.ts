@@ -21,6 +21,8 @@ import {
 } from "@/const/solana";
 import { rmSync } from "fs";
 import { deconflictAnchorTomlWithConfig, loadAnchorToml } from "@/lib/anchor";
+import { isGitRepo } from "@/lib/git";
+import { promptToInitGitRepo } from "@/lib/prompts/git";
 
 /**
  * Command: `run`
@@ -69,6 +71,15 @@ export function runCloneCommand() {
         message:
           "Unable to detect the 'solana account' command. Do you have it installed?",
       });
+
+      let targetGitDir = process.cwd();
+      if (!isGitRepo(targetGitDir)) {
+        warnMessage(
+          `Cloning accounts/programs without tracking changes via git is not recommended`,
+        );
+
+        await promptToInitGitRepo(targetGitDir);
+      }
 
       let config = loadConfigToml(
         options.config,
