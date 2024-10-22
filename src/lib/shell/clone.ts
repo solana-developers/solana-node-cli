@@ -277,6 +277,8 @@ export async function cloneAccountsFromConfig(
   const owners = new Map<string, SolanaTomlCloneConfig["cluster"]>();
   const changedAccounts = new Map<string, JsonAccountStruct>();
 
+  let newAccount: JsonAccountStruct | false = false;
+
   for (const key in config.clone.account) {
     if (!config.clone.account.hasOwnProperty(key)) {
       continue;
@@ -293,6 +295,17 @@ export async function cloneAccountsFromConfig(
     } else if (settings.force === true) {
       console.log("Force clone account:", account.address);
     } else if (currentAccounts.has(account.address)) {
+      newAccount = loadJsonFile<JsonAccountStruct>(
+        path.join(
+          config.settings.accountDir,
+          currentAccounts.get(account.address),
+        ),
+      );
+
+      owners.set(
+        newAccount.account.owner,
+        account.cluster || config.settings.cluster,
+      );
       console.log("Skipping clone account:", account.address);
       continue;
     } else {
@@ -310,7 +323,7 @@ export async function cloneAccountsFromConfig(
 
     // todo: if cloning lots of accounts, we can likely make this more efficient
     // todo: handle errors on cloning (like if the clone failed and the json file does not exist)
-    const newAccount = await cloneAccount({
+    newAccount = await cloneAccount({
       saveDir: DEFAULT_ACCOUNTS_DIR_TEMP,
       address: account.address,
       url: account.cluster || config.settings.cluster,
@@ -321,11 +334,6 @@ export async function cloneAccountsFromConfig(
       continue;
     }
 
-    /**
-     * todo: we should ensure the cloned account's `owner` program is auto cloned
-     * - from the same network as the account
-     * - not to override any manually defined configs settings
-     */
     owners.set(
       newAccount.account.owner,
       account.cluster || config.settings.cluster,
@@ -382,6 +390,10 @@ export function mergeOwnersMapWithConfig(
 
   // force remove the default programs
   owners.delete("11111111111111111111111111111111");
+  owners.delete("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+  owners.delete("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb");
+  // todo: add other programs that are builtins on the network
+  // todo: handle the builtin programs being migrated to the core-bpf
 
   if (owners.size == 0) return config;
 
