@@ -409,3 +409,46 @@ export function mergeOwnersMapWithConfig(
 
   return config;
 }
+
+export function validateExpectedCloneCounts(
+  accountDir: string,
+  config: SolanaToml,
+): { expected: number; actual: number } {
+  accountDir = path.resolve(accountDir);
+  const clonedAccounts = loadFileNamesToMap(accountDir, ".json");
+
+  const clonedPrograms = loadFileNamesToMap(accountDir, ".so");
+
+  const actual = clonedAccounts.size + clonedPrograms.size;
+
+  // handle auto cloned programs
+  const autoCloned = new Map<string, SolanaTomlCloneConfig["cluster"]>();
+
+  // count the number of deduplicated `owners` for all the cloned accounts
+  clonedAccounts.forEach((filename, key) => {
+    autoCloned.set(
+      loadJsonFile<JsonAccountStruct>(
+        path.join(config.settings.accountDir, filename),
+      ).account.owner,
+      "", // this value here does not matter
+    );
+  });
+
+  config.clone.program =
+    mergeOwnersMapWithConfig(autoCloned, config?.clone?.program || {}) || {};
+
+  let expected: number = 0;
+
+  if (config?.clone?.account) {
+    expected += Object.keys(config.clone.account).length;
+  }
+  if (config?.clone?.token) {
+    expected += Object.keys(config.clone.token).length;
+  }
+  if (config?.clone?.program) {
+    expected += Object.keys(config.clone.program).length;
+  }
+
+  // return actual === expected;
+  return { actual, expected };
+}

@@ -19,6 +19,8 @@ import {
 import { COMMON_OPTIONS } from "@/const/commands";
 import { loadKeypairFromFile } from "@/lib/solana";
 import { DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR } from "@/const/solana";
+import { deconflictAnchorTomlWithConfig, loadAnchorToml } from "@/lib/anchor";
+import { validateExpectedCloneCounts } from "@/lib/shell/clone";
 
 /**
  * Command: `test-validator`
@@ -58,7 +60,7 @@ export default function testValidatorCommand() {
             "Unable to detect the 'solana-test-validator'. Do you have it installed?",
         });
 
-        const config = loadConfigToml(options.config, options);
+        let config = loadConfigToml(options.config, options);
 
         updateGitignore([DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR]);
 
@@ -74,6 +76,27 @@ export default function testValidatorCommand() {
             );
             warnMessage("Skipping auto creation and setting authorities");
           }
+        }
+
+        // attempt to load and combine the anchor toml clone settings
+        const anchorToml = loadAnchorToml(config.configPath);
+        if (anchorToml) {
+          config = deconflictAnchorTomlWithConfig(anchorToml, config);
+        }
+
+        const cloneCounts = validateExpectedCloneCounts(
+          config.settings.accountDir,
+          config,
+        );
+        if (cloneCounts.actual !== cloneCounts.expected) {
+          warnMessage(
+            `Expected ${cloneCounts.expected} accounts, but only ${cloneCounts.actual} found.`,
+          );
+          warnMessage(
+            `Consider running the 'clone' command to ensure you have all the expected accounts.`,
+          );
+
+          // todo: prompt the user if they want to run the cloner
         }
 
         const command = buildTestValidatorCommand({

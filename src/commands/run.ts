@@ -17,6 +17,7 @@ import {
   cloneProgramsFromConfig,
   cloneTokensFromConfig,
   mergeOwnersMapWithConfig,
+  validateExpectedCloneCounts,
 } from "@/lib/shell/clone";
 import { COMMON_OPTIONS } from "@/const/commands";
 import {
@@ -140,30 +141,14 @@ export function runCloneCommand() {
         force: true,
       });
 
-      // perform a final sanity check to ensure the correct quantity of accounts were cloned
-      let expectedCount: number = 0;
-
-      if (config?.clone?.account)
-        expectedCount += Object.keys(config.clone.account).length;
-      if (config?.clone?.token)
-        expectedCount += Object.keys(config.clone.token).length;
-      if (config?.clone?.program)
-        expectedCount += Object.keys(config.clone.program).length;
-      if (Object.keys(detectedPrograms).length) {
-        warnMessage(
-          `Auto detected and cloned ${
-            Object.keys(detectedPrograms).length
-          } programs`,
-        );
-        expectedCount += Object.keys(detectedPrograms).length;
-      }
-
-      const newAccounts = loadFileNamesToMap(config.settings.accountDir);
-
-      if (expectedCount === newAccounts.size) {
+      const cloneCounts = validateExpectedCloneCounts(
+        config.settings.accountDir,
+        config,
+      );
+      if (cloneCounts.actual === cloneCounts.expected) {
         console.log(
-          `Completed cloning ${expectedCount} ${
-            expectedCount == 1 ? "account" : "accounts"
+          `Completed cloning ${cloneCounts.actual} ${
+            cloneCounts.actual == 1 ? "account" : "accounts"
           }`,
         );
 
@@ -172,7 +157,7 @@ export function runCloneCommand() {
         // todo: count how many json files exist in the `config.settings.accountDir`
       } else {
         warnMessage(
-          `Completed cloning accounts. Expected ${expectedCount} accounts, but ${newAccounts.size} found`,
+          `Completed cloning accounts. Expected ${cloneCounts.expected} accounts, but only ${cloneCounts.actual} found`,
         );
       }
     });
