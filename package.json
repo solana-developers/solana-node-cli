@@ -13,7 +13,7 @@
     "build": "rollup -c",
     "watch": "rollup -c --watch",
     "solana": "node ./bin/index.mjs",
-    "changeset:release": "changeset version && git add -A && git commit -m \"chore: version\" && git push",
+    "changeset:version": "changeset version && git add -A && git commit -m \"chore: version\" && git push",
     "changeset:publish": "pnpm build && changeset publish",
     "postpublish": "git push --follow-tags"
   },
