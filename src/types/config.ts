@@ -38,6 +38,7 @@ export type SolanaCluster =
 
 export type SolanaTomlCloneConfig = {
   address: string;
+  filePath?: string;
   name?: string;
   cluster?: SolanaCluster | string;
   clone?: "always" | "prompt";
@@ -61,6 +62,16 @@ export type SolanaTomlClone = {
       }>;
     };
   };
+};
+
+/**
+ * Composite type of SolanaTomlClone["program"] but with the `filePath` required
+ */
+export type SolanaTomlCloneLocalProgram = {
+  [K in keyof SolanaTomlClone["program"]]: Omit<
+    SolanaTomlClone["program"][K],
+    "filePath"
+  > & { filePath: string };
 };
 
 export type CloneSettings = {

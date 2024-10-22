@@ -1,7 +1,13 @@
 import { AnchorToml, AnchorTomlWithConfigPath } from "@/types/anchor";
-import { directoryExists, doesFileExist, loadTomlFile } from "./utils";
+import {
+  directoryExists,
+  doesFileExist,
+  loadFileNamesToMap,
+  loadTomlFile,
+} from "./utils";
 import { join, dirname } from "path";
-import { loadConfigToml, warningOutro } from "./cli";
+import { loadConfigToml, warningOutro, warnMessage } from "./cli";
+import { SolanaTomlCloneLocalProgram } from "@/types/config";
 
 const ANCHOR_TOML = "Anchor.toml";
 
@@ -98,4 +104,54 @@ export function deconflictAnchorTomlWithConfig(
   // console.log(config.clone.program);
 
   return config;
+}
+
+export function locateLocalAnchorPrograms(
+  configPath: string,
+  programListing: AnchorToml["programs"],
+): SolanaTomlCloneLocalProgram {
+  const buildDir = join(dirname(configPath), "target/deploy");
+
+  let localPrograms: SolanaTomlCloneLocalProgram = {};
+
+  if (!directoryExists(buildDir)) return localPrograms;
+
+  const anchorPrograms = loadFileNamesToMap(buildDir, ".so");
+
+  // todo: handle the user selecting the cluster
+  const cluster: keyof typeof programListing = "localnet";
+
+  if (!Object.prototype.hasOwnProperty.call(programListing, cluster)) {
+    warnMessage(`Unable to locate 'programs.${cluster}' in Anchor.toml`);
+    return localPrograms;
+  }
+
+  let missingCounter = 0;
+
+  anchorPrograms.forEach((binaryName, programName) => {
+    if (
+      Object.prototype.hasOwnProperty.call(
+        programListing[cluster],
+        programName,
+      ) &&
+      !Object.hasOwn(localPrograms, programName)
+    ) {
+      localPrograms[programName] = {
+        address: programListing[cluster][programName],
+        filePath: join(buildDir, binaryName),
+      };
+    } else {
+      missingCounter++;
+      warnMessage(
+        `Unable to locate compiled program '${programName}' in Anchor.toml`,
+      );
+    }
+  });
+
+  if (missingCounter > 0) {
+    // todo: add the ability to prompt the user to build their anchor programs
+    warnMessage(`Have you built all your local Anchor programs?`);
+  }
+
+  return localPrograms;
 }

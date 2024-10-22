@@ -13,6 +13,7 @@ import {
 } from "@/const/solana";
 import { rmSync } from "fs";
 import { warnMessage } from "../cli";
+import { SolanaTomlClone } from "@/types/config";
 
 type BuildTestValidatorCommandInput = {
   verbose?: boolean;
@@ -20,6 +21,7 @@ type BuildTestValidatorCommandInput = {
   accountDir?: string;
   ledgerDir?: string;
   authority?: string;
+  localPrograms?: SolanaTomlClone["program"];
 };
 
 export function buildTestValidatorCommand({
@@ -28,6 +30,7 @@ export function buildTestValidatorCommand({
   accountDir = DEFAULT_ACCOUNTS_DIR,
   ledgerDir = DEFAULT_TEST_LEDGER_DIR,
   authority,
+  localPrograms,
 }: BuildTestValidatorCommandInput = {}) {
   const command: string[] = ["solana-test-validator"];
 
@@ -40,6 +43,11 @@ export function buildTestValidatorCommand({
     });
 
     command.push("--reset");
+  }
+
+  if (ledgerDir) {
+    createFolders(ledgerDir);
+    command.push(`--ledger ${ledgerDir}`);
   }
 
   // auto load in the account from the provided json files
@@ -87,9 +95,17 @@ export function buildTestValidatorCommand({
     }
   }
 
-  if (ledgerDir) {
-    createFolders(ledgerDir);
-    command.push(`--ledger ${ledgerDir}`);
+  // load the local programs in directly from their build dir
+  if (localPrograms) {
+    for (const key in localPrograms) {
+      if (Object.prototype.hasOwnProperty.call(localPrograms, key)) {
+        command.push(
+          `--upgradeable-program ${localPrograms[key].address}`,
+          localPrograms[key].filePath,
+          authority,
+        );
+      }
+    }
   }
 
   // todo: support cloning programs via `--clone-upgradeable-program`?

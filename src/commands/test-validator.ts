@@ -19,8 +19,13 @@ import {
 import { COMMON_OPTIONS } from "@/const/commands";
 import { loadKeypairFromFile } from "@/lib/solana";
 import { DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR } from "@/const/solana";
-import { deconflictAnchorTomlWithConfig, loadAnchorToml } from "@/lib/anchor";
+import {
+  deconflictAnchorTomlWithConfig,
+  loadAnchorToml,
+  locateLocalAnchorPrograms,
+} from "@/lib/anchor";
 import { validateExpectedCloneCounts } from "@/lib/shell/clone";
+import { SolanaTomlCloneLocalProgram } from "@/types/config";
 
 /**
  * Command: `test-validator`
@@ -78,11 +83,23 @@ export default function testValidatorCommand() {
           }
         }
 
+        let localPrograms: SolanaTomlCloneLocalProgram = {};
+
         // attempt to load and combine the anchor toml clone settings
         const anchorToml = loadAnchorToml(config.configPath);
         if (anchorToml) {
           config = deconflictAnchorTomlWithConfig(anchorToml, config);
+
+          Object.assign(
+            localPrograms,
+            locateLocalAnchorPrograms(
+              anchorToml.configPath,
+              anchorToml.programs,
+            ),
+          );
         }
+
+        // todo: handle support for local native programs
 
         const cloneCounts = validateExpectedCloneCounts(
           config.settings.accountDir,
@@ -105,6 +122,7 @@ export default function testValidatorCommand() {
           accountDir: config.settings.accountDir,
           // todo: allow setting the authority from the cli args
           authority: authorityAddress,
+          localPrograms: localPrograms,
         });
 
         // only log the "run validator" command, do not execute it
