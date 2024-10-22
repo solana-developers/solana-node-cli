@@ -1,5 +1,11 @@
 # solana
 
+## 2.3.0-tv.11
+
+### Minor Changes
+
+- include local anchor programs in test-validator
+
 ## 2.3.0-tv.10
 
 ### Patch Changes
