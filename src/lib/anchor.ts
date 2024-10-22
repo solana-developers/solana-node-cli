@@ -1,4 +1,4 @@
-import { AnchorToml } from "@/types/anchor";
+import { AnchorToml, AnchorTomlWithConfigPath } from "@/types/anchor";
 import { directoryExists, doesFileExist, loadTomlFile } from "./utils";
 import { join, dirname } from "path";
 import { loadConfigToml, warningOutro } from "./cli";
@@ -11,25 +11,29 @@ const ANCHOR_TOML = "Anchor.toml";
 export function loadAnchorToml(
   configPath: string,
   isConfigRequired: boolean = false,
-): AnchorToml {
+): AnchorTomlWithConfigPath | false {
   // allow the config path to be a full filepath to search that same directory
   if (!configPath.endsWith(ANCHOR_TOML)) configPath = dirname(configPath);
 
   // allow the config path to be a directory, with an Anchor.toml in it
   if (directoryExists(configPath)) configPath = join(configPath, ANCHOR_TOML);
 
-  let anchor: AnchorToml = {};
+  let anchor: AnchorTomlWithConfigPath = {
+    configPath,
+  };
 
   if (doesFileExist(configPath, true)) {
-    anchor = loadTomlFile<AnchorToml>(configPath) || anchor;
+    anchor = loadTomlFile<AnchorTomlWithConfigPath>(configPath) || anchor;
   } else {
     if (isConfigRequired) {
       warningOutro(`No Anchor.toml config file found. Operation canceled.`);
     }
+    return false;
     // else warnMessage(`No Anchor.toml config file found. Skipping.`);
   }
 
-  return anchor;
+  anchor.configPath = configPath;
+  return anchor as AnchorTomlWithConfigPath;
 }
 
 /**

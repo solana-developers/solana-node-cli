@@ -1,5 +1,8 @@
 import { JsonAccountStruct } from "@/lib/shell/clone";
 
+export type SolanaTomlWithConfigPath = Omit<SolanaToml, "configPath"> &
+  NonNullable<{ configPath: SolanaToml["configPath"] }>;
+
 export type SolanaToml = {
   configPath?: string;
   settings?: Partial<{

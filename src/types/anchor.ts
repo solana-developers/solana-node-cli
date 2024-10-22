@@ -1,6 +1,7 @@
 import { SolanaTomlCloneConfig } from "./config";
 
 export type AnchorToml = {
+  configPath?: string;
   programs?: {
     localnet?: Record<string, string>;
     devnet?: Record<string, string>;
@@ -19,3 +20,6 @@ export type AnchorToml = {
     };
   };
 };
+
+export type AnchorTomlWithConfigPath = Omit<AnchorToml, "configPath"> &
+  NonNullable<{ configPath: AnchorToml["configPath"] }>;
