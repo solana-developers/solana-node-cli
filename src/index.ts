@@ -5,7 +5,7 @@ import cliProgramRoot from "@/commands";
 
 import installCommand from "@/commands/install";
 import setupCommand from "@/commands/setup";
-import runCommand from "@/commands/run";
+import cloneCommand from "@/commands/clone";
 import testValidatorCommand from "@/commands/test-validator";
 
 async function main() {
@@ -16,8 +16,8 @@ async function main() {
       .addCommand(installCommand())
       // note: enables a shorter command for installing
       .addCommand(setupCommand())
-      .addCommand(testValidatorCommand())
-      .addCommand(runCommand());
+      .addCommand(cloneCommand())
+      .addCommand(testValidatorCommand());
 
     // set the default action to `help` (without an error)
     if (process.argv.length === 2) {

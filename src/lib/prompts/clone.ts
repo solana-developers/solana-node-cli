@@ -1,5 +1,5 @@
 import { select } from "@inquirer/prompts";
-import { runCloneCommand } from "@/commands/run";
+import { cloneCommand } from "@/commands/clone";
 
 export async function promptToAutoClone(): Promise<void | boolean> {
   console.log(); // print a line separator
@@ -26,7 +26,7 @@ export async function promptToAutoClone(): Promise<void | boolean> {
 
       // run the clone command with default options
       // todo: could we pass options in here if we want?
-      await runCloneCommand().parseAsync([]);
+      await cloneCommand().parseAsync([]);
     })
     .catch(() => {
       /**

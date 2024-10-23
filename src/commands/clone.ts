@@ -31,23 +31,11 @@ import { isGitRepo } from "@/lib/git";
 import { promptToInitGitRepo } from "@/lib/prompts/git";
 
 /**
- * Command: `run`
- *
- * Run various helper tools on your local machine
- */
-export default function runCommand() {
-  return new Command("run")
-    .configureOutput(cliOutputConfig)
-    .description("run various helper tools on your local machine")
-    .addCommand(runCloneCommand());
-}
-
-/**
  * Command: `run clone`
  *
  * Clone all the accounts and programs listed in the Solana.toml file
  */
-export function runCloneCommand() {
+export function cloneCommand() {
   return new Command("clone")
     .configureOutput(cliOutputConfig)
     .description(
@@ -162,3 +150,5 @@ export function runCloneCommand() {
       }
     });
 }
+
+export default cloneCommand;
