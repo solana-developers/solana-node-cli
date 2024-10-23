@@ -1,5 +1,11 @@
 # solana
 
+## 2.3.0-tv.13
+
+### Patch Changes
+
+- merged master
+
 ## 2.3.0-tv.12
 
 ### Patch Changes

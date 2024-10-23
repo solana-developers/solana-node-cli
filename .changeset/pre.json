@@ -5,6 +5,7 @@
     "solana": "2.2.1"
   },
   "changesets": [
+    "brown-buses-admire",
     "clean-tools-relate",
     "dirty-worms-run",
     "eighty-feet-burn",
