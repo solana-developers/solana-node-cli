@@ -143,7 +143,7 @@ export function runCloneCommand() {
 
       const cloneCounts = validateExpectedCloneCounts(
         config.settings.accountDir,
-        config,
+        config.clone,
       );
       if (cloneCounts.actual === cloneCounts.expected) {
         console.log(

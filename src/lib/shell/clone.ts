@@ -412,7 +412,7 @@ export function mergeOwnersMapWithConfig(
 
 export function validateExpectedCloneCounts(
   accountDir: string,
-  config: SolanaToml,
+  clone: SolanaToml["clone"],
 ): { expected: number; actual: number } {
   accountDir = path.resolve(accountDir);
   const clonedAccounts = loadFileNamesToMap(accountDir, ".json");
@@ -427,28 +427,28 @@ export function validateExpectedCloneCounts(
   // count the number of deduplicated `owners` for all the cloned accounts
   clonedAccounts.forEach((filename, key) => {
     autoCloned.set(
-      loadJsonFile<JsonAccountStruct>(
-        path.join(config.settings.accountDir, filename),
-      ).account.owner,
+      loadJsonFile<JsonAccountStruct>(path.join(accountDir, filename)).account
+        .owner,
       "", // this value here does not matter
     );
   });
 
-  config.clone.program =
-    mergeOwnersMapWithConfig(autoCloned, config?.clone?.program || {}) || {};
-
   let expected: number = 0;
 
-  if (config?.clone?.account) {
-    expected += Object.keys(config.clone.account).length;
-  }
-  if (config?.clone?.token) {
-    expected += Object.keys(config.clone.token).length;
-  }
-  if (config?.clone?.program) {
-    expected += Object.keys(config.clone.program).length;
+  if (clone) {
+    if (clone.account) {
+      expected += Object.keys(clone.account).length;
+    }
+    if (clone.token) {
+      expected += Object.keys(clone.token).length;
+    }
+    if (clone.program) {
+      clone.program =
+        mergeOwnersMapWithConfig(autoCloned, clone?.program || {}) || {};
+
+      expected += Object.keys(clone.program).length;
+    }
   }
 
-  // return actual === expected;
   return { actual, expected };
 }

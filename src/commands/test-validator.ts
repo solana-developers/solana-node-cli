@@ -103,7 +103,7 @@ export default function testValidatorCommand() {
 
         const cloneCounts = validateExpectedCloneCounts(
           config.settings.accountDir,
-          config,
+          config.clone,
         );
         if (cloneCounts.actual !== cloneCounts.expected) {
           warnMessage(
