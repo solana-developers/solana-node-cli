@@ -86,7 +86,7 @@ export function deconflictAnchorTomlWithConfig(
           anchorToml.test.validator.account,
           cloner,
         ) &&
-        !config.clone.program[anchorToml.test.validator.account[cloner].address]
+        !config.clone.account[anchorToml.test.validator.account[cloner].address]
       ) {
         if (anchorToml.test.validator?.url) {
           anchorToml.test.validator.account[cloner].cluster =
@@ -94,7 +94,7 @@ export function deconflictAnchorTomlWithConfig(
         }
 
         // looks ugly, but we dont have to allocate anything
-        config.clone.program[
+        config.clone.account[
           anchorToml.test.validator.account[cloner].address
         ] = anchorToml.test.validator.account[cloner];
       }
