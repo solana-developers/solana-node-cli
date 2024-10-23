@@ -10,26 +10,23 @@ import { detectOperatingSystem } from "@/lib/shell";
 import { checkInstalledTools } from "@/lib/setup";
 
 /**
- * Command: `setup`
+ * Command: `doctor`
  *
- * Setup your local machine for Solana development
+ * Inspect and remedy your local machine for Solana development
  */
-export default function setupCommand() {
-  return new Command("setup")
+export default function doctorCommand() {
+  return new Command("doctor")
     .configureOutput(cliOutputConfig)
-    .description(
-      "setup your local machine for Solana development",
-      // "Install the local tooling and setup your local machine for Solana development",
-    )
-    .addCommand(setupListCommand());
+    .description("inspect and remedy your local development environment")
+    .addCommand(doctorListCommand());
 }
 
 /**
- * Command: `setup list`
+ * Command: `doctor list`
  *
  * List the current installed versions of Solana development tooling
  */
-export function setupListCommand() {
+export function doctorListCommand() {
   return new Command("list")
     .configureOutput(cliOutputConfig)
     .description("list the current versions of Solana development tooling")

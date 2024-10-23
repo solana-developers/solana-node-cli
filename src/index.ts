@@ -2,7 +2,7 @@
 
 import cliProgramRoot from "@/commands/index.js";
 import installCommand from "@/commands/install";
-import setupCommand from "@/commands/setup";
+import doctorCommand from "@/commands/doctor";
 import { errorMessage } from "@/lib/cli";
 import { Command } from "@commander-js/extra-typings";
 import ora from "ora";
@@ -50,7 +50,7 @@ async function main() {
     program
       .addCommand(installCommand())
       // note: enables a shorter command for installing
-      .addCommand(setupCommand());
+      .addCommand(doctorCommand());
 
     // set the default action: `help` (without an error)
     if (process.argv.length === 2) {
