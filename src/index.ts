@@ -4,7 +4,7 @@ import { errorMessage } from "@/lib/cli";
 import cliProgramRoot from "@/commands";
 
 import installCommand from "@/commands/install";
-import setupCommand from "@/commands/setup";
+import doctorCommand from "@/commands/doctor";
 import cloneCommand from "@/commands/clone";
 import testValidatorCommand from "@/commands/test-validator";
 
@@ -15,7 +15,7 @@ async function main() {
     program
       .addCommand(installCommand())
       // note: enables a shorter command for installing
-      .addCommand(setupCommand())
+      .addCommand(doctorCommand())
       .addCommand(cloneCommand())
       .addCommand(testValidatorCommand());
 
