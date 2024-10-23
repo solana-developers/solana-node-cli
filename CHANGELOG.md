@@ -1,5 +1,11 @@
 # solana
 
+## 2.3.0-tv.12
+
+### Patch Changes
+
+- various fixes
+
 ## 2.3.0-tv.11
 
 ### Minor Changes

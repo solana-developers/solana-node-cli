@@ -5,6 +5,7 @@
     "solana": "2.2.1"
   },
   "changesets": [
+    "clean-tools-relate",
     "dirty-worms-run",
     "eighty-feet-burn",
     "fluffy-wombats-melt",
