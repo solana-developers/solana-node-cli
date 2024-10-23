@@ -56,7 +56,7 @@ export default function testValidatorCommand() {
       .addOption(
         new Option(
           "--reset",
-          "reset the test-validator to genesis, reloading all preloaded accounts",
+          "reset the test-validator to genesis, reloading all preloaded fixtures",
         ),
       )
       .addOption(COMMON_OPTIONS.accountDir)
@@ -116,7 +116,7 @@ export default function testValidatorCommand() {
         );
         if (cloneCounts.actual !== cloneCounts.expected) {
           warnMessage(
-            `Expected ${cloneCounts.expected} accounts, but only ${cloneCounts.actual} found.`,
+            `Expected ${cloneCounts.expected} fixtures, but only ${cloneCounts.actual} found.`,
           );
 
           if (!options.outputOnly) {

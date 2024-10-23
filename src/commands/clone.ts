@@ -31,9 +31,9 @@ import { isGitRepo } from "@/lib/git";
 import { promptToInitGitRepo } from "@/lib/prompts/git";
 
 /**
- * Command: `run clone`
+ * Command: `clone`
  *
- * Clone all the accounts and programs listed in the Solana.toml file
+ * Clone all the fixtures listed in the Solana.toml file
  */
 export function cloneCommand() {
   return new Command("clone")
@@ -42,20 +42,19 @@ export function cloneCommand() {
       "clone all the accounts and programs listed in the Solana.toml file",
     )
     .addOption(
-      new Option("--force", "force clone all accounts, even if they exist"),
+      new Option("--force", "force clone all fixtures, even if they exist"),
     )
     .addOption(
       new Option(
         "--no-prompt",
-        "skip the prompts to override any existing cloned accounts",
+        "skip the prompts to override any existing fixtures",
       ),
     )
     .addOption(COMMON_OPTIONS.accountDir)
     .addOption(COMMON_OPTIONS.config)
     .addOption(COMMON_OPTIONS.url)
     .action(async (options) => {
-      titleMessage("Clone accounts and programs");
-      // console.log("Clone accounts and programs", "\n");
+      titleMessage("Clone fixtures (accounts and programs)");
 
       // console.log("options:");
       // console.log(options);
@@ -69,7 +68,7 @@ export function cloneCommand() {
       let targetGitDir = process.cwd();
       if (!isGitRepo(targetGitDir)) {
         warnMessage(
-          `Cloning accounts/programs without tracking changes via git is not recommended`,
+          `Cloning fixtures without tracking changes via git is not recommended`,
         );
 
         await promptToInitGitRepo(targetGitDir);
@@ -139,13 +138,9 @@ export function cloneCommand() {
             cloneCounts.actual == 1 ? "account" : "accounts"
           }`,
         );
-
-        // todo: perform a final sanity check to ensure the correct quantity of accounts were cloned
-        // if (expectedCount === "")
-        // todo: count how many json files exist in the `config.settings.accountDir`
       } else {
         warnMessage(
-          `Completed cloning accounts. Expected ${cloneCounts.expected} accounts, but only ${cloneCounts.actual} found`,
+          `Completed cloning fixtures. Expected ${cloneCounts.expected} fixtures, but only ${cloneCounts.actual} found`,
         );
       }
     });

@@ -89,8 +89,8 @@ export function buildTestValidatorCommand({
       // todo: support loading in local binaries via `--bpf-program`
     } else {
       if (verbose) {
-        warnMessage(`Account dir does not exist: ${accountDir}`);
-        warnMessage("Skipping cloning accounts");
+        warnMessage(`Accounts directory does not exist: ${accountDir}`);
+        warnMessage("Skipping cloning of fixtures");
       }
     }
   }
