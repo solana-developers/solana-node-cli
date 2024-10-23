@@ -44,7 +44,13 @@ export default function testValidatorCommand() {
       .addOption(
         new Option(
           "--output",
-          "only output the generated test-validator command",
+          "output the generated test-validator command while executing it",
+        ),
+      )
+      .addOption(
+        new Option(
+          "--output-only",
+          "only output the generated test-validator command, but do not execute it",
         ),
       )
       .addOption(
@@ -124,7 +130,7 @@ export default function testValidatorCommand() {
         });
 
         // only log the "run validator" command, do not execute it
-        if (options.output) {
+        if (options.outputOnly) {
           return cancelMessage(`\n${command}`);
         }
 
