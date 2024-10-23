@@ -26,6 +26,7 @@ import {
 } from "@/lib/anchor";
 import { validateExpectedCloneCounts } from "@/lib/shell/clone";
 import { SolanaTomlCloneLocalProgram } from "@/types/config";
+import { promptToAutoClone } from "@/lib/prompts/clone";
 
 /**
  * Command: `test-validator`
@@ -109,11 +110,8 @@ export default function testValidatorCommand() {
           warnMessage(
             `Expected ${cloneCounts.expected} accounts, but only ${cloneCounts.actual} found.`,
           );
-          warnMessage(
-            `Consider running the 'clone' command to ensure you have all the expected accounts.`,
-          );
 
-          // todo: prompt the user if they want to run the cloner
+          await promptToAutoClone();
         }
 
         const command = buildTestValidatorCommand({
