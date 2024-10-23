@@ -81,8 +81,6 @@ export function initGitRepo(
       `git -C ${targetFolder} commit -m "${commitMessage}"`,
     );
 
-    console.log(commands.join(" && "));
-
     // Execute the command
     execSync(commands.join(" && "), {
       stdio: "ignore", // hide output

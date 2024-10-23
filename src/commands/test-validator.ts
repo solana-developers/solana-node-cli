@@ -146,12 +146,12 @@ export default function testValidatorCommand() {
         const explorerUrl = new URL(
           "https://explorer.solana.com/?cluster=custom",
         );
-        // explorerUrl.searchParams.set("customUrl", "http://localhost:8899");
+        explorerUrl.searchParams.set("customUrl", "http://localhost:8899");
         console.log("\nSolana Explorer for your local test-validator:");
         console.log(
           "(on Brave Browser, you may need to turn Shields down for the Explorer website)",
         );
-        console.log(explorerUrl.toString(), "\n");
+        console.log(explorerUrl.toString());
 
         runTestValidator({
           command,
