@@ -61,7 +61,6 @@ export function isGitRepo(targetFolder: string): boolean {
 
     return result === "true";
   } catch (error) {
-    console.error("[isGitRepo]", error);
     // If command fails, it means it's not a git repo
     return false;
   }
