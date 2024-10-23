@@ -37,7 +37,7 @@ export default function testValidatorCommand() {
   return (
     new Command("test-validator")
       .configureOutput(cliOutputConfig)
-      .description("run the 'solana-test-validator' on your local machine")
+      .description("run the Solana test-validator on your local machine")
       // .addOption(
       //   new Option("--prompt", "prompt to override any existing cloned accounts"),
       // )
