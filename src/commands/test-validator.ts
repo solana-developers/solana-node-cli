@@ -66,7 +66,7 @@ export default function testValidatorCommand() {
       .action(async (options) => {
         if (!options.outputOnly) {
           titleMessage("solana-test-validator");
-        }
+        } else options.output = options.outputOnly;
 
         await checkCommand("solana-test-validator --version", {
           exit: true,
@@ -135,9 +135,7 @@ export default function testValidatorCommand() {
 
         if (options.output) console.log(`\n${command}\n`);
         // only log the "run validator" command, do not execute it
-        if (options.outputOnly) {
-          process.exit();
-        }
+        if (options.outputOnly) process.exit();
 
         if (options.reset) {
           console.log(
