@@ -64,7 +64,9 @@ export default function testValidatorCommand() {
       .addOption(COMMON_OPTIONS.keypair)
       .addOption(COMMON_OPTIONS.url)
       .action(async (options) => {
-        titleMessage("solana-test-validator");
+        if (!options.outputOnly) {
+          titleMessage("solana-test-validator");
+        }
 
         await checkCommand("solana-test-validator --version", {
           exit: true,
@@ -117,7 +119,9 @@ export default function testValidatorCommand() {
             `Expected ${cloneCounts.expected} accounts, but only ${cloneCounts.actual} found.`,
           );
 
-          await promptToAutoClone();
+          if (!options.outputOnly) {
+            await promptToAutoClone();
+          }
         }
 
         const command = buildTestValidatorCommand({
@@ -129,9 +133,10 @@ export default function testValidatorCommand() {
           localPrograms: localPrograms,
         });
 
+        if (options.output) console.log(`\n${command}\n`);
         // only log the "run validator" command, do not execute it
         if (options.outputOnly) {
-          return cancelMessage(`\n${command}`);
+          process.exit();
         }
 
         if (options.reset) {
