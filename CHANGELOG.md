@@ -1,5 +1,11 @@
 # solana
 
+## 2.3.0-tv.14
+
+### Minor Changes
+
+- loading local compiled programs
+
 ## 2.3.0-tv.13
 
 ### Patch Changes
