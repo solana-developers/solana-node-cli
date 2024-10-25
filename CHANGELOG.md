@@ -1,5 +1,23 @@
 # solana
 
+## 2.3.0
+
+### Minor Changes
+
+- ef29b92: include local anchor programs in test-validator
+- 274504f: added basic support for Anchor.toml based account/program cloning
+- 2af75c8: loading local compiled programs
+- 25f6514: add auto gitignore
+
+### Patch Changes
+
+- 3788e69: merged master
+- 82e8404: various fixes
+- d05d786: auto detect account owner and clone it
+- 2c01e6f: fix directory vs file creation
+- c85e0e4: fix config not found
+- 0d4f25e: auto search and locate solana.toml
+
 ## 2.3.0-tv.14
 
 ### Minor Changes
