@@ -3,11 +3,11 @@ import {
   cliOutputConfig,
   titleMessage,
   loadConfigToml,
-  cancelMessage,
   warnMessage,
 } from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
 import {
+  deepMerge,
   doesFileExist,
   loadFileNamesToMap,
   updateGitignore,
@@ -19,14 +19,10 @@ import {
 import { COMMON_OPTIONS } from "@/const/commands";
 import { loadKeypairFromFile } from "@/lib/solana";
 import { DEFAULT_CACHE_DIR, DEFAULT_TEST_LEDGER_DIR } from "@/const/solana";
-import {
-  deconflictAnchorTomlWithConfig,
-  loadAnchorToml,
-  locateLocalAnchorPrograms,
-} from "@/lib/anchor";
+import { deconflictAnchorTomlWithConfig, loadAnchorToml } from "@/lib/anchor";
 import { validateExpectedCloneCounts } from "@/lib/shell/clone";
-import { SolanaTomlCloneLocalProgram } from "@/types/config";
 import { promptToAutoClone } from "@/lib/prompts/clone";
+import { listLocalPrograms } from "@/lib/programs";
 
 /**
  * Command: `test-validator`
@@ -92,24 +88,36 @@ export default function testValidatorCommand() {
           }
         }
 
-        let localPrograms: SolanaTomlCloneLocalProgram = {};
+        // let localPrograms: SolanaTomlCloneLocalProgram = {};
+        let locatedPrograms: ReturnType<
+          typeof listLocalPrograms
+        >["locatedPrograms"] = {};
 
         // attempt to load and combine the anchor toml clone settings
         const anchorToml = loadAnchorToml(config.configPath);
         if (anchorToml) {
           config = deconflictAnchorTomlWithConfig(anchorToml, config);
 
-          Object.assign(
-            localPrograms,
-            locateLocalAnchorPrograms(
-              anchorToml.configPath,
-              anchorToml.programs,
-            ),
-          );
+          // deep merge the solana and anchor config, taking priority with solana toml
+          config.programs = deepMerge(config.programs, anchorToml.programs);
         }
 
-        // todo: handle support for local native programs
+        Object.assign(
+          locatedPrograms,
+          listLocalPrograms({
+            configPath: config.configPath,
+            labels: config.programs,
+            cluster: "localnet", // todo: handle the user selecting the `cluster`
+          }).locatedPrograms,
+        );
 
+        // todo: check if all the local programs were compiled/found, if not => prompt
+        // if (!localListing.allFound) {
+        //   // todo: add the ability to prompt the user to build their anchor programs
+        //   warnMessage(`Have you built all your local programs?`);
+        // }
+
+        // todo: this is flaky and does not seem to detect if some are missing. fix it
         const cloneCounts = validateExpectedCloneCounts(
           config.settings.accountDir,
           config.clone,
@@ -130,7 +138,7 @@ export default function testValidatorCommand() {
           accountDir: config.settings.accountDir,
           // todo: allow setting the authority from the cli args
           authority: authorityAddress,
-          localPrograms: localPrograms,
+          localPrograms: locatedPrograms,
         });
 
         if (options.output) console.log(`\n${command}\n`);
