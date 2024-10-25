@@ -282,3 +282,30 @@ export function findFileInDirectory(
 export function isInCurrentDir(filePath: string): boolean {
   return path.resolve(process.cwd()) === path.resolve(path.dirname(filePath));
 }
+
+type AnyObject = Record<string, any>;
+
+export function deepMerge<T extends AnyObject, U extends AnyObject>(
+  obj1: T,
+  obj2: U,
+): T & U {
+  const result: AnyObject = { ...obj1 };
+
+  for (const key in obj2) {
+    if (obj2.hasOwnProperty(key)) {
+      if (isObject(obj2[key]) && isObject(result[key])) {
+        // Recursively merge nested objects
+        result[key] = deepMerge(result[key], obj2[key]);
+      } else {
+        // Directly assign the value from obj2
+        result[key] = obj2[key];
+      }
+    }
+  }
+
+  return result as T & U;
+}
+
+export function isObject(value: any): value is AnyObject {
+  return value && typeof value === "object" && !Array.isArray(value);
+}
