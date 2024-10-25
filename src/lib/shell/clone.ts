@@ -144,7 +144,7 @@ export async function cloneProgramsFromConfig(
     if (settings.autoClone) {
       warnMessage(`Auto clone program: ${program.address}`);
     }
-    if (program.clone === "always") {
+    if (program.frequency === "always") {
       console.log("Always clone program:", program.address);
     } else if (settings.force === true) {
       console.log("Force clone program:", program.address);
@@ -192,7 +192,7 @@ export async function cloneTokensFromConfig(
     // set the default token info
     if (!token?.name) token.name = key;
 
-    if (token.clone === "always") {
+    if (token.frequency === "always") {
       console.log("Always clone token:", token.address);
     } else if (settings.force === true) {
       console.log("Force clone token:", token.address);
@@ -293,7 +293,7 @@ export async function cloneAccountsFromConfig(
     // set the default account info
     if (!account?.name) account.name = key;
 
-    if (account.clone === "always") {
+    if (account.frequency === "always") {
       console.log("Always clone account:", account.address);
     } else if (settings.force === true) {
       console.log("Force clone account:", account.address);

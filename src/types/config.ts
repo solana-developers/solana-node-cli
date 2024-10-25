@@ -42,7 +42,8 @@ export type SolanaTomlCloneConfig = {
   filePath?: string;
   name?: string;
   cluster?: SolanaCluster | string;
-  clone?: "always" | "prompt";
+  // default - `cached`
+  frequency?: "cached" | "always";
 };
 
 export type SolanaTomlClone = {
