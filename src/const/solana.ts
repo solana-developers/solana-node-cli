@@ -11,3 +11,5 @@ export const DEFAULT_ACCOUNTS_DIR_TEMP = ".cache/staging/fixtures";
 export const DEFAULT_ACCOUNTS_DIR_LOADED = ".cache/loaded/fixtures";
 
 export const DEFAULT_KEYPAIR_PATH = "~/.config/solana/id.json";
+
+export const DEFAULT_BUILD_DIR = "target/deploy";
