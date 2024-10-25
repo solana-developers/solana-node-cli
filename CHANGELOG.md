@@ -1,5 +1,67 @@
 # solana
 
+## 2.3.0-tv.14
+
+### Minor Changes
+
+- loading local compiled programs
+
+## 2.3.0-tv.13
+
+### Patch Changes
+
+- merged master
+
+## 2.3.0-tv.12
+
+### Patch Changes
+
+- various fixes
+
+## 2.3.0-tv.11
+
+### Minor Changes
+
+- include local anchor programs in test-validator
+
+## 2.3.0-tv.10
+
+### Patch Changes
+
+- fix directory vs file creation
+
+## 2.3.0-tv.9
+
+### Patch Changes
+
+- fix config not found
+
+## 2.3.0-tv.8
+
+### Minor Changes
+
+- added basic support for Anchor.toml based account/program cloning
+
+### Patch Changes
+
+- 0d4f25e: auto search and locate solana.toml
+
+## 2.3.0-tv.6
+
+### Patch Changes
+
+- auto detect account owner and clone it
+- cloning general accounts
+
+## 2.3.0-tv.0
+
+### Minor Changes
+
+- added test-validator support
+- added basic token account cloning
+- added Solana.toml support
+- add auto gitignore
+
 ## 2.2.1
 
 ### Patch Changes

@@ -14,8 +14,9 @@ export default {
   plugins: [
     commonjs(),
     nodeResolve({
-      exportConditions: ["node"], // add node option here,
-      preferBuiltins: true,
+      exportConditions: ["node"],
+      // prevent using the deprecated punycode module
+      preferBuiltins: (module) => module != "punycode",
     }),
     json(),
     typescript(),
@@ -23,9 +24,10 @@ export default {
       format: {
         comments: "some",
         beautify: true,
-        // ecma: "2022",
       },
-      compress: false,
+      compress: {
+        drop_console: ["warn"],
+      },
       mangle: false,
       module: true,
     }),

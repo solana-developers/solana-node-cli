@@ -1,0 +1,19 @@
+{
+  "mode": "pre",
+  "tag": "tv",
+  "initialVersions": {
+    "solana": "2.2.1"
+  },
+  "changesets": [
+    "brown-buses-admire",
+    "clean-tools-relate",
+    "dirty-worms-run",
+    "eighty-feet-burn",
+    "fluffy-wombats-melt",
+    "pretty-kings-laugh",
+    "silent-elephants-join",
+    "sixty-experts-travel",
+    "wet-comics-rhyme",
+    "wise-lemons-sparkle"
+  ]
+}
