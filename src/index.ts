@@ -20,6 +20,7 @@ async function main() {
       .addCommand(testValidatorCommand());
 
     // set the default action to `help` (without an error)
+    // set the default action to `help` (without an error)
     if (process.argv.length === 2) {
       process.argv.push("--help");
     }
