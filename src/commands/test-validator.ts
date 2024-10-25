@@ -23,6 +23,7 @@ import { deconflictAnchorTomlWithConfig, loadAnchorToml } from "@/lib/anchor";
 import { validateExpectedCloneCounts } from "@/lib/shell/clone";
 import { promptToAutoClone } from "@/lib/prompts/clone";
 import { listLocalPrograms } from "@/lib/programs";
+import cloneCommand from "./clone";
 
 /**
  * Command: `test-validator`
@@ -116,6 +117,13 @@ export default function testValidatorCommand() {
         //   // todo: add the ability to prompt the user to build their anchor programs
         //   warnMessage(`Have you built all your local programs?`);
         // }
+
+        // auto run the clone on reset
+        if (options.reset) {
+          // run the clone command with default options
+          // todo: could we pass options in here if we want?
+          await cloneCommand().parseAsync([]);
+        }
 
         // todo: this is flaky and does not seem to detect if some are missing. fix it
         const cloneCounts = validateExpectedCloneCounts(
