@@ -25,6 +25,7 @@ export type SolanaToml = {
       localnet: string;
     }>;
   }>;
+  programs?: ProgramBuildLabels;
   clone?: Partial<SolanaTomlClone>;
 };
 
@@ -84,3 +85,10 @@ export type CloneAccountsFromConfigResult = {
   owners: Map<string, SolanaTomlCloneConfig["cluster"]>;
   changedAccounts: Map<string, JsonAccountStruct>;
 };
+
+export type ProgramBuildLabels = Partial<{
+  localnet?: Record<string, string>;
+  devnet?: Record<string, string>;
+  testnet?: Record<string, string>;
+  mainnet?: Record<string, string>;
+}>;

@@ -1,13 +1,8 @@
-import { SolanaTomlCloneConfig } from "./config";
+import { ProgramBuildLabels, SolanaTomlCloneConfig } from "./config";
 
 export type AnchorToml = {
   configPath?: string;
-  programs?: {
-    localnet?: Record<string, string>;
-    devnet?: Record<string, string>;
-    testnet?: Record<string, string>;
-    mainnet?: Record<string, string>;
-  };
+  programs?: ProgramBuildLabels;
   test?: {
     validator?: {
       /** rpc url to use in order to clone */
