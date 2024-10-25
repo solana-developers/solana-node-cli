@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import shellExec from "shell-exec";
 import { TOOL_CONFIG } from "@/const/setup";
+import { warnMessage } from "../cli";
 
 /**
  * Check if a given command name is installed and available on the system
@@ -31,7 +32,10 @@ export async function installedToolVersion(name: ToolNames) {
 /**
  * Attempt to run the given shell command, detecting if the command is available on the system
  */
-export async function checkCommand(cmd: string) {
+export async function checkCommand(
+  cmd: string,
+  onError: { message?: string; exit?: boolean } = null,
+): Promise<string | false> {
   try {
     const { stdout } = await shellExec(cmd);
 
@@ -39,8 +43,16 @@ export async function checkCommand(cmd: string) {
       return stdout.trim();
     }
 
+    if (onError) throw "Command not found";
     return false;
   } catch (err) {
+    if (onError) {
+      console.log("onError:", onError);
+      warnMessage(
+        onError.message || `Unable to execute command: ${cmd.split(" ")[0]}`,
+      );
+      if (onError.exit) process.exit(1);
+    }
     return false;
   }
 }
