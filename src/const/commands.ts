@@ -15,13 +15,13 @@ export const COMMON_OPTIONS = {
    * note: this is a different config file than the solana cli's config file
    */
   config: new Option(
-    "-c --config <path>",
+    "-c --config <PATH>",
     "path to a Solana.toml config file",
   ).default(DEFAULT_CONFIG_FILE),
   /**
    * path to the local authority keypair
    */
-  keypair: new Option("--keypair <path>", "path to a keypair file").default(
+  keypair: new Option("--keypair <PATH>", "path to a keypair file").default(
     DEFAULT_KEYPAIR_PATH,
   ),
   /**
