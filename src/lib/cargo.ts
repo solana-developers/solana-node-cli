@@ -4,7 +4,8 @@
 
 import { CargoTomlWithConfigPath } from "@/types/cargo";
 import { directoryExists, doesFileExist, loadTomlFile } from "./utils";
-import { join } from "path";
+import { readdirSync, statSync } from "fs";
+import { join, relative } from "path";
 
 const DEFAULT_CARGO_TOML_FILE = "Cargo.toml";
 
@@ -37,50 +38,56 @@ export function loadCargoToml(
   }
 }
 
-/**
- * Attempt to locate all the program directories within all the listed workspaces
- */
-export function locateProgramsInWorkspace({
-  workspaces = ["programs/", "program/"],
-  workingDir = process.cwd(),
-  declaredPrograms,
-}: {
-  workspaces: string[];
-  workingDir: string;
-  declaredPrograms: Record<string, string>;
-}) {
-  const programs: {
-    [key: string]: BuildProgramMetadata;
-  } = {};
+export function findAllCargoToml(
+  startDir: string,
+  whitelist: string[] = [],
+  blacklist: string[] = ["node_modules", "dist", "target"],
+  maxDepth: number = 3,
+): string[] {
+  const cargoTomlPaths: string[] = [];
 
-  workspaces.forEach((workspace) => {
-    workspace = join(workingDir, workspace).replace(/\*+$/, "");
-    if (!directoryExists(workspace)) return;
+  // Convert whitelist patterns to regular expressions for wildcard matching
+  const whitelistPatterns = whitelist.map(
+    (pattern) => new RegExp("^" + pattern.replace(/\*/g, ".*") + "$"),
+  );
 
-    /**
-     * if the dir exists, its either a listing of program dirs or a single program
-     */
-    if (doesFileExist(join(workspace, "Cargo.toml"))) {
-      const programCargoToml = loadCargoToml(join(workspace, "Cargo.toml"));
-
-      console.log("programCargoToml:", programCargoToml);
-    } else {
-      Object.keys(declaredPrograms).forEach((key) => {
-        const program: BuildProgramMetadata = {
-          found: false,
-          dirPath: join(workspace, key),
-          address: declaredPrograms[key],
-        };
-
-        if (directoryExists(program.dirPath)) {
-          program.found = true;
-        } else {
-          // warnMessage(`Missing program directory: ${key}`);
-        }
-        programs[key] = program;
-      });
+  // Helper function to check if a directory matches any whitelist pattern
+  function isWhitelisted(relativeDir: string): boolean {
+    if (whitelistPatterns.length === 0) {
+      return true;
     }
-  });
+    return whitelistPatterns.some((regex) => regex.test(relativeDir));
+  }
 
-  return programs;
+  // Helper function to recursively search directories
+  function searchDir(dir: string, depth: number): void {
+    // Stop searching if maxDepth is reached
+    if (depth > maxDepth) {
+      return;
+    }
+
+    const items = readdirSync(dir);
+    for (const item of items) {
+      const itemPath = join(dir, item);
+      const stats = statSync(itemPath);
+
+      if (stats.isFile() && item === "Cargo.toml") {
+        cargoTomlPaths.push(itemPath);
+      }
+
+      if (stats.isDirectory()) {
+        const relativeDir = relative(startDir, itemPath);
+
+        if (blacklist.includes(relativeDir) && !isWhitelisted(relativeDir)) {
+          continue;
+        }
+
+        searchDir(itemPath, depth + 1);
+      }
+    }
+  }
+
+  searchDir(startDir, 0);
+
+  return cargoTomlPaths;
 }

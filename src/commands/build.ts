@@ -1,9 +1,14 @@
-import { join } from "path";
+import { dirname, join } from "path";
 import { Command, Option } from "@commander-js/extra-typings";
-import { cliOutputConfig, titleMessage, warningOutro } from "@/lib/cli.js";
+import {
+  cliOutputConfig,
+  titleMessage,
+  warningOutro,
+  warnMessage,
+} from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
 import { COMMON_OPTIONS } from "@/const/commands";
-import { loadCargoToml } from "@/lib/cargo";
+import { findAllCargoToml, loadCargoToml } from "@/lib/cargo";
 import { buildProgramCommand } from "@/lib/shell/build";
 import { spawn } from "child_process";
 import { doesFileExist } from "@/lib/utils";
@@ -29,8 +34,11 @@ export function buildCommand() {
       ),
     )
     .addOption(COMMON_OPTIONS.config)
+    .addOption(COMMON_OPTIONS.outputOnly)
     .action(async (options) => {
-      titleMessage("Build your Solana programs");
+      if (!options.outputOnly) {
+        titleMessage("Build your Solana programs");
+      }
 
       // console.log("options:");
       // console.log(options);
@@ -41,19 +49,17 @@ export function buildCommand() {
           "Unable to detect the 'cargo build-sbf' command. Do you have it installed?",
       });
 
-      // when a specific program is not provided, attempt to build the workspace
-      // if (!options.programName) {}
-
       // determine if we are in a program specific dir or the workspace
       let cargoToml = loadCargoToml(options.manifestPath);
 
+      let workspaceDirs = ["temp", "programs/*", "program"];
       if (!cargoToml) {
-        // console.log("todo: attempt to locate all cargo toml files");
-
-        const commonDirs = ["programs/", "program/"];
-
-        commonDirs.some((workspace) => {
-          const filePath = join(process.cwd(), workspace, "Cargo.toml");
+        workspaceDirs.some((workspace) => {
+          const filePath = join(
+            process.cwd(),
+            workspace.replace(/\*+$/, ""),
+            "Cargo.toml",
+          );
           if (doesFileExist(filePath)) {
             cargoToml = loadCargoToml(filePath);
             if (cargoToml) return;
@@ -61,9 +67,45 @@ export function buildCommand() {
         });
       }
 
+      if (cargoToml) {
+        // always update the current manifest path to the one of the loaded Cargo.toml
+        if (cargoToml.configPath) {
+          options.manifestPath = cargoToml.configPath;
+        }
+
+        if (cargoToml.workspace?.members) {
+          workspaceDirs = cargoToml.workspace.members;
+        }
+      }
+
+      // only build a single program
+      if (options.programName) {
+        const workspacePrograms = findAllCargoToml(
+          dirname(options.manifestPath),
+          workspaceDirs,
+        );
+
+        // we intentionally lowercase all this for the matching
+        const testPath = workspacePrograms.filter((tomlPath) =>
+          tomlPath.toLowerCase().endsWith(`/${options.programName}/cargo.toml`),
+        );
+
+        if (testPath.length > 1) {
+          warnMessage(`Located multiple programs with the same name`);
+        }
+
+        if (testPath?.[0] && doesFileExist(testPath[0])) {
+          cargoToml = loadCargoToml(testPath[0]);
+        } else {
+          return warningOutro(
+            `Unable to locate program '${options.programName}'`,
+          );
+        }
+      }
+
       if (!cargoToml) {
         return warningOutro(
-          `Unable to locate any Cargo.toml file. Operation canceled.`,
+          `Unable to locate Cargo.toml file. Operation canceled.`,
         );
       }
 
@@ -91,33 +133,17 @@ export function buildCommand() {
         return warningOutro(`Unable to create build command`);
       }
 
-      const child = spawn(buildCommand, undefined, {
+      if (options.outputOnly) {
+        console.log(buildCommand);
+        process.exit();
+      }
+
+      // execute the build command using a normal shell, allowing the user to CTRL+C to cancel
+      spawn(buildCommand, undefined, {
         detached: false, // run the command in the same session
         stdio: "inherit", // Stream directly to the user's terminal
         shell: true, // Runs in shell for compatibility with shell commands
       });
-
-      //   for (let i = 0; i < programsToBuild.length; i++) {
-      //     const programName = programsToBuild[i];
-
-      //     const spinner = ora(`Building program '${programName}'`).start();
-
-      //     // console.log("build command:");
-      //     const buildCommand = buildProgramCommand({
-      //       manifestPath: join(programs[programName].dirPath, "Cargo.toml"),
-      //     });
-
-      //     const buildStatus = await runBuildCommand({
-      //       programName,
-      //       command: buildCommand,
-      //     });
-
-      //     if (buildStatus == true) {
-      //       spinner.succeed(`Build complete: ${programName}`);
-      //     } else {
-      //       spinner.fail(`Build failed: ${programName}`);
-      //     }
-      //   }
     });
 }
 
