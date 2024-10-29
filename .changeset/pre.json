@@ -5,6 +5,7 @@
     "solana": "2.3.0"
   },
   "changesets": [
+    "clean-chefs-beg",
     "ninety-apricots-chew"
   ]
 }
