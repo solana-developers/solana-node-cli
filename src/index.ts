@@ -7,6 +7,7 @@ import installCommand from "@/commands/install";
 import doctorCommand from "@/commands/doctor";
 import cloneCommand from "@/commands/clone";
 import testValidatorCommand from "@/commands/test-validator";
+import buildCommand from "@/commands/build";
 
 async function main() {
   try {
@@ -17,6 +18,7 @@ async function main() {
       // note: enables a shorter command for installing
       .addCommand(doctorCommand())
       .addCommand(cloneCommand())
+      .addCommand(buildCommand())
       .addCommand(testValidatorCommand());
 
     // set the default action to `help` (without an error)
