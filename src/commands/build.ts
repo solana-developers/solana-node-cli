@@ -87,11 +87,6 @@ export function buildCommand() {
         return warningOutro(`Unable to locate any program's Cargo.toml file`);
       }
 
-      // join(programs[programName].dirPath, "Cargo.toml")
-
-      console.log("buildCommand:");
-      console.log(buildCommand);
-
       if (!buildCommand) {
         return warningOutro(`Unable to create build command`);
       }
