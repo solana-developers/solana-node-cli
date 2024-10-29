@@ -98,7 +98,7 @@ export function buildCommand() {
           cargoToml = loadCargoToml(testPath[0]);
         } else {
           return warningOutro(
-            `Unable to locate program '${options.programName}'`,
+            `Unable to locate program '${options.programName}' in this workspace`,
           );
         }
       }
