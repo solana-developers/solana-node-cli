@@ -1,12 +1,13 @@
+import { join, dirname } from "path";
 import { AnchorToml, AnchorTomlWithConfigPath } from "@/types/anchor";
 import {
   directoryExists,
   doesFileExist,
   loadFileNamesToMap,
   loadTomlFile,
-} from "./utils";
-import { join, dirname } from "path";
-import { loadConfigToml, warningOutro, warnMessage } from "./cli";
+} from "@/lib/utils";
+import { loadConfigToml } from "@/lib/cli";
+import { warningOutro, warnMessage } from "@/lib/logs";
 import { SolanaTomlCloneLocalProgram } from "@/types/config";
 
 const ANCHOR_TOML = "Anchor.toml";

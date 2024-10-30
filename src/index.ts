@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { errorMessage } from "@/lib/cli";
+import { errorMessage } from "@/lib/logs";
 import cliProgramRoot from "@/commands";
 
 import installCommand from "@/commands/install";

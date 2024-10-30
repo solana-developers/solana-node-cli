@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import shellExec from "shell-exec";
 import { TOOL_CONFIG } from "@/const/setup";
-import { warnMessage } from "../cli";
+import { warnMessage } from "@/lib/logs";
 
 /**
  * Check if a given command name is installed and available on the system

@@ -1,10 +1,6 @@
 import { Command, Option } from "@commander-js/extra-typings";
-import {
-  cliOutputConfig,
-  titleMessage,
-  loadConfigToml,
-  warnMessage,
-} from "@/lib/cli.js";
+import { cliOutputConfig, loadConfigToml } from "@/lib/cli";
+import { titleMessage, warnMessage } from "@/lib/logs";
 import { checkCommand } from "@/lib/shell";
 import {
   createFolders,

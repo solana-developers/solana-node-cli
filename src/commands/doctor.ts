@@ -1,5 +1,7 @@
 import { Command } from "@commander-js/extra-typings";
-import { cliOutputConfig, successOutro, warnMessage } from "@/lib/cli.js";
+import { cliOutputConfig } from "@/lib/cli";
+import { successOutro, warnMessage } from "@/lib/logs";
+
 import { detectOperatingSystem } from "@/lib/shell";
 import { checkInstalledTools } from "@/lib/setup";
 

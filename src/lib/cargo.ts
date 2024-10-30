@@ -3,7 +3,7 @@
  */
 
 import { CargoTomlWithConfigPath } from "@/types/cargo";
-import { directoryExists, doesFileExist, loadTomlFile } from "./utils";
+import { directoryExists, doesFileExist, loadTomlFile } from "@/lib/utils";
 import { readdirSync, statSync } from "fs";
 import { dirname, join, relative } from "path";
 

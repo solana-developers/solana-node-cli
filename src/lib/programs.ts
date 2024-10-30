@@ -1,11 +1,11 @@
+import { dirname, join, resolve } from "path";
 import {
   ProgramBuildLabels,
   SolanaTomlCloneLocalProgram,
 } from "@/types/config";
-import { directoryExists, loadFileNamesToMap } from "./utils";
-import { warnMessage } from "./cli";
-import { dirname, join, resolve } from "path";
+import { directoryExists, loadFileNamesToMap } from "@/lib//utils";
 import { DEFAULT_BUILD_DIR } from "@/const/solana";
+import { warnMessage } from "@/lib/logs";
 
 /**
  * List all the local program binaries in the specified build directory

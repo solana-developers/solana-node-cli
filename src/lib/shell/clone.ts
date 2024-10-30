@@ -5,7 +5,7 @@ import {
   doesFileExist,
   loadFileNamesToMap,
   loadJsonFile,
-} from "../utils";
+} from "@/lib/utils";
 import {
   CloneAccountsFromConfigResult,
   CloneSettings,
@@ -13,12 +13,12 @@ import {
   SolanaToml,
   SolanaTomlCloneConfig,
 } from "@/types/config";
-import { parseRpcUrlOrMoniker } from "../solana";
+import { parseRpcUrlOrMoniker } from "@/lib/solana";
 import {
   DEFAULT_ACCOUNTS_DIR,
   DEFAULT_ACCOUNTS_DIR_TEMP,
 } from "@/const/solana";
-import { warnMessage } from "../cli";
+import { warnMessage } from "@/lib/logs";
 
 export type JsonAccountStruct = {
   pubkey: string;

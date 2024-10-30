@@ -2,7 +2,7 @@ import fs from "fs";
 import * as toml from "@iarna/toml";
 import path from "path";
 import { homedir } from "os";
-import { warnMessage } from "./cli";
+import { warnMessage } from "@/lib/logs";
 
 /**
  *

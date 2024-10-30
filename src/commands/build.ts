@@ -1,11 +1,7 @@
 import { join } from "path";
 import { Command, Option } from "@commander-js/extra-typings";
-import {
-  cliOutputConfig,
-  titleMessage,
-  warningOutro,
-  warnMessage,
-} from "@/lib/cli.js";
+import { cliOutputConfig } from "@/lib/cli";
+import { titleMessage, warningOutro, warnMessage } from "@/lib/logs";
 import { checkCommand } from "@/lib/shell";
 import { COMMON_OPTIONS } from "@/const/commands";
 import { getProgramPathsInWorkspace, loadCargoToml } from "@/lib/cargo";

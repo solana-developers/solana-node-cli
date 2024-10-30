@@ -1,8 +1,8 @@
 import { Keypair } from "@solana/web3.js";
-import { doesFileExist, loadJsonFile } from "./utils";
+import { doesFileExist, loadJsonFile } from "@/lib/utils";
 import { DEFAULT_KEYPAIR_PATH } from "@/const/solana";
 import { ProgramBuildLabels, SolanaCluster } from "@/types/config";
-import { warnMessage } from "./cli";
+import { warnMessage } from "@/lib/logs";
 
 export function loadKeypairFromFile(
   filePath: string = DEFAULT_KEYPAIR_PATH,

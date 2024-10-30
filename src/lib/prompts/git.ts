@@ -1,6 +1,6 @@
 import { select } from "@inquirer/prompts";
-import { initGitRepo, isGitRepo } from "../git";
-import { warningOutro } from "../cli";
+import { initGitRepo, isGitRepo } from "@/lib/git";
+import { warningOutro } from "@/lib/logs";
 
 export async function promptToInitGitRepo(
   defaultGitDir: string,

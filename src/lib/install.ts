@@ -3,10 +3,10 @@
  */
 
 import { InstallCommandPropsBase } from "@/types";
-import { appendPathToRCFiles, installedToolVersion } from "./shell";
+import { appendPathToRCFiles, installedToolVersion } from "@/lib/shell";
 import shellExec from "shell-exec";
-import { errorMessage } from "./cli";
 import ora from "ora";
+import { errorMessage } from "@/lib/logs";
 import { TOOL_CONFIG } from "@/const/setup";
 
 /**

@@ -1,18 +1,18 @@
 import { spawn } from "child_process";
+import { resolve } from "path";
+import { rmSync } from "fs";
 import {
   createFolders,
   directoryExists,
   loadFileNamesToMap,
   moveFiles,
-} from "../utils";
-import { resolve } from "path";
+} from "@/lib/utils";
 import {
   DEFAULT_ACCOUNTS_DIR,
   DEFAULT_ACCOUNTS_DIR_LOADED,
   DEFAULT_TEST_LEDGER_DIR,
 } from "@/const/solana";
-import { rmSync } from "fs";
-import { warnMessage } from "../cli";
+import { warnMessage } from "@/lib/logs";
 import { SolanaTomlClone } from "@/types/config";
 
 type BuildTestValidatorCommandInput = {
