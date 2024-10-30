@@ -9,6 +9,11 @@ import cloneCommand from "@/commands/clone";
 import testValidatorCommand from "@/commands/test-validator";
 import buildCommand from "@/commands/build";
 
+import { assertRuntimeVersion } from "@/lib/node";
+
+// ensure the user running the cli tool is on a supported javascript runtime version
+assertRuntimeVersion();
+
 async function main() {
   try {
     const program = cliProgramRoot();
