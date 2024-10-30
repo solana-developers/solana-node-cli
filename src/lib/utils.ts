@@ -55,10 +55,14 @@ export function loadJsonFile<T = object>(filePath: string): T | null {
 /**
  *
  */
-export function loadTomlFile<T>(filePath: string): T | null {
+export function loadTomlFile<T>(
+  filePath: string,
+  injectConfigPath: boolean = true,
+): T | null {
   try {
     const data = loadPlaintextFile(filePath);
     const parsedData = toml.parse(data);
+    if (injectConfigPath) parsedData.configPath = filePath;
     return parsedData as T;
   } catch (error) {
     if (error instanceof SyntaxError) {

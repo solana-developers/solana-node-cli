@@ -31,6 +31,10 @@ export const COMMON_OPTIONS = {
     "-u --url <URL_OR_MONIKER>",
     "URL for Solana's JSON RPC or moniker",
   ).default("mainnet"),
+  outputOnly: new Option(
+    "--output-only",
+    "only output the generated command, do not execute it",
+  ),
   /**
    * local directory path to store and load any cloned accounts
    */
