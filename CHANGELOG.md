@@ -1,16 +1,11 @@
 # solana
 
-## 2.4.0-build.1
+## 2.4.0
 
 ### Minor Changes
 
-- ability to build a single program in the workspace
-
-## 2.4.0-build.0
-
-### Minor Changes
-
-- add build command for workspaces
+- 523aa87: ability to build a single program in the workspace
+- babbdb2: add build command for workspaces
 
 ## 2.3.0
 

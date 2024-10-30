@@ -1,6 +1,6 @@
 {
   "name": "solana",
-  "version": "2.4.0-build.1",
+  "version": "2.4.0",
   "description": "",
   "license": "MIT",
   "type": "module",
@@ -13,7 +13,7 @@
     "build": "rollup -c",
     "watch": "rollup -c --watch",
     "solana": "node ./bin/index.mjs",
-    "changeset:version": "changeset version && git add -A && git commit -m \"chore: version\" && git push",
+    "changeset:version": "changeset version && git add -A && git commit -m \"chore: version\"",
     "changeset:publish": "pnpm build && changeset publish",
     "postpublish": "git push --follow-tags"
   },
