@@ -28,6 +28,7 @@ system. If installed globally, unexpected behavior may occur.
   cluster desired and declared in the `Solana.toml`.
 - [`test-validator`](#test-validator) - Run the Solana test-validator on your
   local machine, including loading all the cloned fixtures for your repo.
+- [`build`](#build) - Build all or a single Solana program in your workspace.
 
 ### install
 
@@ -93,6 +94,16 @@ about all options.
 > to facilitate a consistent local Solana ledger (via
 > [`text-validator`](#test-validator)) and therefore reproducible and testable
 > blockchain state for anyone with access to the repo.
+
+### build
+
+Build all or a single Solana program in your workspace.
+
+**Usage:**
+
+```shell
+npx solana build --help
+```
 
 ### test-validator
 
