@@ -114,6 +114,7 @@ export function buildCommand() {
       let buildCommand: null | string = null;
 
       if (cargoToml.workspace) {
+        console.log("Building all programs in the workspace");
         buildCommand = buildProgramCommand({
           // no manifest file will attempt to build the whole workspace
           manifestPath: cargoToml.configPath,
@@ -123,6 +124,12 @@ export function buildCommand() {
         cargoToml.package &&
         cargoToml.lib["crate-type"].includes("lib")
       ) {
+        console.log(
+          `Building program '${
+            cargoToml.lib.name || cargoToml.package.name || "[unknown]"
+          }' only`,
+        );
+
         buildCommand = buildProgramCommand({
           // a single program manifest will build only that one program
           manifestPath: cargoToml.configPath,
