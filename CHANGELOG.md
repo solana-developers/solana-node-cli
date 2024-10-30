@@ -1,5 +1,14 @@
 # solana
 
+## 2.4.1
+
+### Patch Changes
+
+- - added node version assertion to require users running the tool to use
+    NodeJS >=22
+  - refactor imports to prevent circular dependencies
+  - refactor to use the same common option for the `--output-only` flag
+
 ## 2.4.0
 
 ### Minor Changes
