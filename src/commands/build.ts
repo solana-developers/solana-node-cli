@@ -1,4 +1,4 @@
-import { dirname, join } from "path";
+import { join } from "path";
 import { Command, Option } from "@commander-js/extra-typings";
 import {
   cliOutputConfig,
@@ -8,7 +8,7 @@ import {
 } from "@/lib/cli.js";
 import { checkCommand } from "@/lib/shell";
 import { COMMON_OPTIONS } from "@/const/commands";
-import { findAllCargoToml, loadCargoToml } from "@/lib/cargo";
+import { getProgramPathsInWorkspace, loadCargoToml } from "@/lib/cargo";
 import { buildProgramCommand } from "@/lib/shell/build";
 import { spawn } from "child_process";
 import { doesFileExist } from "@/lib/utils";
@@ -78,28 +78,30 @@ export function buildCommand() {
         }
       }
 
+      const programs = getProgramPathsInWorkspace(
+        options.manifestPath,
+        workspaceDirs,
+      );
+
       // only build a single program
       if (options.programName) {
-        const workspacePrograms = findAllCargoToml(
-          dirname(options.manifestPath),
-          workspaceDirs,
-        );
-
-        // we intentionally lowercase all this for the matching
-        const testPath = workspacePrograms.filter((tomlPath) =>
-          tomlPath.toLowerCase().endsWith(`/${options.programName}/cargo.toml`),
-        );
-
-        if (testPath.length > 1) {
-          warnMessage(`Located multiple programs with the same name`);
-        }
-
-        if (testPath?.[0] && doesFileExist(testPath[0])) {
-          cargoToml = loadCargoToml(testPath[0]);
+        if (
+          programs.has(options.programName) &&
+          doesFileExist(programs.get(options.programName))
+        ) {
+          cargoToml = loadCargoToml(programs.get(options.programName));
         } else {
-          return warningOutro(
+          warnMessage(
             `Unable to locate program '${options.programName}' in this workspace`,
           );
+          console.log(`The following programs were located:`);
+
+          programs.forEach((_programPath, programName) =>
+            console.log(" -", programName),
+          );
+
+          // todo: should we prompt the user to select a valid program?
+          process.exit();
         }
       }
 

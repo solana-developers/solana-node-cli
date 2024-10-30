@@ -5,15 +5,9 @@
 import { CargoTomlWithConfigPath } from "@/types/cargo";
 import { directoryExists, doesFileExist, loadTomlFile } from "./utils";
 import { readdirSync, statSync } from "fs";
-import { join, relative } from "path";
+import { dirname, join, relative } from "path";
 
 const DEFAULT_CARGO_TOML_FILE = "Cargo.toml";
-
-type BuildProgramMetadata = {
-  found: boolean;
-  dirPath: string;
-  address: string;
-};
 
 /**
  * Load a Cargo.toml file
@@ -90,4 +84,33 @@ export function findAllCargoToml(
   searchDir(startDir, 0);
 
   return cargoTomlPaths;
+}
+
+export function getProgramPathsInWorkspace(
+  startDir: string,
+  workspaceDirs: string[],
+) {
+  const programPaths = new Map<string, string>();
+
+  let tempToml: false | ReturnType<typeof loadCargoToml> = false;
+
+  if (doesFileExist(startDir)) startDir = dirname(startDir);
+
+  const allTomls = findAllCargoToml(startDir, workspaceDirs);
+
+  allTomls.map((progPath) => {
+    if (!doesFileExist(progPath)) return;
+
+    tempToml = loadCargoToml(progPath);
+    if (!tempToml || tempToml.workspace) return;
+
+    const name = tempToml?.lib?.name || tempToml?.package?.name;
+    if (!name) return;
+    // require that the package name matches the directory name
+    // if (name !== basename(dirname(tempToml.configPath))) return;
+
+    programPaths.set(name, tempToml.configPath);
+  });
+
+  return programPaths;
 }
