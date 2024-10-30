@@ -36,22 +36,17 @@ export default function testValidatorCommand() {
       // )
       .addOption(
         new Option(
-          "--output",
-          "output the generated test-validator command while executing it",
-        ),
-      )
-      .addOption(
-        new Option(
-          "--output-only",
-          "only output the generated test-validator command, but do not execute it",
-        ),
-      )
-      .addOption(
-        new Option(
           "--reset",
           "reset the test-validator to genesis, reloading all preloaded fixtures",
         ),
       )
+      .addOption(
+        new Option(
+          "--output",
+          "output the generated test-validator command while executing it",
+        ),
+      )
+      .addOption(COMMON_OPTIONS.outputOnly)
       .addOption(COMMON_OPTIONS.accountDir)
       .addOption(COMMON_OPTIONS.config)
       .addOption(COMMON_OPTIONS.keypair)
