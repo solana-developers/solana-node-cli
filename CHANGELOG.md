@@ -1,5 +1,11 @@
 # solana
 
+## 2.4.2
+
+### Patch Changes
+
+- fix missing beta label on "mainnet"
+
 ## 2.4.1
 
 ### Patch Changes
