@@ -19,7 +19,8 @@ export const TOOL_CONFIG: { [key in ToolNames]: ToolCommandConfig } = {
     version: "yarn --version",
   },
   trident: {
-    version: "trident --version",
+    // the trident cli does not have a version command, so we grab it from cargo
+    version: "cargo install --list | grep trident-cli",
   },
 };
 
