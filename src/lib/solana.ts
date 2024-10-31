@@ -17,8 +17,8 @@ export function loadKeypairFromFile(
  */
 export function parseRpcUrlOrMoniker(
   input: string,
+  includeBetaLabel: boolean = true,
   allowUrl: boolean = true,
-  includeBetaLabel: boolean = false,
 ): SolanaCluster | string {
   if (allowUrl && input.match(/^http?s/i)) {
     try {

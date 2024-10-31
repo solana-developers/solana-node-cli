@@ -63,7 +63,9 @@ export async function cloneAccount({
 
   // note: when no url/cluster is specified, the user's `solana config` url will be used
   if (url) {
-    command.push(`--url ${parseRpcUrlOrMoniker(url)}`);
+    command.push(
+      `--url ${parseRpcUrlOrMoniker(url, true /* enforce the "beta" label */)}`,
+    );
   }
 
   /**
@@ -104,7 +106,9 @@ export async function cloneProgram({
 
   // note: when no url/cluster is specified, the user's `solana config` url will be used
   if (url) {
-    command.push(`--url ${parseRpcUrlOrMoniker(url)}`);
+    command.push(
+      `--url ${parseRpcUrlOrMoniker(url, true /* enforce the "beta" label */)}`,
+    );
   }
 
   await shellExec(command.join(" "));
