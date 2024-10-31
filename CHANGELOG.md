@@ -1,5 +1,17 @@
 # solana
 
+## 2.5.0
+
+### Minor Changes
+
+- c86988f: add zest (code coverage tool) to the list of tools to install
+
+### Patch Changes
+
+- ec3fc3c: fix trident version command, allowing the trident install command to
+  pass
+- 2933115: improve the `install` command error messages for each tool
+
 ## 2.4.2
 
 ### Patch Changes
