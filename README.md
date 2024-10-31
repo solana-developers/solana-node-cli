@@ -47,13 +47,15 @@ The Solana Toolkit includes the following tools:
   [Rustup](https://rustup.rs/).
 - [Agave CLI tool suite](https://solana.com/docs/intro/installation#install-the-solana-cli) -
   the standard tool suite required to build and deploy Solana programs (formerly
-  known as the "Solana CLI tool suite")
+  known as the "Solana CLI tool suite").
 - [Anchor and AVM](https://www.anchor-lang.com/docs/installation#installing-using-anchor-version-manager-avm-recommended) -
   The Anchor framework and the Anchor Version Manager (AVM)
   - Yarn is currently installed as a dependency of Anchor. This dependency is
-    expected to be removed in the near future
+    expected to be removed in the near future.
 - [Trident Fuzzer](https://ackee.xyz/trident/docs/latest/) - Rust-based fuzzing
-  framework for Solana programs to help you ship secure code
+  framework for Solana programs to help you ship secure code.
+- [Zest](https://github.com/LimeChain/zest?tab=readme-ov-file) - Code coverage
+  CLI tool for Solana programs.
 
 ### clone
 
