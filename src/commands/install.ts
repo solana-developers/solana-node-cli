@@ -10,6 +10,7 @@ import {
   installAnchorUsingAvm,
   installYarn,
   installTrident,
+  installZest,
 } from "@/lib/install";
 import { checkInstalledTools, checkShellPathSource } from "@/lib/setup";
 import { PathSourceStatus, TOOL_CONFIG } from "@/const/setup";
@@ -20,6 +21,7 @@ const toolNames: Array<ToolNames> = [
   "avm",
   "anchor",
   "trident",
+  "zest",
   "yarn",
 ];
 
@@ -117,6 +119,12 @@ export default function installCommand() {
         }
         if (!toolName || toolName == "trident") {
           await installTrident({
+            os,
+            version,
+          });
+        }
+        if (!toolName || toolName == "zest") {
+          await installZest({
             os,
             version,
           });

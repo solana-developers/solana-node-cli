@@ -6,6 +6,7 @@ export type ToolNames =
   | "avm"
   | "anchor"
   | "yarn"
+  | "zest"
   | "trident";
 
 export type ToolCommandConfig = {

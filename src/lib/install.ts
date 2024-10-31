@@ -338,3 +338,90 @@ export async function installTrident({
 
   return false;
 }
+
+/**
+ * Install the Zest (from LimeChain) - code coverage tool
+ */
+export async function installZest({
+  version = "latest",
+  verifyParentCommand = true,
+}: InstallCommandPropsBase = {}) {
+  const spinner = ora("Installing zest (code coverage)").start();
+  try {
+    let installedVersion = await installedToolVersion("zest");
+    if (installedVersion) {
+      spinner.info(`zest ${installedVersion} is already installed`);
+      return true;
+    }
+
+    if (verifyParentCommand) {
+      const parentVersion = await installedToolVersion("rust");
+      if (!parentVersion) {
+        throw "rustc/cargo was not found but is required";
+      }
+    }
+
+    let result: Awaited<ReturnType<typeof shellExec>>;
+
+    try {
+      spinner.text = `Installing zest...`;
+
+      result = await shellExec(
+        `cargo install --git https://github.com/LimeChain/zest zest --force`,
+      );
+    } catch (err) {
+      throw "Unable to execute the zest installer";
+    }
+
+    if (result && result.code != 0) {
+      const error = result.stderr.trim().split("\n");
+      let parsed: string | null = null;
+
+      // ensure the user has the minimum rustc version
+      if (
+        (parsed = error
+          .slice(-1)[0]
+          .match(
+            /(?<=\bit requires rustc\s)\d+\.\d+(\.\d+)?(?=\sor newer\b)/gi,
+          )[0])
+      ) {
+        throw (
+          `Zest requires a minimum rustc version of ${parsed}. ` +
+          `To set your rustc version, run the following command:\n` +
+          `rustup default ${parsed}`
+        );
+      }
+
+      // fallback to displaying the error
+      throw error.join("\n");
+    }
+
+    try {
+      spinner.text = "Installing the 'llvm-tools-preview' component in rustup";
+      result = await shellExec(`rustup component add llvm-tools-preview`);
+    } catch (err) {
+      throw (
+        `Unable to execute 'rustup component add llvm-tools-preview'. ` +
+        `Try running manually.`
+      );
+    }
+
+    spinner.text = "Verifying zest was installed";
+    installedVersion = await installedToolVersion("zest");
+
+    if (installedVersion) {
+      spinner.succeed(`zest ${installedVersion} installed`);
+      return installedVersion;
+    } else {
+      spinner.fail("zest failed to install");
+      return false;
+    }
+  } catch (err) {
+    spinner.fail("Unable to install zest");
+    if (typeof err == "string") console.error(err);
+    else if (err instanceof Error) console.error(err.message);
+    else console.error(err.message);
+  }
+
+  return false;
+}

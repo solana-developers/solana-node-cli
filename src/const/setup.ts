@@ -22,6 +22,10 @@ export const TOOL_CONFIG: { [key in ToolNames]: ToolCommandConfig } = {
     // the trident cli does not have a version command, so we grab it from cargo
     version: "cargo install --list | grep trident-cli",
   },
+  zest: {
+    // the zest cli does not have a version command, so we grab it from cargo
+    version: "cargo install --list | grep zest",
+  },
 };
 
 export enum PathSourceStatus {
