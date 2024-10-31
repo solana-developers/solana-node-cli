@@ -6,7 +6,6 @@ import { InstallCommandPropsBase } from "@/types";
 import { appendPathToRCFiles, installedToolVersion } from "@/lib/shell";
 import shellExec from "shell-exec";
 import ora from "ora";
-import { errorMessage } from "@/lib/logs";
 import { TOOL_CONFIG } from "@/const/setup";
 
 /**
@@ -25,9 +24,18 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
       return true;
     }
 
-    await shellExec(
+    const result = await shellExec(
       `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`,
     );
+
+    if (result && result.code != 0) {
+      const error = result.stderr.trim().split("\n");
+
+      // todo: we can handle any specific known install errors here
+
+      // fallback to displaying the error
+      throw error.join("\n");
+    }
 
     spinner.text = "Verifying rust was installed";
     installedVersion = await installedToolVersion("rust");
@@ -40,6 +48,10 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
     }
   } catch (err) {
     spinner.fail("Unable to install rust");
+
+    if (typeof err == "string") console.error(err);
+    else if (err instanceof Error) console.error(err.message);
+    else console.error(err.message);
   }
 
   return false;
@@ -67,10 +79,19 @@ export async function installSolana({
       spinner.fail(`Invalid version: '${version}'`);
     }
 
-    await shellExec(
+    const result = await shellExec(
       // `sh -c "$(curl -sSfL https://release.solana.com/${version}/install)"`,
       `sh -c "$(curl -sSfL https://release.anza.xyz/${version}/install)"`,
     );
+
+    if (result && result.code != 0) {
+      const error = result.stderr.trim().split("\n");
+
+      // todo: we can handle any specific known install errors here
+
+      // fallback to displaying the error
+      throw error.join("\n");
+    }
 
     spinner.text = "Verifying solana was installed";
     installedVersion = await installedToolVersion("solana");
@@ -83,6 +104,9 @@ export async function installSolana({
     }
   } catch (err) {
     spinner.fail("Unable to install the Solana CLI tool suite");
+    if (typeof err == "string") console.error(err);
+    else if (err instanceof Error) console.error(err.message);
+    else console.error(err.message);
   }
 
   return false;
@@ -115,35 +139,34 @@ export async function installAnchorVersionManager({
     // const version = "v1.18.3";
     // const version = "stable";
 
-    const res = await shellExec(
+    const result = await shellExec(
       `cargo install --git https://github.com/coral-xyz/anchor avm --locked --force`,
     );
 
-    // console.log(res);
+    if (result && result.code != 0) {
+      const error = result.stderr.trim().split("\n");
 
-    // if (res.stdout) {
-    // todo: check the `path` and ensure it was fully setup
-    // todo: manually add the path info to the user's bashrc
+      // todo: we can handle any specific known install errors here
+
+      // fallback to displaying the error
+      throw error.join("\n");
+    }
 
     spinner.text = "Verifying avm was installed";
-
     installedVersion = await installedToolVersion("avm");
-    // console.log("\ninstalledVersion:", installedVersion);
 
     if (installedVersion) {
       spinner.succeed(`avm ${installedVersion} installed`);
       return installedVersion;
     } else {
       spinner.fail("avm failed to install");
-      // console.log(result);
-
       return false;
     }
-
-    //   return true;
-    // }
   } catch (err) {
     spinner.fail("Unable to install avm");
+    if (typeof err == "string") console.error(err);
+    else if (err instanceof Error) console.error(err.message);
+    else console.error(err.message);
   }
 
   return false;
@@ -190,16 +213,24 @@ export async function installAnchorUsingAvm({
 
       result = await shellExec(`avm install ${version}`);
     } catch (err) {
-      spinner.fail("Unable to execute `avm install`");
-      errorMessage(err);
+      throw "Unable to execute `avm install`";
+    }
+
+    // handle any `avm install` errors
+    if (result && result.code != 0) {
+      const error = result.stderr.trim().split("\n");
+
+      // todo: we can handle any specific known install errors here
+
+      // fallback to displaying the error
+      throw error.join("\n");
     }
 
     try {
       spinner.text = "Setting anchor version with avm";
       result = await shellExec(`avm use ${version}`);
     } catch (err) {
-      spinner.fail("Unable to execute `avm use`");
-      errorMessage(err);
+      throw "Unable to execute `avm use`";
     }
 
     spinner.text = "Verifying anchor was installed";
@@ -213,6 +244,9 @@ export async function installAnchorUsingAvm({
     }
   } catch (err) {
     spinner.fail("Unable to install anchor using avm");
+    if (typeof err == "string") console.error(err);
+    else if (err instanceof Error) console.error(err.message);
+    else console.error(err.message);
   }
 }
 
@@ -242,6 +276,9 @@ export async function installYarn({}: InstallCommandPropsBase = {}) {
     }
   } catch (err) {
     spinner.fail("Unable to install yarn package manager");
+    if (typeof err == "string") console.error(err);
+    else if (err instanceof Error) console.error(err.message);
+    else console.error(err.message);
   }
 
   return false;
@@ -254,7 +291,7 @@ export async function installTrident({
   version = "latest",
   verifyParentCommand = true,
 }: InstallCommandPropsBase = {}): Promise<boolean | string> {
-  const spinner = ora("Installing trident fuzzer").start();
+  const spinner = ora("Installing trident (fuzzer)").start();
   try {
     let installedVersion = await installedToolVersion("trident");
     if (installedVersion) {
@@ -271,10 +308,18 @@ export async function installTrident({
     }
 
     // note: trident requires `honggfuzz`
-    const res = await shellExec(`cargo install honggfuzz trident-cli`);
+    const result = await shellExec(`cargo install honggfuzz trident-cli`);
+
+    if (result && result.code != 0) {
+      const error = result.stderr.trim().split("\n");
+
+      // todo: we can handle any specific known install errors here
+
+      // fallback to displaying the error
+      throw error.join("\n");
+    }
 
     spinner.text = "Verifying trident was installed";
-
     installedVersion = await installedToolVersion("trident");
 
     if (installedVersion) {
@@ -286,6 +331,9 @@ export async function installTrident({
     }
   } catch (err) {
     spinner.fail("Unable to install the trident fuzzer");
+    if (typeof err == "string") console.error(err);
+    else if (err instanceof Error) console.error(err.message);
+    else console.error(err.message);
   }
 
   return false;
