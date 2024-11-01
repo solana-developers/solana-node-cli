@@ -38,3 +38,9 @@ export type InstallCommandPropsBase = {
    */
   // spinner: ReturnType<typeof spinner>;
 };
+
+export type ShellExecInSessionArgs = {
+  command: string;
+  args?: string[];
+  outputOnly?: boolean;
+};

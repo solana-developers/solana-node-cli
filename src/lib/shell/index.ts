@@ -1,5 +1,5 @@
 import os from "node:os";
-import { PlatformOS, ToolNames } from "@/types";
+import { PlatformOS, ShellExecInSessionArgs, ToolNames } from "@/types";
 import fs from "fs";
 import path from "path";
 import shellExec from "shell-exec";
@@ -161,11 +161,7 @@ export function shellExecInSession({
   command,
   args = undefined,
   outputOnly,
-}: {
-  command: string;
-  args?: string[];
-  outputOnly?: boolean;
-}): ChildProcess | void {
+}: ShellExecInSessionArgs): ChildProcess | void {
   if (outputOnly) {
     args = args || [];
     args.unshift(command);
