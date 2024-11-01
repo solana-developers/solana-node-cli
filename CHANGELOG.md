@@ -1,9 +1,10 @@
 # solana
 
-## 2.6.0-cov.0
+## 2.6.0
 
 ### Minor Changes
 
+- 4ebf2aa: add coverage command
 - add coverage command
 
 ### Patch Changes
