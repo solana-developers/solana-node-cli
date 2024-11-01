@@ -1,0 +1,11 @@
+{
+  "mode": "pre",
+  "tag": "cov",
+  "initialVersions": {
+    "solana": "2.5.0"
+  },
+  "changesets": [
+    "grumpy-ties-help",
+    "soft-crabs-pull"
+  ]
+}

@@ -5,6 +5,7 @@ import path from "path";
 import shellExec from "shell-exec";
 import { TOOL_CONFIG } from "@/const/setup";
 import { warnMessage } from "@/lib/logs";
+import { type ChildProcess, spawn } from "node:child_process";
 
 /**
  * Check if a given command name is installed and available on the system
@@ -149,5 +150,31 @@ export function appendPathToRCFiles(
     } else {
       // console.log(`${rcFile} not found.`);
     }
+  });
+}
+
+/**
+ * Execute a command using the user's current shell session,
+ * allowing the user to CTRL+C to cancel
+ */
+export function shellExecInSession({
+  command,
+  args = undefined,
+  outputOnly,
+}: {
+  command: string;
+  args?: string[];
+  outputOnly?: boolean;
+}): ChildProcess | void {
+  if (outputOnly) {
+    args = args || [];
+    args.unshift(command);
+    return console.log(args.join(" "));
+  }
+
+  return spawn(command, args, {
+    detached: false, // run the command in the same session
+    stdio: "inherit", // stream directly to the user's terminal
+    shell: true, // uns in shell mode for compatibility with shell commands
   });
 }
