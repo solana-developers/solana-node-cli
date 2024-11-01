@@ -12,7 +12,7 @@ import { TOOL_CONFIG } from "@/const/setup";
  * Install the rust toolchain with Rustup
  */
 export async function installRust({ version }: InstallCommandPropsBase = {}) {
-  const spinner = ora("Installing the rust toolchain using Rustup").start();
+  const spinner = ora("Installing the rust toolchain using rustup").start();
   try {
     // we ALWAYS check for and update the PATH in the bashrc file
     appendPathToRCFiles(TOOL_CONFIG.rust.pathSource, "rust");
@@ -24,6 +24,7 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
       return true;
     }
 
+    spinner.text = "Installing the rust toolchain using rustup";
     const result = await shellExec(
       `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`,
     );
@@ -54,6 +55,7 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
     else console.error(err.message);
   }
 
+  // default return false
   return false;
 }
 
@@ -76,9 +78,10 @@ export async function installSolana({
     }
     version = version.toLowerCase();
     if (version != "stable" && !version.startsWith("v")) {
-      spinner.fail(`Invalid version: '${version}'`);
+      throw `Invalid version: '${version}'`;
     }
 
+    spinner.text = "Installing the Solana CLI tool suite...";
     const result = await shellExec(
       // `sh -c "$(curl -sSfL https://release.solana.com/${version}/install)"`,
       `sh -c "$(curl -sSfL https://release.anza.xyz/${version}/install)"`,
@@ -109,6 +112,7 @@ export async function installSolana({
     else console.error(err.message);
   }
 
+  // default return false
   return false;
 }
 
@@ -127,18 +131,7 @@ export async function installAnchorVersionManager({
       return true;
     }
 
-    // if (verifyParentCommand) {
-    //   // if ()
-    //   const isParentInstalled = await installedToolVersion("rust");
-    //   if (!isParentInstalled) {
-    //     // todo: better error response handling
-    //     return "rust/cargo was not found";
-    //   }
-    // }
-
-    // const version = "v1.18.3";
-    // const version = "stable";
-
+    spinner.text = "Installing avm (anchor version manager)";
     const result = await shellExec(
       `cargo install --git https://github.com/coral-xyz/anchor avm --locked --force`,
     );
@@ -169,6 +162,7 @@ export async function installAnchorVersionManager({
     else console.error(err.message);
   }
 
+  // default return false
   return false;
 }
 
@@ -192,9 +186,8 @@ export async function installAnchorUsingAvm({
 
     if (!avmVersion) {
       // todo: smart install avm?
-      spinner.fail(`avm is NOT already installed`);
+      throw `avm is NOT already installed`;
       // todo: better error response handling
-      return false;
     } else {
       // todo: support other versions of anchor via avm
       version = avmVersion;
@@ -209,8 +202,9 @@ export async function installAnchorUsingAvm({
     let result: Awaited<ReturnType<typeof shellExec>>;
 
     try {
-      spinner.text = `Installing anchor version '${version}'. This may take a few minutes...`;
-
+      spinner.text =
+        `Installing anchor version '${version}'. ` +
+        `This may take a few moments...`;
       result = await shellExec(`avm install ${version}`);
     } catch (err) {
       throw "Unable to execute `avm install`";
@@ -248,6 +242,9 @@ export async function installAnchorUsingAvm({
     else if (err instanceof Error) console.error(err.message);
     else console.error(err.message);
   }
+
+  // default return false
+  return false;
 }
 
 /**
@@ -263,6 +260,7 @@ export async function installYarn({}: InstallCommandPropsBase = {}) {
       return true;
     }
 
+    spinner.text = `Installing yarn package manager`;
     await shellExec(`npm install -g yarn`);
 
     spinner.text = "Verifying yarn was installed";
@@ -281,6 +279,7 @@ export async function installYarn({}: InstallCommandPropsBase = {}) {
     else console.error(err.message);
   }
 
+  // default return false
   return false;
 }
 
@@ -307,6 +306,7 @@ export async function installTrident({
       }
     }
 
+    spinner.text = "Installing trident (fuzzer)";
     // note: trident requires `honggfuzz`
     const result = await shellExec(`cargo install honggfuzz trident-cli`);
 
@@ -336,6 +336,7 @@ export async function installTrident({
     else console.error(err.message);
   }
 
+  // default return false
   return false;
 }
 
@@ -364,8 +365,7 @@ export async function installZest({
     let result: Awaited<ReturnType<typeof shellExec>>;
 
     try {
-      spinner.text = `Installing zest...`;
-
+      spinner.text = `Installing zest (code coverage)...`;
       result = await shellExec(
         `cargo install --git https://github.com/LimeChain/zest zest --force`,
       );
@@ -423,5 +423,6 @@ export async function installZest({
     else console.error(err.message);
   }
 
+  // default return false
   return false;
 }
