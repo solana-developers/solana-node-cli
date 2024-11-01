@@ -26,6 +26,7 @@ export async function checkInstalledTools({
     anchor: false,
     yarn: false,
     trident: false,
+    zest: false,
   };
 
   await Promise.all(
