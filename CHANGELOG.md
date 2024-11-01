@@ -1,5 +1,15 @@
 # solana
 
+## 2.6.0-cov.0
+
+### Minor Changes
+
+- add coverage command
+
+### Patch Changes
+
+- 97b466a: improved installer status messages
+
 ## 2.5.0
 
 ### Minor Changes
