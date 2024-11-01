@@ -34,7 +34,12 @@ export async function installedToolVersion(name: ToolNames) {
  */
 export async function checkCommand(
   cmd: string,
-  onError: { message?: string; exit?: boolean } = null,
+  errorOptions: {
+    message?: string;
+    exit?: boolean;
+    onError?: Function;
+    doubleCheck?: boolean;
+  } = null,
 ): Promise<string | false> {
   try {
     const { stdout } = await shellExec(cmd);
@@ -43,15 +48,30 @@ export async function checkCommand(
       return stdout.trim();
     }
 
-    if (onError) throw "Command not found";
+    if (errorOptions) throw "Command not found";
     return false;
   } catch (err) {
-    if (onError) {
-      console.log("onError:", onError);
-      warnMessage(
-        onError.message || `Unable to execute command: ${cmd.split(" ")[0]}`,
-      );
-      if (onError.exit) process.exit(1);
+    if (errorOptions) {
+      // execute the onError function
+      if (typeof errorOptions?.onError == "function") {
+        // the onError function can attempt to fix the error of the command not executing
+        // (like prompting the user to install a command)
+        const res = await errorOptions.onError();
+
+        if (errorOptions.doubleCheck) {
+          return await checkCommand(cmd, {
+            exit: errorOptions.exit,
+          });
+        }
+
+        if (!res && errorOptions?.exit) process.exit(1);
+      } else {
+        warnMessage(
+          errorOptions.message ||
+            `Unable to execute command: ${cmd.split(" ")[0]}`,
+        );
+        if (errorOptions.exit) process.exit(1);
+      }
     }
     return false;
   }
