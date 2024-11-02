@@ -26,6 +26,9 @@ export const TOOL_CONFIG: { [key in ToolNames]: ToolCommandConfig } = {
     // the zest cli does not have a version command, so we grab it from cargo
     version: "cargo install --list | grep zest",
   },
+  verify: {
+    version: "solana-verify --version",
+  },
 };
 
 export enum PathSourceStatus {
