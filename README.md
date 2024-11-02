@@ -29,6 +29,7 @@ system. If installed globally, unexpected behavior may occur.
 - [`test-validator`](#test-validator) - Run the Solana test-validator on your
   local machine, including loading all the cloned fixtures for your repo.
 - [`build`](#build) - Build all or a single Solana program in your workspace.
+- [`coverage`](#coverage) - Run code coverage tests on a Solana program.
 
 ### install
 
@@ -133,6 +134,25 @@ The default behavior for running the `test-validator` is as follows:
   will be loaded into the validator at genesis.
 - All loaded programs will have their upgrade authority set to your local
   keypair's address (via `settings.keypair`).
+
+### coverage
+
+Run code coverage tests on a Solana program, powered by the
+[Zest CLI](https://github.com/LimeChain/zest?tab=readme-ov-file).
+
+**Usage:**
+
+```shell
+npx solana coverage --help
+```
+
+To pass additional arguments to the Zest CLI, append them at the end of this
+tool's command starting with `--`. For example, to run the Zest CLI's help
+command:
+
+```shell
+npx solana coverage -- --help
+```
 
 ## Solana.toml
 
