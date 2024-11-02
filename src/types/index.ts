@@ -19,6 +19,7 @@ export type ToolCommandConfig = {
   // install: string;
   /** command to update the tool */
   // update: string;
+  dependencies?: ToolNames[];
 };
 
 /**
