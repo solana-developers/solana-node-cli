@@ -11,6 +11,7 @@ import {
   installYarn,
   installTrident,
   installZest,
+  installSolanaVerify,
 } from "@/lib/install";
 import { checkInstalledTools, checkShellPathSource } from "@/lib/setup";
 import { PathSourceStatus, TOOL_CONFIG } from "@/const/setup";
@@ -23,6 +24,7 @@ const toolNames: Array<ToolNames> = [
   "trident",
   "zest",
   "yarn",
+  "verify",
 ];
 
 /**
@@ -125,6 +127,12 @@ export default function installCommand() {
         }
         if (!toolName || toolName == "zest") {
           await installZest({
+            os,
+            version,
+          });
+        }
+        if (!toolName || toolName == "verify") {
+          await installSolanaVerify({
             os,
             version,
           });

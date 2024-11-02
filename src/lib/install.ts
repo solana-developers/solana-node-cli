@@ -426,3 +426,78 @@ export async function installZest({
   // default return false
   return false;
 }
+
+/**
+ * Install the solana-verify tool
+ */
+export async function installSolanaVerify({
+  version = "latest",
+  verifyParentCommand = true,
+}: InstallCommandPropsBase = {}) {
+  const spinner = ora("Installing solana-verify").start();
+  try {
+    let installedVersion = await installedToolVersion("verify");
+    if (installedVersion) {
+      spinner.info(`solana-verify ${installedVersion} is already installed`);
+      return true;
+    }
+
+    if (verifyParentCommand) {
+      const parentVersion = await installedToolVersion("rust");
+      if (!parentVersion) {
+        throw "rustc/cargo was not found but is required";
+      }
+    }
+
+    let result: Awaited<ReturnType<typeof shellExec>>;
+
+    try {
+      spinner.text = `Installing solana-verify...`;
+      result = await shellExec(`cargo install solana-verify`);
+    } catch (err) {
+      throw "Unable to execute the solana-verify installer";
+    }
+
+    if (result && result.code != 0) {
+      const error = result.stderr.trim().split("\n");
+      let parsed: string | null = null;
+
+      // // ensure the user has the minimum rustc version
+      // if (
+      //   (parsed = error
+      //     .slice(-1)[0]
+      //     .match(
+      //       /(?<=\bit requires rustc\s)\d+\.\d+(\.\d+)?(?=\sor newer\b)/gi,
+      //     )[0])
+      // ) {
+      //   throw (
+      //     `Zest requires a minimum rustc version of ${parsed}. ` +
+      //     `To set your rustc version, run the following command:\n` +
+      //     `rustup default ${parsed}`
+      //   );
+      // }
+
+      // fallback to displaying the error
+      throw error.join("\n");
+    }
+
+    spinner.text = "Verifying solana-verify was installed";
+    installedVersion = await installedToolVersion("verify");
+
+    if (installedVersion) {
+      spinner.succeed(`solana-verify ${installedVersion} installed`);
+      return installedVersion;
+    } else {
+      spinner.fail("solana-verify failed to install");
+      return false;
+    }
+  } catch (err) {
+    spinner.fail("Unable to install solana-verify");
+    if (typeof err == "string") console.error(err);
+    else if (err instanceof Error) console.error(err.message);
+    else console.error(err.message);
+  }
+
+  // default return false
+  return false;
+}
