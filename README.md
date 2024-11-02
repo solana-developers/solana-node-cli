@@ -49,6 +49,8 @@ The Solana Toolkit includes the following tools:
 - [Agave CLI tool suite](https://solana.com/docs/intro/installation#install-the-solana-cli) -
   the standard tool suite required to build and deploy Solana programs (formerly
   known as the "Solana CLI tool suite").
+- [solana-verify](https://github.com/Ellipsis-Labs/solana-verifiable-build) - A
+  command line tool to build and verify Solana programs.
 - [Anchor and AVM](https://www.anchor-lang.com/docs/installation#installing-using-anchor-version-manager-avm-recommended) -
   The Anchor framework and the Anchor Version Manager (AVM)
   - Yarn is currently installed as a dependency of Anchor. This dependency is
