@@ -3,7 +3,11 @@
  */
 
 import { InstallCommandPropsBase } from "@/types";
-import { appendPathToRCFiles, installedToolVersion } from "@/lib/shell";
+import {
+  appendPathToRCFiles,
+  checkCommand,
+  installedToolVersion,
+} from "@/lib/shell";
 import shellExec from "shell-exec";
 import ora from "ora";
 import { TOOL_CONFIG } from "@/const/setup";
@@ -439,6 +443,7 @@ export async function installSolanaVerify({
     let installedVersion = await installedToolVersion("verify");
     if (installedVersion) {
       spinner.info(`solana-verify ${installedVersion} is already installed`);
+      await isDockerInstalled();
       return true;
     }
 
@@ -486,6 +491,7 @@ export async function installSolanaVerify({
 
     if (installedVersion) {
       spinner.succeed(`solana-verify ${installedVersion} installed`);
+      await isDockerInstalled();
       return installedVersion;
     } else {
       spinner.fail("solana-verify failed to install");
@@ -500,4 +506,20 @@ export async function installSolanaVerify({
 
   // default return false
   return false;
+}
+
+export async function isDockerInstalled() {
+  return checkCommand("docker --version", {
+    exit: false,
+    onError: () => {
+      console.error(
+        `Unable to detect Docker (which is required for 'solana-verify'). Do you have it installed?`,
+      );
+
+      console.error(
+        "To install Docker, follow the instructions in the official Docker documentation:",
+        "\nhttps://docs.docker.com/engine/install/",
+      );
+    },
+  });
 }
