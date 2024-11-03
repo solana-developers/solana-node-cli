@@ -6,11 +6,78 @@ import { InstallCommandPropsBase } from "@/types";
 import {
   appendPathToRCFiles,
   checkCommand,
+  detectOperatingSystem,
   installedToolVersion,
 } from "@/lib/shell";
 import shellExec from "shell-exec";
 import ora from "ora";
 import { TOOL_CONFIG } from "@/const/setup";
+
+/**
+ * Check to see which debian/ubuntu dependencies
+ */
+export async function checkDebianDependenciesInstalled(
+  exitWhenMissing: boolean = true,
+  printInstallCommand: boolean = true,
+): Promise<string[] | void> {
+  const deps: string[] = [
+    "build-essential",
+    "pkg-config",
+    "libudev-dev",
+    "llvm",
+    "libclang-dev",
+    "protobuf-compiler",
+    "libssl-dev",
+  ];
+
+  const statuses = await Promise.allSettled(
+    deps.map((dep) =>
+      checkCommand(`apt list ${dep} | grep \[installed\]`, {
+        exit: false,
+      }),
+    ),
+  );
+
+  const missingDeps: string[] = [];
+
+  statuses.map((res, index) => {
+    let isInstalled = false;
+
+    if (res.status == "rejected" || !res?.value) {
+      console.error("Unable to detect dependency:", deps[index]);
+    } else {
+      res.value.split("\n").map((data) => {
+        if (
+          new RegExp(`^${deps[index]}\/[^\\s]+.+\\[installed\\]`, "m").test(
+            data,
+          )
+        ) {
+          isInstalled = true;
+        }
+      });
+    }
+
+    if (!isInstalled) {
+      missingDeps.push(deps[index]);
+    }
+  });
+
+  if (missingDeps.length == 0) return;
+
+  if (printInstallCommand) {
+    console.log(
+      "sudo apt update && sudo apt install -y",
+      missingDeps.join(" "),
+    );
+  }
+
+  if (exitWhenMissing) {
+    console.error("Missing dependencies:", missingDeps.join(" "));
+    process.exit(0);
+  }
+
+  return missingDeps;
+}
 
 /**
  * Install the rust toolchain with Rustup
@@ -20,6 +87,20 @@ export async function installRust({ version }: InstallCommandPropsBase = {}) {
   try {
     // we ALWAYS check for and update the PATH in the bashrc file
     appendPathToRCFiles(TOOL_CONFIG.rust.pathSource, "rust");
+
+    const os = detectOperatingSystem();
+    // todo: we need to support non-debian linux
+    // if the user's system does not have `apt`, skip this check
+    if (os == "linux" && (await checkCommand(`apt --version`))) {
+      spinner.text = `Checking for required linux dependencies`;
+      const missingDeps = await checkDebianDependenciesInstalled(true, true);
+      if (missingDeps && missingDeps.length > 0) {
+        throw (
+          `Your system is missing required system dependencies: ` +
+          missingDeps.join(" ")
+        );
+      }
+    }
 
     let installedVersion = await installedToolVersion("rust");
     if (installedVersion) {
