@@ -1,5 +1,12 @@
 # solana
 
+## 2.7.0
+
+### Minor Changes
+
+- added solana-verify to the installer
+- added helper to detect and auto install debian system dependencies
+
 ## 2.6.0
 
 ### Minor Changes
