@@ -114,3 +114,43 @@ export function getProgramPathsInWorkspace(
 
   return programPaths;
 }
+
+export function autoLocateProgramsInWorkspace(
+  manifestPath: string = join(process.cwd(), "Cargo.toml"),
+  workspaceDirs: string[] = ["temp", "programs/*", "program"],
+): {
+  programs: Map<string, string>;
+  cargoToml: false | CargoTomlWithConfigPath;
+} {
+  // determine if we are in a program specific dir or the workspace
+  let cargoToml = loadCargoToml(manifestPath);
+
+  if (!cargoToml) {
+    workspaceDirs.some((workspace) => {
+      const filePath = join(
+        process.cwd(),
+        workspace.replace(/\*+$/, ""),
+        "Cargo.toml",
+      );
+      if (doesFileExist(filePath)) {
+        cargoToml = loadCargoToml(filePath);
+        if (cargoToml) return;
+      }
+    });
+  }
+
+  if (cargoToml) {
+    // always update the current manifest path to the one of the loaded Cargo.toml
+    if (cargoToml.configPath) {
+      manifestPath = cargoToml.configPath;
+    }
+
+    if (cargoToml.workspace?.members) {
+      workspaceDirs = cargoToml.workspace.members;
+    }
+  }
+
+  const programs = getProgramPathsInWorkspace(manifestPath, workspaceDirs);
+
+  return { programs, cargoToml };
+}

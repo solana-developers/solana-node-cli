@@ -2,11 +2,10 @@ import { join } from "path";
 import { Command, Option } from "@commander-js/extra-typings";
 import { cliOutputConfig } from "@/lib/cli";
 import { titleMessage, warningOutro, warnMessage } from "@/lib/logs";
-import { checkCommand } from "@/lib/shell";
+import { checkCommand, shellExecInSession } from "@/lib/shell";
 import { COMMON_OPTIONS } from "@/const/commands";
-import { getProgramPathsInWorkspace, loadCargoToml } from "@/lib/cargo";
+import { autoLocateProgramsInWorkspace, loadCargoToml } from "@/lib/cargo";
 import { buildProgramCommand } from "@/lib/shell/build";
-import { spawn } from "child_process";
 import { doesFileExist } from "@/lib/utils";
 
 /**
@@ -18,6 +17,13 @@ export function buildCommand() {
   return new Command("build")
     .configureOutput(cliOutputConfig)
     .description("build your Solana programs")
+    .usage("[options] [-- <CARGO_ARGS>...]")
+    .addOption(
+      new Option(
+        "-- <CARGO_ARGS>",
+        `arguments to pass to the underlying 'cargo build-sbf' command`,
+      ),
+    )
     .addOption(
       new Option(
         "-p --program-name <PROGRAM_NAME>",
@@ -31,7 +37,7 @@ export function buildCommand() {
     )
     .addOption(COMMON_OPTIONS.config)
     .addOption(COMMON_OPTIONS.outputOnly)
-    .action(async (options) => {
+    .action(async (options, { args: passThroughArgs }) => {
       if (!options.outputOnly) {
         titleMessage("Build your Solana programs");
       }
@@ -45,38 +51,8 @@ export function buildCommand() {
           "Unable to detect the 'cargo build-sbf' command. Do you have it installed?",
       });
 
-      // determine if we are in a program specific dir or the workspace
-      let cargoToml = loadCargoToml(options.manifestPath);
-
-      let workspaceDirs = ["temp", "programs/*", "program"];
-      if (!cargoToml) {
-        workspaceDirs.some((workspace) => {
-          const filePath = join(
-            process.cwd(),
-            workspace.replace(/\*+$/, ""),
-            "Cargo.toml",
-          );
-          if (doesFileExist(filePath)) {
-            cargoToml = loadCargoToml(filePath);
-            if (cargoToml) return;
-          }
-        });
-      }
-
-      if (cargoToml) {
-        // always update the current manifest path to the one of the loaded Cargo.toml
-        if (cargoToml.configPath) {
-          options.manifestPath = cargoToml.configPath;
-        }
-
-        if (cargoToml.workspace?.members) {
-          workspaceDirs = cargoToml.workspace.members;
-        }
-      }
-
-      const programs = getProgramPathsInWorkspace(
+      let { programs, cargoToml } = autoLocateProgramsInWorkspace(
         options.manifestPath,
-        workspaceDirs,
       );
 
       // only build a single program
@@ -138,16 +114,10 @@ export function buildCommand() {
         return warningOutro(`Unable to create build command`);
       }
 
-      if (options.outputOnly) {
-        console.log(buildCommand);
-        process.exit();
-      }
-
-      // execute the build command using a normal shell, allowing the user to CTRL+C to cancel
-      spawn(buildCommand, undefined, {
-        detached: false, // run the command in the same session
-        stdio: "inherit", // Stream directly to the user's terminal
-        shell: true, // Runs in shell for compatibility with shell commands
+      shellExecInSession({
+        command: buildCommand,
+        args: passThroughArgs,
+        outputOnly: options.outputOnly,
       });
     });
 }

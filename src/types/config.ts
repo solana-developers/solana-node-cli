@@ -25,7 +25,7 @@ export type SolanaToml = {
       localnet: string;
     }>;
   }>;
-  programs?: ProgramBuildLabels;
+  programs?: ProgramsByClusterLabels;
   clone?: Partial<SolanaTomlClone>;
 };
 
@@ -87,7 +87,7 @@ export type CloneAccountsFromConfigResult = {
   changedAccounts: Map<string, JsonAccountStruct>;
 };
 
-export type ProgramBuildLabels = Partial<{
+export type ProgramsByClusterLabels = Partial<{
   localnet?: Record<string, string>;
   devnet?: Record<string, string>;
   testnet?: Record<string, string>;
