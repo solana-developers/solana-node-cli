@@ -82,6 +82,11 @@ export function deployCommand() {
         );
       }
 
+      // auto select the program name for single program repos
+      if (!options.programName && programs.size == 1) {
+        options.programName = programs.entries().next().value[0];
+      }
+
       if (!programs.has(options.programName) || !options.programName) {
         if (!options.programName) {
           // todo: we could give the user a prompt
