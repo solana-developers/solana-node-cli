@@ -1,6 +1,6 @@
 import { dirname, join, resolve } from "path";
 import {
-  ProgramBuildLabels,
+  ProgramsByClusterLabels,
   SolanaTomlCloneLocalProgram,
 } from "@/types/config";
 import { directoryExists, loadFileNamesToMap } from "@/lib//utils";
@@ -19,9 +19,9 @@ export function listLocalPrograms({
 }: {
   buildDir?: string;
   basePath?: string;
-  labels?: ProgramBuildLabels;
+  labels?: ProgramsByClusterLabels;
   configPath?: string;
-  cluster?: keyof ProgramBuildLabels;
+  cluster?: keyof ProgramsByClusterLabels;
 } = {}): {
   locatedPrograms: SolanaTomlCloneLocalProgram;
   buildDirListing: Map<string, string>;

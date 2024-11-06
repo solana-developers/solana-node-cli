@@ -1,7 +1,7 @@
 import { Keypair } from "@solana/web3.js";
 import { doesFileExist, loadJsonFile } from "@/lib/utils";
 import { DEFAULT_KEYPAIR_PATH } from "@/const/solana";
-import { ProgramBuildLabels, SolanaCluster } from "@/types/config";
+import { ProgramsByClusterLabels, SolanaCluster } from "@/types/config";
 import { warnMessage } from "@/lib/logs";
 
 export function loadKeypairFromFile(
@@ -43,9 +43,9 @@ export function parseRpcUrlOrMoniker(
 }
 
 export function safeCheckClusterLabel(
-  labels: ProgramBuildLabels,
+  labels: ProgramsByClusterLabels,
   cluster: SolanaCluster,
-): false | keyof ProgramBuildLabels {
+): false | keyof ProgramsByClusterLabels {
   // allow equivalent cluster names
   switch (cluster) {
     case "localhost":
