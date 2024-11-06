@@ -109,7 +109,8 @@ export function deployCommand() {
       const binaryPath = path.join(buildDir, `${options.programName}.so`);
       if (!doesFileExist(binaryPath)) {
         // todo: we should detect if the program is declared and recommend building it
-        return warnMessage(`Unable to locate program binary: ${binaryPath}`);
+        // todo: or we could generate a fresh one?
+        return warnMessage(`Unable to locate program binary:\n${binaryPath}`);
       }
 
       let programIdPath = path.join(
@@ -132,6 +133,23 @@ export function deployCommand() {
       // todo: if options.url is localhost, verify the test validator is running
 
       // todo: if localhost deploy, support feature cloning to match a cluster
+
+      /**
+       * todo: if deploying to mainnet, we should add some "confirm" prompts
+       * - this is the program id
+       * - this is the upgrade authority
+       * - estimated cost (you have X sol)
+       * do you want to continue?
+       */
+
+      /**
+       * todo: assorted pre-deploy checks to add
+       * - is program already deployed
+       * - is program frozen
+       * - do you have the upgrade authority
+       * - is the upgrade authority a multi sig?
+       * - do you have enough sol to deploy?
+       */
 
       shellExecInSession({
         command,
