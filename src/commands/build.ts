@@ -2,11 +2,10 @@ import { join } from "path";
 import { Command, Option } from "@commander-js/extra-typings";
 import { cliOutputConfig } from "@/lib/cli";
 import { titleMessage, warningOutro, warnMessage } from "@/lib/logs";
-import { checkCommand } from "@/lib/shell";
+import { checkCommand, shellExecInSession } from "@/lib/shell";
 import { COMMON_OPTIONS } from "@/const/commands";
 import { autoLocateProgramsInWorkspace, loadCargoToml } from "@/lib/cargo";
 import { buildProgramCommand } from "@/lib/shell/build";
-import { spawn } from "child_process";
 import { doesFileExist } from "@/lib/utils";
 
 /**
@@ -18,6 +17,13 @@ export function buildCommand() {
   return new Command("build")
     .configureOutput(cliOutputConfig)
     .description("build your Solana programs")
+    .usage("[options] [-- <CARGO_ARGS>...]")
+    .addOption(
+      new Option(
+        "-- <CARGO_ARGS>",
+        `arguments to pass to the underlying 'cargo build-sbf' command`,
+      ),
+    )
     .addOption(
       new Option(
         "-p --program-name <PROGRAM_NAME>",
@@ -31,7 +37,7 @@ export function buildCommand() {
     )
     .addOption(COMMON_OPTIONS.config)
     .addOption(COMMON_OPTIONS.outputOnly)
-    .action(async (options) => {
+    .action(async (options, { args: passThroughArgs }) => {
       if (!options.outputOnly) {
         titleMessage("Build your Solana programs");
       }
@@ -108,16 +114,10 @@ export function buildCommand() {
         return warningOutro(`Unable to create build command`);
       }
 
-      if (options.outputOnly) {
-        console.log(buildCommand);
-        process.exit();
-      }
-
-      // execute the build command using a normal shell, allowing the user to CTRL+C to cancel
-      spawn(buildCommand, undefined, {
-        detached: false, // run the command in the same session
-        stdio: "inherit", // Stream directly to the user's terminal
-        shell: true, // Runs in shell for compatibility with shell commands
+      shellExecInSession({
+        command: buildCommand,
+        args: passThroughArgs,
+        outputOnly: options.outputOnly,
       });
     });
 }
