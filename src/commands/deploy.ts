@@ -82,17 +82,17 @@ export function deployCommand() {
         );
       }
 
-      if (!options.programName) {
-        // todo: we could give the user a prompt
-        return warnMessage(`You must select a program to deploy. See --help.`);
-      }
+      if (!programs.has(options.programName) || !options.programName) {
+        if (!options.programName) {
+          // todo: we could give the user a prompt
+          warnMessage(`You must select a program to deploy. See --help.`);
+        } else if (!programs.has(options.programName)) {
+          warnMessage(
+            `Unable to locate program '${options.programName}' in this workspace`,
+          );
+        }
 
-      if (!programs.has(options.programName)) {
-        warnMessage(
-          `Unable to locate program '${options.programName}' in this workspace`,
-        );
         console.log(`The following programs were located:`);
-
         programs.forEach((_programPath, programName) =>
           console.log(" -", programName),
         );
