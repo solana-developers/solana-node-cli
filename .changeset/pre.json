@@ -1,0 +1,11 @@
+{
+  "mode": "pre",
+  "tag": "deploy",
+  "initialVersions": {
+    "solana": "2.7.0"
+  },
+  "changesets": [
+    "large-hairs-fix",
+    "neat-singers-reply"
+  ]
+}

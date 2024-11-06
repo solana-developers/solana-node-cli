@@ -1,5 +1,12 @@
 # solana
 
+## 2.8.0-deploy.0
+
+### Minor Changes
+
+- 36dfaf1: accept pass through args for the `build` command
+- added deploy command
+
 ## 2.7.0
 
 ### Minor Changes
