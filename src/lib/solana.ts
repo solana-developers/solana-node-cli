@@ -42,10 +42,24 @@ export function parseRpcUrlOrMoniker(
   }
 }
 
-export function safeCheckClusterLabel(
-  labels: ProgramsByClusterLabels,
-  cluster: SolanaCluster,
+/**
+ * Validate and sanitize the provided cluster moniker
+ */
+export function getSafeClusterMoniker(
+  cluster: SolanaCluster | string,
+  labels?: ProgramsByClusterLabels,
 ): false | keyof ProgramsByClusterLabels {
+  cluster = parseRpcUrlOrMoniker(cluster, true, false);
+
+  if (!labels) {
+    labels = {
+      devnet: {},
+      localnet: {},
+      mainnet: {},
+      testnet: {},
+    };
+  }
+
   // allow equivalent cluster names
   switch (cluster) {
     case "localhost":
@@ -64,6 +78,7 @@ export function safeCheckClusterLabel(
     // default:
   }
 
-  if (Object.hasOwn(labels, cluster)) return cluster;
-  else return false;
+  if (Object.hasOwn(labels, cluster)) {
+    return cluster as keyof ProgramsByClusterLabels;
+  } else return false;
 }
