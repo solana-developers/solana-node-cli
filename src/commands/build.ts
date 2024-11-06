@@ -4,7 +4,7 @@ import { cliOutputConfig } from "@/lib/cli";
 import { titleMessage, warningOutro, warnMessage } from "@/lib/logs";
 import { checkCommand } from "@/lib/shell";
 import { COMMON_OPTIONS } from "@/const/commands";
-import { getProgramPathsInWorkspace, loadCargoToml } from "@/lib/cargo";
+import { autoLocateProgramsInWorkspace, loadCargoToml } from "@/lib/cargo";
 import { buildProgramCommand } from "@/lib/shell/build";
 import { spawn } from "child_process";
 import { doesFileExist } from "@/lib/utils";
@@ -45,38 +45,8 @@ export function buildCommand() {
           "Unable to detect the 'cargo build-sbf' command. Do you have it installed?",
       });
 
-      // determine if we are in a program specific dir or the workspace
-      let cargoToml = loadCargoToml(options.manifestPath);
-
-      let workspaceDirs = ["temp", "programs/*", "program"];
-      if (!cargoToml) {
-        workspaceDirs.some((workspace) => {
-          const filePath = join(
-            process.cwd(),
-            workspace.replace(/\*+$/, ""),
-            "Cargo.toml",
-          );
-          if (doesFileExist(filePath)) {
-            cargoToml = loadCargoToml(filePath);
-            if (cargoToml) return;
-          }
-        });
-      }
-
-      if (cargoToml) {
-        // always update the current manifest path to the one of the loaded Cargo.toml
-        if (cargoToml.configPath) {
-          options.manifestPath = cargoToml.configPath;
-        }
-
-        if (cargoToml.workspace?.members) {
-          workspaceDirs = cargoToml.workspace.members;
-        }
-      }
-
-      const programs = getProgramPathsInWorkspace(
+      let { programs, cargoToml } = autoLocateProgramsInWorkspace(
         options.manifestPath,
-        workspaceDirs,
       );
 
       // only build a single program
