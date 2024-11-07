@@ -41,8 +41,19 @@ export function loadPlaintextFile(filePath: string): string | null {
  */
 export function loadJsonFile<T = object>(filePath: string): T | null {
   try {
-    const data = loadPlaintextFile(filePath);
-    const parsedData: T = JSON.parse(data);
+    const parsedData: T = parseJson(loadPlaintextFile(filePath));
+    return parsedData;
+  } catch (error) {
+    return null;
+  }
+}
+
+/**
+ *
+ */
+export function parseJson<T = object>(input: string): T | null {
+  try {
+    const parsedData: T = JSON.parse(input);
     return parsedData;
   } catch (error) {
     if (error instanceof SyntaxError) {
