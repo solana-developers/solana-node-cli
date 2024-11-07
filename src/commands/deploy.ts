@@ -2,7 +2,7 @@ import path from "path";
 import { Command, Option } from "@commander-js/extra-typings";
 import { COMMON_OPTIONS } from "@/const/commands";
 import { cliOutputConfig, loadConfigToml } from "@/lib/cli";
-import { titleMessage, warnMessage } from "@/lib/logs";
+import { cancelMessage, titleMessage, warnMessage } from "@/lib/logs";
 import { checkCommand, shellExecInSession } from "@/lib/shell";
 import {
   buildDeployProgramCommand,
@@ -151,6 +151,7 @@ export function deployCommand() {
       }
 
       let programId = config.programs[selectedCluster][options.programName];
+      let programIdPath: string | null = null;
       let programInfo = await getDeployedProgramInfo(programId, options.url);
 
       /**
@@ -159,7 +160,7 @@ export function deployCommand() {
        */
       if (!programInfo) {
         // not-yet-deployed programs require a keypair to deploy for the first time
-        let programIdPath = path.join(
+        programIdPath = path.join(
           buildDir,
           `${options.programName}-keypair.json`,
         );
@@ -173,9 +174,38 @@ export function deployCommand() {
         programInfo = await getDeployedProgramInfo(programId, options.url);
       }
 
+      // console.log("programInfo:", programInfo);
+      const authorityKeypair = loadKeypairFromFile(config.settings.keypair);
+
+      /**
+       * todo: assorted pre-deploy checks to add
+       * + is program already deployed
+       * + is program frozen
+       * - do you have the upgrade authority
+       * - is the upgrade authority a multi sig?
+       * - do you have enough sol to deploy ?
+       */
+      if (programInfo) {
+        if (!programInfo.authority) {
+          return cancelMessage(
+            `Program ${programInfo.programId} is no longer upgradeable`,
+          );
+        }
+
+        if (programInfo.authority !== authorityKeypair.publicKey.toBase58()) {
+          return cancelMessage(
+            `Your keypair (${authorityKeypair.publicKey.toBase58()}) is not the upgrade authority for program ${programId}`,
+          );
+        }
+
+        programId = programInfo.programId;
+      } else {
+        // todo: do we need to perform any checks if the program is not already deployed?
+      }
+
       const command = buildDeployProgramCommand({
         programPath: binaryPath,
-        programId: programId,
+        programId: programIdPath || programId,
         url: options.url,
         keypair: options.keypair,
       });
