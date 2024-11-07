@@ -1,5 +1,11 @@
 # solana
 
+## 2.8.0-deploy.1
+
+### Minor Changes
+
+- added pre-deploy checks
+
 ## 2.8.0-deploy.0
 
 ### Minor Changes

@@ -5,6 +5,7 @@
     "solana": "2.7.0"
   },
   "changesets": [
+    "beige-chicken-film",
     "large-hairs-fix",
     "neat-singers-reply"
   ]
