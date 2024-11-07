@@ -4,9 +4,13 @@ import { COMMON_OPTIONS } from "@/const/commands";
 import { cliOutputConfig, loadConfigToml } from "@/lib/cli";
 import { titleMessage, warnMessage } from "@/lib/logs";
 import { checkCommand, shellExecInSession } from "@/lib/shell";
-import { buildDeployProgramCommand } from "@/lib/shell/deploy";
+import {
+  buildDeployProgramCommand,
+  getDeployedProgramInfo,
+} from "@/lib/shell/deploy";
 import { autoLocateProgramsInWorkspace } from "@/lib/cargo";
 import { directoryExists, doesFileExist } from "@/lib/utils";
+import { getSafeClusterMoniker, loadKeypairFromFile } from "@/lib/solana";
 
 /**
  * Command: `deploy`
@@ -69,6 +73,28 @@ export function deployCommand() {
 
       if (!cargoToml) return warnMessage(`Unable to locate Cargo.toml`);
 
+      const selectedCluster = getSafeClusterMoniker(options.url);
+      if (!selectedCluster) {
+        return warnMessage(`Unable to parse cluster url: ${options.url}`);
+      }
+
+      // make sure the user has the cluster program declared
+      if (!getSafeClusterMoniker(selectedCluster, config.programs)) {
+        warnMessage(
+          `Unable to locate '${selectedCluster}' programs your Solana.toml`,
+        );
+
+        console.log("The following programs are declared:");
+        Object.keys(config.programs).forEach((cl) => {
+          console.log(` - ${cl}:`);
+          Object.keys(config.programs[cl]).forEach((name) => {
+            console.log(`    - ${name}`);
+          });
+        });
+
+        process.exit();
+      }
+
       const buildDir = path.join(
         path.dirname(cargoToml.configPath),
         "target",
@@ -87,6 +113,16 @@ export function deployCommand() {
         options.programName = programs.entries().next().value[0];
       }
 
+      if (
+        !config?.programs?.[selectedCluster] ||
+        !Object.hasOwn(config.programs[selectedCluster], options.programName)
+      ) {
+        return warnMessage(
+          `Program '${options.programName}' not found in 'programs.${selectedCluster}'`,
+        );
+      }
+
+      // ensure the selected program directory exists in the workspace
       if (!programs.has(options.programName) || !options.programName) {
         if (!options.programName) {
           // todo: we could give the user a prompt
@@ -110,22 +146,36 @@ export function deployCommand() {
       if (!doesFileExist(binaryPath)) {
         // todo: we should detect if the program is declared and recommend building it
         // todo: or we could generate a fresh one?
-        return warnMessage(`Unable to locate program binary:\n${binaryPath}`);
+        warnMessage(`Unable to locate program binary:\n${binaryPath}`);
+        return warnMessage(`Have you built your programs?`);
       }
 
-      let programIdPath = path.join(
-        buildDir,
-        `${options.programName}-keypair.json`,
-      );
-      if (!doesFileExist(programIdPath)) {
-        return warnMessage(
-          `Unable to locate program keypair: ${programIdPath}`,
+      let programId = config.programs[selectedCluster][options.programName];
+      let programInfo = await getDeployedProgramInfo(programId, options.url);
+
+      /**
+       * when programInfo exists, we assume the program is already deployed
+       * (either from the user's current machine or not)
+       */
+      if (!programInfo) {
+        // not-yet-deployed programs require a keypair to deploy for the first time
+        let programIdPath = path.join(
+          buildDir,
+          `${options.programName}-keypair.json`,
         );
+        if (!doesFileExist(programIdPath)) {
+          return warnMessage(
+            `Unable to locate program keypair: ${programIdPath}`,
+          );
+        }
+
+        programId = loadKeypairFromFile(programIdPath).publicKey.toBase58();
+        programInfo = await getDeployedProgramInfo(programId, options.url);
       }
 
       const command = buildDeployProgramCommand({
         programPath: binaryPath,
-        programId: programIdPath,
+        programId: programId,
         url: options.url,
         keypair: options.keypair,
       });
@@ -140,15 +190,6 @@ export function deployCommand() {
        * - this is the upgrade authority
        * - estimated cost (you have X sol)
        * do you want to continue?
-       */
-
-      /**
-       * todo: assorted pre-deploy checks to add
-       * - is program already deployed
-       * - is program frozen
-       * - do you have the upgrade authority
-       * - is the upgrade authority a multi sig?
-       * - do you have enough sol to deploy?
        */
 
       shellExecInSession({
