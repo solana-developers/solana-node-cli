@@ -4,12 +4,14 @@ type BuildProgramCommandInput = {
   verbose?: boolean;
   workspace?: boolean;
   manifestPath?: string;
+  toolsVersion?: string;
 };
 
 export function buildProgramCommand({
   verbose = false,
   manifestPath,
   workspace = false,
+  toolsVersion,
 }: BuildProgramCommandInput) {
   const command: string[] = ["cargo build-sbf"];
 
@@ -18,6 +20,10 @@ export function buildProgramCommand({
   }
   if (workspace) {
     command.push(`--workspace`);
+  }
+  if (toolsVersion) {
+    if (!toolsVersion.startsWith("v")) toolsVersion = `v${toolsVersion}`;
+    command.push(`--tools-version ${toolsVersion}`);
   }
 
   // todo: research features and how best to include them
