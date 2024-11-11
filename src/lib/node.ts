@@ -1,7 +1,7 @@
 const MIN_NODE_VERSION = "22.0.0";
-const MIN_BUN_VERSION = "0.4.0";
+// const MIN_BUN_VERSION = "0.4.0";
 
-function checkVersion(currentVersion, requiredVersion) {
+export function checkVersion(currentVersion, requiredVersion) {
   const [major, minor] = currentVersion.split(".").map(Number);
   const [reqMajor, reqMinor] = requiredVersion.split(".").map(Number);
   return major > reqMajor || (major === reqMajor && minor >= reqMinor);
