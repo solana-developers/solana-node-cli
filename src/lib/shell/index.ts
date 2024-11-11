@@ -7,12 +7,13 @@ import { TOOL_CONFIG } from "@/const/setup";
 import { warnMessage } from "@/lib/logs";
 import { type ChildProcess, spawn } from "node:child_process";
 
+export const VERSION_REGEX = /(?:[\w-]+\s+)?(\d+\.\d+\.?\d+?)/;
+
 /**
  * Check if a given command name is installed and available on the system
  */
 export async function installedToolVersion(name: ToolNames) {
   let command: string = "";
-  const regex = /(?:[\w-]+\s+)?(\d+\.\d+\.\d+)/;
 
   if (Object.prototype.hasOwnProperty.call(TOOL_CONFIG, name)) {
     command = TOOL_CONFIG[name].version;
@@ -26,7 +27,7 @@ export async function installedToolVersion(name: ToolNames) {
 
   const res = await checkCommand(command);
 
-  if (res) return regex.exec(res)[1] || res;
+  if (res) return VERSION_REGEX.exec(res)[1] || res;
   return res;
 }
 

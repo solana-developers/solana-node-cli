@@ -3,6 +3,8 @@ import { doesFileExist, loadJsonFile } from "@/lib/utils";
 import { DEFAULT_KEYPAIR_PATH } from "@/const/solana";
 import { ProgramsByClusterLabels, SolanaCluster } from "@/types/config";
 import { warnMessage } from "@/lib/logs";
+import { checkCommand, VERSION_REGEX } from "@/lib/shell";
+import { PlatformToolsVersions } from "@/types";
 
 export function loadKeypairFromFile(
   filePath: string = DEFAULT_KEYPAIR_PATH,
@@ -81,4 +83,27 @@ export function getSafeClusterMoniker(
   if (Object.hasOwn(labels, cluster)) {
     return cluster as keyof ProgramsByClusterLabels;
   } else return false;
+}
+
+/**
+ * Get the listing of the user's platform tools versions
+ */
+export async function getPlatformToolsVersions(): Promise<PlatformToolsVersions> {
+  const res = await checkCommand("cargo build-sbf --version");
+  const tools: PlatformToolsVersions = {};
+
+  if (!res) return tools;
+
+  res.split("\n").map((line) => {
+    line = line.trim().toLowerCase();
+    if (!line) return;
+
+    const version = VERSION_REGEX.exec(line)?.[1];
+
+    if (line.startsWith("rustc")) tools.rust = version;
+    if (line.startsWith("platform-tools")) tools.platformTools = version;
+    if (line.startsWith("solana-cargo-build-")) tools.buildSbf = version;
+  });
+
+  return tools;
 }

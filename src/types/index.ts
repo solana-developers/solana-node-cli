@@ -22,6 +22,12 @@ export type ToolCommandConfig = {
   dependencies?: ToolNames[];
 };
 
+export type PlatformToolsVersions = Partial<{
+  rust: string;
+  platformTools: string;
+  buildSbf: string;
+}>;
+
 /**
  *
  */
