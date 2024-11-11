@@ -1,5 +1,15 @@
 # solana
 
+## 2.8.0-deploy.2
+
+### Minor Changes
+
+- 1b98283: auto detect and bump platform tools version for some builds
+
+### Patch Changes
+
+- e4c912d: added helper to get the platform tool versions
+
 ## 2.8.0-deploy.1
 
 ### Minor Changes
