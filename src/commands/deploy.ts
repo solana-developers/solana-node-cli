@@ -160,9 +160,16 @@ export function deployCommand() {
        */
       if (!programInfo) {
         // not-yet-deployed programs require a keypair to deploy for the first time
+        warnMessage(
+          `Program ${options.programName} (${programId}) is NOT already deployed on ${selectedCluster}`,
+        );
+
         programIdPath = path.join(
           buildDir,
           `${options.programName}-keypair.json`,
+        );
+        warnMessage(
+          `Falling back to the program keypair path: ${programIdPath}`,
         );
         if (!doesFileExist(programIdPath)) {
           return warnMessage(
@@ -170,7 +177,15 @@ export function deployCommand() {
           );
         }
 
-        programId = loadKeypairFromFile(programIdPath).publicKey.toBase58();
+        const programIdFromKeypair =
+          loadKeypairFromFile(programIdPath).publicKey.toBase58();
+        if (programIdFromKeypair !== programId) {
+          warnMessage(
+            `The loaded program keypair (${programIdFromKeypair}) does NOT match the configured programId (${programId})`,
+          );
+          // todo: should we prompt the user if they want to proceed
+        }
+        programId = programIdFromKeypair;
         programInfo = await getDeployedProgramInfo(programId, options.url);
       }
 
