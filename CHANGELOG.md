@@ -1,5 +1,11 @@
 # solana
 
+## 2.8.0-deploy.3
+
+### Patch Changes
+
+- better deploy config logic
+
 ## 2.8.0-deploy.2
 
 ### Minor Changes
