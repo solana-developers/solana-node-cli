@@ -194,19 +194,27 @@ export function deployCommand() {
         }
 
         const programIdFromKeypair = programKeypair.publicKey.toBase58();
+        /**
+         * since the initial deployment requires a keypair:
+         * if the user has a mismatch between their declared program id
+         * and the program keypair, we do not explicitly know which address they want
+         */
         if (programIdFromKeypair !== programId) {
           warnMessage(
             `The loaded program keypair does NOT match the configured program id`,
           );
           console.log(` - program keypair: ${programIdFromKeypair}`);
           console.log(` - declared program id: ${programId}`);
+          warnMessage(
+            `Unable to perform initial program deployment. Operation cancelled.`,
+          );
+          process.exit();
           // todo: should we prompt the user if they want to proceed
         }
         programId = programIdFromKeypair;
         programInfo = await getDeployedProgramInfo(programId, options.url);
       }
 
-      // console.log("programInfo:", programInfo);
       const authorityKeypair = loadKeypairFromFile(config.settings.keypair);
 
       /**
