@@ -50,7 +50,12 @@ export function cloneCommand() {
       .addOption(COMMON_OPTIONS.accountDir)
       .addOption(COMMON_OPTIONS.config)
       // we intentionally make cloning from mainnet by default (vice the solana cli's config.yml)
-      .addOption(COMMON_OPTIONS.url.default("mainnet"))
+      .addOption(
+        new Option(
+          COMMON_OPTIONS.url.flags,
+          COMMON_OPTIONS.url.description,
+        ).default("mainnet"),
+      )
       .action(async (options) => {
         titleMessage("Clone fixtures (accounts and programs)");
 
