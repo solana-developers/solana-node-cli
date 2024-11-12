@@ -22,7 +22,31 @@ import { SolanaCliYaml } from "@/types/solana";
  * Load the Solana CLI's config file
  */
 export function loadSolanaCliConfig(filePath: string = DEFAULT_CLI_YAML_PATH) {
-  return loadYamlFile<SolanaCliYaml>(filePath);
+  const cliConfig = loadYamlFile<SolanaCliYaml>(filePath);
+
+  // auto convert the rpc url to the cluster moniker
+  if (cliConfig?.json_rpc_url) {
+    switch (cliConfig.json_rpc_url) {
+      case "https://api.devnet.solana.com": {
+        cliConfig.json_rpc_url = "devnet";
+        break;
+      }
+      case "https://api.testnet.solana.com": {
+        cliConfig.json_rpc_url = "testnet";
+        break;
+      }
+      case "https://api.mainnet-beta.solana.com": {
+        cliConfig.json_rpc_url = "mainnet";
+        break;
+      }
+      case "http://localhost:8899": {
+        cliConfig.json_rpc_url = "localhost";
+        break;
+      }
+    }
+  }
+
+  return cliConfig;
 }
 
 /**
@@ -69,13 +93,17 @@ export function loadConfigToml(
 
   config.settings = Object.assign(defaultSettings, config.settings || {});
 
-  config = deconflictConfig(config, settings);
+  config = deconflictSolanaTomlConfig(config, settings);
 
   config.configPath = configPath;
   return config as SolanaTomlWithConfigPath;
 }
 
-export function deconflictConfig(config: SolanaToml, args: any) {
+/**
+ * Used to deconflict a Solana.toml's declarations with the provided input,
+ * setting the desired priority of values
+ */
+export function deconflictSolanaTomlConfig(config: SolanaToml, args: any) {
   if (args?.url && args.url !== COMMON_OPTIONS.url.defaultValue) {
     config.settings.cluster = args.url;
   }
