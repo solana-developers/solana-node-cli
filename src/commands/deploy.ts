@@ -57,66 +57,16 @@ export function deployCommand() {
         return warnMessage(`You must select cluster to deploy to. See --help`);
       }
 
-      let config = loadConfigToml(
-        options.config,
-        options,
-        true /* config required */,
-      );
-
       const { programs, cargoToml } = autoLocateProgramsInWorkspace(
         options.manifestPath,
       );
-
-      if (!cargoToml) return warnMessage(`Unable to locate Cargo.toml`);
-
-      const selectedCluster = getSafeClusterMoniker(options.url);
-      if (!selectedCluster) {
-        return warnMessage(`Unable to parse cluster url: ${options.url}`);
-      }
-
-      // make sure the user has the cluster program declared
-      if (!getSafeClusterMoniker(selectedCluster, config.programs)) {
-        warnMessage(
-          `Unable to locate '${selectedCluster}' programs your Solana.toml`,
-        );
-
-        console.log("The following programs are declared:");
-        Object.keys(config.programs).forEach((cl) => {
-          console.log(` - ${cl}:`);
-          Object.keys(config.programs[cl]).forEach((name) => {
-            console.log(`    - ${name}`);
-          });
-        });
-
-        process.exit();
-      }
-
-      const buildDir = path.join(
-        path.dirname(cargoToml.configPath),
-        "target",
-        "deploy",
-      );
-
-      if (!directoryExists(buildDir)) {
-        return warnMessage(
-          `Unable to locate your build dir: ${buildDir}` +
-            `\nHave you built your programs?`,
-        );
-      }
 
       // auto select the program name for single program repos
       if (!options.programName && programs.size == 1) {
         options.programName = programs.entries().next().value[0];
       }
 
-      if (
-        !config?.programs?.[selectedCluster] ||
-        !Object.hasOwn(config.programs[selectedCluster], options.programName)
-      ) {
-        return warnMessage(
-          `Program '${options.programName}' not found in 'programs.${selectedCluster}'`,
-        );
-      }
+      if (!cargoToml) return warnMessage(`Unable to locate Cargo.toml`);
 
       // ensure the selected program directory exists in the workspace
       if (!programs.has(options.programName) || !options.programName) {
@@ -136,6 +86,60 @@ export function deployCommand() {
 
         // todo: should we prompt the user to select a valid program?
         process.exit();
+      }
+
+      const selectedCluster = getSafeClusterMoniker(options.url);
+      if (!selectedCluster) {
+        return warnMessage(`Unable to parse cluster url: ${options.url}`);
+      }
+
+      let config = loadConfigToml(
+        options.config,
+        options,
+        false /* config not required */,
+      );
+
+      // process the user's config file if they have one
+      if (config?.programs) {
+        // make sure the user has the cluster program declared
+        if (!getSafeClusterMoniker(selectedCluster, config.programs)) {
+          warnMessage(
+            `Unable to locate '${selectedCluster}' programs your Solana.toml`,
+          );
+
+          console.log("The following programs are declared:");
+          Object.keys(config.programs).forEach((cl) => {
+            console.log(` - ${cl}:`);
+            Object.keys(config.programs[cl]).forEach((name) => {
+              console.log(`    - ${name}`);
+            });
+          });
+
+          process.exit();
+        }
+
+        if (
+          !config?.programs?.[selectedCluster] ||
+          !Object.hasOwn(config.programs[selectedCluster], options.programName)
+        ) {
+          warnMessage(
+            `Program '${options.programName}' not found in 'programs.${selectedCluster}'`,
+          );
+          process.exit();
+        }
+      }
+
+      const buildDir = path.join(
+        path.dirname(cargoToml.configPath),
+        "target",
+        "deploy",
+      );
+
+      if (!directoryExists(buildDir)) {
+        return warnMessage(
+          `Unable to locate your build dir: ${buildDir}` +
+            `\nHave you built your programs?`,
+        );
       }
 
       const binaryPath = path.join(buildDir, `${options.programName}.so`);
