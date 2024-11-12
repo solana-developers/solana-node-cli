@@ -3,6 +3,7 @@ import * as toml from "@iarna/toml";
 import path from "path";
 import { homedir } from "os";
 import { warnMessage } from "@/lib/logs";
+import { parse as yamlParse } from "yaml";
 
 /**
  *
@@ -42,6 +43,18 @@ export function loadPlaintextFile(filePath: string): string | null {
 export function loadJsonFile<T = object>(filePath: string): T | null {
   try {
     const parsedData: T = parseJson(loadPlaintextFile(filePath));
+    return parsedData;
+  } catch (error) {
+    return null;
+  }
+}
+
+/**
+ *
+ */
+export function loadYamlFile<T = object>(filePath: string): T | null {
+  try {
+    const parsedData: T = yamlParse(loadPlaintextFile(filePath));
     return parsedData;
   } catch (error) {
     return null;

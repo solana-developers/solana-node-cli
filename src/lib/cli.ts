@@ -10,11 +10,20 @@ import {
   findFileInRepo,
   isInCurrentDir,
   loadTomlFile,
+  loadYamlFile,
 } from "@/lib/utils";
 import { SolanaToml, SolanaTomlWithConfigPath } from "@/types/config";
-import { DEFAULT_CONFIG_FILE } from "@/const/solana";
+import { DEFAULT_CLI_YAML_PATH, DEFAULT_CONFIG_FILE } from "@/const/solana";
 import { COMMON_OPTIONS } from "@/const/commands";
 import { warningOutro, warnMessage } from "@/lib/logs";
+import { SolanaCliYaml } from "@/types/solana";
+
+/**
+ * Load the Solana CLI's config file
+ */
+export function loadSolanaCliConfig(filePath: string = DEFAULT_CLI_YAML_PATH) {
+  return loadYamlFile<SolanaCliYaml>(filePath);
+}
 
 /**
  * Load the Solana.toml config file and handle the default settings overrides
