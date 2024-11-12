@@ -99,6 +99,32 @@ export function deployCommand() {
         false /* config not required */,
       );
 
+      const buildDir = path.join(
+        path.dirname(cargoToml.configPath),
+        "target",
+        "deploy",
+      );
+
+      if (!directoryExists(buildDir)) {
+        warnMessage(`Unable to locate your build dir: ${buildDir}`);
+        return warnMessage(`Have you built your programs?`);
+      }
+
+      const binaryPath = path.join(buildDir, `${options.programName}.so`);
+      if (!doesFileExist(binaryPath)) {
+        // todo: we should detect if the program is declared and recommend building it
+        // todo: or we could generate a fresh one?
+        warnMessage(`Unable to locate program binary:\n${binaryPath}`);
+        return warnMessage(`Have you built your programs?`);
+      }
+
+      let programId: string | null = null;
+      let programIdPath: string | null = path.join(
+        buildDir,
+        `${options.programName}-keypair.json`,
+      );
+      const programKeypair = loadKeypairFromFile(programIdPath);
+
       // process the user's config file if they have one
       if (config?.programs) {
         // make sure the user has the cluster program declared
@@ -127,31 +153,29 @@ export function deployCommand() {
           );
           process.exit();
         }
+
+        programId = config.programs[selectedCluster][options.programName];
+      } else {
+        // if the user does not have a config file, we will try to auto detect the program id to use
+        // todo: this
+
+        if (programKeypair) {
+          programId = programKeypair.publicKey.toBase58();
+          warnMessage(`Auto detected default program keypair file:`);
+          console.log(` - keypair path: ${programIdPath}`);
+          console.log(` - program id: ${programId}`);
+        } else {
+          warnMessage(`Unable to locate any program id or program keypair.`);
+          process.exit();
+        }
       }
 
-      const buildDir = path.join(
-        path.dirname(cargoToml.configPath),
-        "target",
-        "deploy",
-      );
-
-      if (!directoryExists(buildDir)) {
+      if (!programId) {
         return warnMessage(
-          `Unable to locate your build dir: ${buildDir}` +
-            `\nHave you built your programs?`,
+          `Unable to locate program id for '${options.programName}'. Do you have it declared?`,
         );
       }
 
-      const binaryPath = path.join(buildDir, `${options.programName}.so`);
-      if (!doesFileExist(binaryPath)) {
-        // todo: we should detect if the program is declared and recommend building it
-        // todo: or we could generate a fresh one?
-        warnMessage(`Unable to locate program binary:\n${binaryPath}`);
-        return warnMessage(`Have you built your programs?`);
-      }
-
-      let programId = config.programs[selectedCluster][options.programName];
-      let programIdPath: string | null = null;
       let programInfo = await getDeployedProgramInfo(programId, options.url);
 
       /**
@@ -160,29 +184,22 @@ export function deployCommand() {
        */
       if (!programInfo) {
         // not-yet-deployed programs require a keypair to deploy for the first time
-        warnMessage(
-          `Program ${options.programName} (${programId}) is NOT already deployed on ${selectedCluster}`,
-        );
-
-        programIdPath = path.join(
-          buildDir,
-          `${options.programName}-keypair.json`,
-        );
-        warnMessage(
-          `Falling back to the program keypair path: ${programIdPath}`,
-        );
-        if (!doesFileExist(programIdPath)) {
+        // warnMessage(
+        //   `Program ${options.programName} (${programId}) is NOT already deployed on ${selectedCluster}`,
+        // );
+        if (!programKeypair) {
           return warnMessage(
             `Unable to locate program keypair: ${programIdPath}`,
           );
         }
 
-        const programIdFromKeypair =
-          loadKeypairFromFile(programIdPath).publicKey.toBase58();
+        const programIdFromKeypair = programKeypair.publicKey.toBase58();
         if (programIdFromKeypair !== programId) {
           warnMessage(
-            `The loaded program keypair (${programIdFromKeypair}) does NOT match the configured programId (${programId})`,
+            `The loaded program keypair does NOT match the configured program id`,
           );
+          console.log(` - program keypair: ${programIdFromKeypair}`);
+          console.log(` - declared program id: ${programId}`);
           // todo: should we prompt the user if they want to proceed
         }
         programId = programIdFromKeypair;
@@ -236,6 +253,8 @@ export function deployCommand() {
        * - estimated cost (you have X sol)
        * do you want to continue?
        */
+
+      console.log(""); // spacer in the terminal
 
       shellExecInSession({
         command,
