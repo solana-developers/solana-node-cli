@@ -130,7 +130,7 @@ export function deployCommand() {
         // make sure the user has the cluster program declared
         if (!getSafeClusterMoniker(selectedCluster, config.programs)) {
           warnMessage(
-            `Unable to locate '${selectedCluster}' programs your Solana.toml`,
+            `Unable to locate '${selectedCluster}' programs in your Solana.toml`,
           );
 
           console.log("The following programs are declared:");
