@@ -39,7 +39,7 @@ export function deployCommand() {
         path.join(process.cwd(), "Cargo.toml"),
       ),
     )
-    .addOption(COMMON_OPTIONS.url.default(undefined))
+    .addOption(COMMON_OPTIONS.url)
     .addOption(COMMON_OPTIONS.outputOnly)
     .addOption(COMMON_OPTIONS.keypair)
     .addOption(COMMON_OPTIONS.config)
