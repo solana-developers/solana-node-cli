@@ -5,6 +5,7 @@ import {
   DEFAULT_KEYPAIR_PATH,
 } from "./solana";
 import { loadSolanaCliConfig } from "@/lib/cli";
+import { join } from "path";
 
 const cliConfig = loadSolanaCliConfig();
 
@@ -45,4 +46,8 @@ export const COMMON_OPTIONS = {
     "--account-dir <ACCOUNT_DIR>",
     "local directory path to store any cloned accounts",
   ).default(DEFAULT_ACCOUNTS_DIR),
+  manifestPath: new Option(
+    "--manifest-path <PATH>",
+    "path to Cargo.toml",
+  ).default(join(process.cwd(), "Cargo.toml")),
 };

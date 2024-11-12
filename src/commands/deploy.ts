@@ -34,11 +34,7 @@ export function deployCommand() {
         "name of the program to deploy",
       ),
     )
-    .addOption(
-      new Option("--manifest-path <PATH>", "path to Cargo.toml").default(
-        path.join(process.cwd(), "Cargo.toml"),
-      ),
-    )
+    .addOption(COMMON_OPTIONS.manifestPath)
     .addOption(COMMON_OPTIONS.url)
     .addOption(COMMON_OPTIONS.outputOnly)
     .addOption(COMMON_OPTIONS.keypair)
