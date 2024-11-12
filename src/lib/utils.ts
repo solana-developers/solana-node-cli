@@ -287,21 +287,21 @@ export function findFileInDirectory(
 
   for (const file of files) {
     const absolutePath = path.join(dir, file);
-
-    if (fs.statSync(absolutePath).isDirectory()) {
-      if (skipDirs.includes(file)) {
-        continue;
+    try {
+      if (fs.statSync(absolutePath).isDirectory()) {
+        if (skipDirs.includes(file)) {
+          continue;
+        }
+        const result = findFileInDirectory(
+          absolutePath,
+          targetFilename,
+          skipDirs,
+        );
+        if (result) return result; // Found in a subdirectory
+      } else if (file.toLowerCase() === targetFilename) {
+        return absolutePath;
       }
-
-      const result = findFileInDirectory(
-        absolutePath,
-        targetFilename,
-        skipDirs,
-      );
-      if (result) return result; // Found in a subdirectory
-    } else if (file.toLowerCase() === targetFilename) {
-      return absolutePath;
-    }
+    } catch (err) {}
   }
 
   return null;
