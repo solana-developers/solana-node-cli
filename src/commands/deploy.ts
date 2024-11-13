@@ -34,11 +34,11 @@ export function deployCommand() {
         "name of the program to deploy",
       ),
     )
-    .addOption(COMMON_OPTIONS.manifestPath)
     .addOption(COMMON_OPTIONS.url)
-    .addOption(COMMON_OPTIONS.outputOnly)
+    .addOption(COMMON_OPTIONS.manifestPath)
     .addOption(COMMON_OPTIONS.keypair)
     .addOption(COMMON_OPTIONS.config)
+    .addOption(COMMON_OPTIONS.outputOnly)
     .action(async (options, { args: passThroughArgs }) => {
       if (!options.outputOnly) {
         titleMessage("Deploy a Solana program");

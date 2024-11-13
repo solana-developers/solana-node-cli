@@ -29,6 +29,7 @@ system. If installed globally, unexpected behavior may occur.
 - [`test-validator`](#test-validator) - Run the Solana test-validator on your
   local machine, including loading all the cloned fixtures for your repo.
 - [`build`](#build) - Build all or a single Solana program in your workspace.
+- [`deploy`](#deploy) - Deploy a Solana program in your workspace.
 - [`coverage`](#coverage) - Run code coverage tests on a Solana program.
 
 ### install
@@ -109,6 +110,21 @@ Build all or a single Solana program in your workspace.
 ```shell
 npx solana build --help
 ```
+
+### deploy
+
+Deploy a Solana program in your workspace.
+
+**Usage:**
+
+```shell
+npx solana deploy --help
+```
+
+The default behavior for deploying is as follows:
+
+- The `deploy` command will default to your Solana CLI declared cluster, unless
+  overriden with the `-u, --url` flag.
 
 ### test-validator
 
