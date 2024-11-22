@@ -7,7 +7,7 @@ import {
 import { loadSolanaCliConfig } from "@/lib/cli";
 import { join } from "path";
 
-const cliConfig = loadSolanaCliConfig();
+export const cliConfig = loadSolanaCliConfig();
 
 /**
  * Listing of the common and reusable command options
@@ -34,7 +34,8 @@ export const COMMON_OPTIONS = {
   url: new Option(
     "-u --url <URL_OR_MONIKER>",
     "URL for Solana's JSON RPC or moniker",
-  ).default(cliConfig.json_rpc_url || "mainnet"),
+  ),
+  //.default(cliConfig.json_rpc_url || "mainnet"),
   outputOnly: new Option(
     "--output-only",
     "only output the generated command, do not execute it",
