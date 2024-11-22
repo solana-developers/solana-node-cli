@@ -1,0 +1,16 @@
+{
+  "mode": "pre",
+  "tag": "deploy",
+  "initialVersions": {
+    "solana": "2.7.0"
+  },
+  "changesets": [
+    "beige-chicken-film",
+    "gorgeous-dolphins-smoke",
+    "large-hairs-fix",
+    "lovely-snakes-compare",
+    "neat-singers-reply",
+    "six-pugs-sniff",
+    "twenty-eyes-add"
+  ]
+}

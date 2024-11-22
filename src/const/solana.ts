@@ -12,4 +12,6 @@ export const DEFAULT_ACCOUNTS_DIR_LOADED = ".cache/loaded/fixtures";
 
 export const DEFAULT_KEYPAIR_PATH = "~/.config/solana/id.json";
 
+export const DEFAULT_CLI_YAML_PATH = "~/.config/solana/cli/config.yml";
+
 export const DEFAULT_BUILD_DIR = "target/deploy";

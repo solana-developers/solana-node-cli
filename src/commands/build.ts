@@ -36,11 +36,7 @@ export function buildCommand() {
         "name of the program to build",
       ),
     )
-    .addOption(
-      new Option("--manifest-path <PATH>", "path to Cargo.toml").default(
-        join(process.cwd(), "Cargo.toml"),
-      ),
-    )
+    .addOption(COMMON_OPTIONS.manifestPath)
     .addOption(COMMON_OPTIONS.config)
     .addOption(COMMON_OPTIONS.outputOnly)
     .action(async (options, { args: passThroughArgs }) => {

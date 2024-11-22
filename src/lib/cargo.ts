@@ -139,6 +139,8 @@ export function autoLocateProgramsInWorkspace(
     });
   }
 
+  let programs = new Map<string, string>();
+
   if (cargoToml) {
     // always update the current manifest path to the one of the loaded Cargo.toml
     if (cargoToml.configPath) {
@@ -148,9 +150,9 @@ export function autoLocateProgramsInWorkspace(
     if (cargoToml.workspace?.members) {
       workspaceDirs = cargoToml.workspace.members;
     }
-  }
 
-  const programs = getProgramPathsInWorkspace(manifestPath, workspaceDirs);
+    programs = getProgramPathsInWorkspace(manifestPath, workspaceDirs);
+  }
 
   return { programs, cargoToml };
 }

@@ -1,4 +1,4 @@
-import { rawlist } from "@inquirer/prompts";
+import { select } from "@inquirer/prompts";
 import { type SolanaCluster } from "@/types/config";
 
 export async function promptToSelectCluster(
@@ -6,7 +6,7 @@ export async function promptToSelectCluster(
   defaultValue: SolanaCluster = "mainnet",
 ): Promise<SolanaCluster> {
   console.log(); // print a line separator
-  return rawlist<SolanaCluster>({
+  return select<SolanaCluster>({
     message,
     theme: {
       // style: {
@@ -14,35 +14,30 @@ export async function promptToSelectCluster(
       //   error: (text) => text,
       // },
     },
-    // default: "m",
+    default: defaultValue,
     choices: [
       {
-        name: "mainnet",
-        key: "m",
         short: "m",
+        name: "m) mainnet",
         value: "mainnet",
-        // description: `Yes, clone all the accounts and programs in Solana.toml`,
       },
       {
-        name: "devnet",
         short: "d",
-        key: "d",
+        name: "d) devnet",
         value: "devnet",
-        // description: "Do not run the 'clone' command now",
       },
       {
-        name: "testnet",
         short: "t",
-        key: "t",
+        name: "t) testnet",
         value: "testnet",
-        // description: "Do not run the 'clone' command now",
       },
       {
-        name: "localnet",
-        key: "l",
         short: "l",
+        name: "l) localnet",
         value: "localnet",
-        // description: "Do not run the 'clone' command now",
+        // description: defaultValue.startsWith("l")
+        //   ? "Default value selected"
+        //   : "",
       },
     ],
   })
