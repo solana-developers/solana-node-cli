@@ -1,39 +1,13 @@
 # solana
 
-## 2.8.0-deploy.4
-
-### Patch Changes
-
-- adding cluster selector prompt
-
-## 2.8.0-deploy.3
-
-### Patch Changes
-
-- better deploy config logic
-
-## 2.8.0-deploy.2
+## 2.8.0
 
 ### Minor Changes
 
+- 745c204: added deploy command
 - 1b98283: auto detect and bump platform tools version for some builds
-
-### Patch Changes
-
 - e4c912d: added helper to get the platform tool versions
-
-## 2.8.0-deploy.1
-
-### Minor Changes
-
-- added pre-deploy checks
-
-## 2.8.0-deploy.0
-
-### Minor Changes
-
 - 36dfaf1: accept pass through args for the `build` command
-- added deploy command
 
 ## 2.7.0
 
