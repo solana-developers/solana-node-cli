@@ -1,5 +1,11 @@
 # solana
 
+## 2.8.0-deploy.4
+
+### Patch Changes
+
+- adding cluster selector prompt
+
 ## 2.8.0-deploy.3
 
 ### Patch Changes
