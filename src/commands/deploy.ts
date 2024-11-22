@@ -54,32 +54,6 @@ export function deployCommand() {
         message: "Unable to detect the 'solana program' command",
       });
 
-      if (!options.url) {
-        const cluster = await promptToSelectCluster(
-          "Select the cluster to deploy your program on?",
-          getSafeClusterMoniker(cliConfig?.json_rpc_url) || undefined,
-        );
-        options.url = parseRpcUrlOrMoniker(cluster);
-      }
-
-      if (!options.url) {
-        return warnMessage(`You must select cluster to deploy to. See --help`);
-      }
-
-      let selectedCluster = getSafeClusterMoniker(options.url);
-      if (!selectedCluster) {
-        // prompting a second time will allow users to use a custom rpc url
-        const cluster = await promptToSelectCluster(
-          "Unable to auto detect the cluster to deploy too. Select a cluster?",
-        );
-        selectedCluster = getSafeClusterMoniker(cluster);
-        if (!selectedCluster) {
-          return warnMessage(
-            `Unable to detect cluster to deploy to. Operation canceled.`,
-          );
-        }
-      }
-
       const { programs, cargoToml } = autoLocateProgramsInWorkspace(
         options.manifestPath,
       );
@@ -109,6 +83,32 @@ export function deployCommand() {
 
         // todo: should we prompt the user to select a valid program?
         process.exit();
+      }
+
+      if (!options.url) {
+        const cluster = await promptToSelectCluster(
+          "Select the cluster to deploy your program on?",
+          getSafeClusterMoniker(cliConfig?.json_rpc_url) || undefined,
+        );
+        options.url = parseRpcUrlOrMoniker(cluster);
+      }
+
+      if (!options.url) {
+        return warnMessage(`You must select cluster to deploy to. See --help`);
+      }
+
+      let selectedCluster = getSafeClusterMoniker(options.url);
+      if (!selectedCluster) {
+        // prompting a second time will allow users to use a custom rpc url
+        const cluster = await promptToSelectCluster(
+          "Unable to auto detect the cluster to deploy too. Select a cluster?",
+        );
+        selectedCluster = getSafeClusterMoniker(cluster);
+        if (!selectedCluster) {
+          return warnMessage(
+            `Unable to detect cluster to deploy to. Operation canceled.`,
+          );
+        }
       }
 
       let config = loadConfigToml(
