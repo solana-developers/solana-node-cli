@@ -12,10 +12,14 @@
     "dev": "yarn build && yarn nsolana",
     "build": "rollup -c",
     "watch": "rollup -c --watch",
+    "test": "pnpm test:unit",
+    "test:unit": "jest -c ./jest-unit.config.ts --rootDir . --silent",
+    "test:unit:watch": "jest -c ./jest-unit.config.ts --rootDir . --watch",
     "solana": "node ./bin/index.mjs",
     "changeset:version": "changeset version && git add -A && git commit -m \"chore: version\"",
     "changeset:publish": "pnpm build && changeset publish",
-    "postpublish": "git push --follow-tags"
+    "postpublish": "git push --follow-tags",
+    "style:fix": "prettier --write '{*,**/*}.{ts,tsx,js,jsx,css,json,md}'"
   },
   "bin": {
     "nsolana": "bin/index.mjs",
@@ -43,19 +47,27 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.9",
+    "@jest/types": "^29.6.3",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.1",
+    "@swc/core": "^1.9.3",
+    "@swc/jest": "^0.2.37",
     "@types/bn.js": "^5.1.6",
     "@types/inquirer": "^9.0.7",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.7.6",
     "@types/prompts": "^2.4.9",
+    "jest": "^29.7.0",
     "rollup": "^4.24.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
     "tslib": "^2.8.0",
     "typescript": "^5.6.3"
   },
+  "packageManager": "pnpm@9.1.0",
   "keywords": [],
   "homepage": "https://github.com/solana-developers/solana-node-cli#readme",
   "bugs": {
