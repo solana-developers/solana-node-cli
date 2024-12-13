@@ -1,11 +1,11 @@
-# solana-node-cli
+# glass
 
-This is the `solana-node-cli`, a command-line tool designed to simplify the
-development and testing of Solana blockchain programs. The tool provides an
-array of commands to manage Solana Toolkit installations, clone and manage
-blockchain fixtures (accounts, programs, etc), and simplifying the experience of
-running a local test-validator with all the required state for a consistent
-development experience.
+This is the `glass`, a command-line tool designed to simplify the development
+and testing of Solana blockchain programs. The tool provides an array of
+commands to manage Solana Toolkit installations, clone and manage blockchain
+fixtures (accounts, programs, etc), and simplifying the experience of running a
+local test-validator with all the required state for a consistent development
+experience.
 
 **System Requirements:**
 
@@ -14,7 +14,7 @@ development experience.
 **Usage:**
 
 ```shell
-npx solana --help
+npx glass --help
 ```
 
 This tool is not recommended to be installed as a global npm package on your
@@ -39,7 +39,7 @@ Install the Solana Toolkit local development tooling on your system.
 **Usage:**
 
 ```shell
-npx solana install --help
+npx glass install --help
 ```
 
 The Solana Toolkit includes the following tools:
@@ -69,7 +69,7 @@ file.
 **Usage:**
 
 ```shell
-npx solana clone --help
+npx glass clone --help
 ```
 
 The default behavior for fixture cloning is as follows:
@@ -108,7 +108,7 @@ Build all or a single Solana program in your workspace.
 **Usage:**
 
 ```shell
-npx solana build --help
+npx glass build --help
 ```
 
 ### deploy
@@ -118,7 +118,7 @@ Deploy a Solana program in your workspace.
 **Usage:**
 
 ```shell
-npx solana deploy --help
+npx glass deploy --help
 ```
 
 The default behavior for deploying is as follows:
@@ -134,14 +134,14 @@ cloned fixtures for your repo.
 **Usage:**
 
 ```shell
-npx solana test-validator --help
+npx glass test-validator --help
 ```
 
 > Under the hood, the `test-validator` commands wraps the Agave tool suite's
 > `solana-test-validator` command but also helps provide additional quality of
 > life improvements for Solana developers. To view the generated
 > `solana-test-validator` wrapper command, run
-> `npx solana test-validator --output-only`.
+> `npx glass test-validator --output-only`.
 
 The default behavior for running the `test-validator` is as follows:
 
@@ -161,7 +161,7 @@ Run code coverage tests on a Solana program, powered by the
 **Usage:**
 
 ```shell
-npx solana coverage --help
+npx glass coverage --help
 ```
 
 To pass additional arguments to the Zest CLI, append them at the end of this
@@ -169,7 +169,7 @@ tool's command starting with `--`. For example, to run the Zest CLI's help
 command:
 
 ```shell
-npx solana coverage -- --help
+npx glass coverage -- --help
 ```
 
 ## Solana.toml

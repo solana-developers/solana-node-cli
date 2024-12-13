@@ -1,6 +1,6 @@
 {
-  "name": "solana",
-  "version": "2.8.0",
+  "name": "glass",
+  "version": "0.1.0",
   "description": "",
   "license": "MIT",
   "type": "module",
@@ -9,21 +9,20 @@
   },
   "main": "./bin/index.mjs",
   "scripts": {
-    "dev": "yarn build && yarn nsolana",
+    "dev": "pnpm build && pnpm glass",
     "build": "rollup -c",
     "watch": "rollup -c --watch",
     "test": "pnpm test:unit",
     "test:unit": "jest -c ./jest-unit.config.ts --rootDir . --silent",
     "test:unit:watch": "jest -c ./jest-unit.config.ts --rootDir . --watch",
-    "solana": "node ./bin/index.mjs",
+    "glass": "node ./bin/index.mjs",
     "changeset:version": "changeset version && git add -A && git commit -m \"chore: version\"",
     "changeset:publish": "pnpm build && changeset publish",
     "postpublish": "git push --follow-tags",
     "style:fix": "prettier --write '{*,**/*}.{ts,tsx,js,jsx,css,json,md}'"
   },
   "bin": {
-    "nsolana": "bin/index.mjs",
-    "solana-node": "bin/index.mjs"
+    "glass": "bin/index.mjs"
   },
   "files": [
     "/bin"
@@ -69,15 +68,16 @@
   },
   "packageManager": "pnpm@9.1.0",
   "keywords": [],
-  "homepage": "https://github.com/solana-developers/solana-node-cli#readme",
+  "homepage": "https://github.com/solana-developers/glass#readme",
   "bugs": {
-    "url": "https://github.com/solana-developers/solana-node-cli/issues"
+    "url": "https://github.com/solana-developers/glass/issues"
   },
   "repository": {
-    "name": "solana-developers/solana-node-cli",
+    "name": "solana-developers/glass",
     "type": "git",
-    "url": "git+https://github.com/solana-developers/solana-node-cli.git"
+    "url": "git+https://github.com/solana-developers/glass.git"
   },
+  "author": "nickfrosty",
   "contributors": [
     {
       "name": "Nick Frostbutter",
