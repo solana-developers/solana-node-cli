@@ -92,10 +92,14 @@ export default function installCommand() {
           );
         }
         if (!toolName || toolName == "solana") {
-          await installSolana({
+          const res = await installSolana({
             os,
             version,
           });
+
+          // string response means this was a fresh install
+          if (typeof res == "string") {
+          }
 
           await checkShellPathSource(
             TOOL_CONFIG.solana.version,

@@ -24,12 +24,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install NPM Dependencies
-        uses: ./.github/workflows/actions/install-npm-dependencies
+      - name: Install Dependencies
+        uses: ./.github/workflows/actions/install-dependencies
         with:
           version: ${{ matrix.node }}
 
       - name: Build
         run: pnpm build
       - name: Unit Tests
-        run: pnpm test:unit
+        run: pnpm test
