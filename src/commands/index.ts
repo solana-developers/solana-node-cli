@@ -10,7 +10,7 @@ export default function cliProgramRoot() {
 
   // initialize the cli commands and options parsing
   const program = new Command()
-    .name(`npx glass`)
+    .name(`npx mucho`)
     .version(app.version, "--version", "output the version number of this tool")
     // .description("")
     .configureOutput(cliOutputConfig);

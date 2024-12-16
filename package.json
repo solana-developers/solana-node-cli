@@ -1,5 +1,5 @@
 {
-  "name": "glass",
+  "name": "mucho",
   "version": "0.1.0",
   "description": "",
   "license": "MIT",
@@ -9,20 +9,19 @@
   },
   "main": "./bin/index.mjs",
   "scripts": {
-    "dev": "pnpm build && pnpm glass",
+    "dev": "pnpm build && pnpm mucho",
     "build": "rollup -c",
     "watch": "rollup -c --watch",
     "test": "pnpm test:unit",
     "test:unit": "jest -c ./jest-unit.config.ts --rootDir . --silent",
     "test:unit:watch": "jest -c ./jest-unit.config.ts --rootDir . --watch",
-    "glass": "node ./bin/index.mjs",
+    "mucho": "node ./bin/index.mjs",
     "changeset:version": "changeset version && git add -A && git commit -m \"chore: version\"",
     "changeset:publish": "pnpm build && changeset publish",
-    "postpublish": "git push --follow-tags",
     "style:fix": "prettier --write '{*,**/*}.{ts,tsx,js,jsx,css,json,md}'"
   },
   "bin": {
-    "glass": "bin/index.mjs"
+    "mucho": "bin/index.mjs"
   },
   "files": [
     "/bin"
@@ -68,14 +67,14 @@
   },
   "packageManager": "pnpm@9.1.0",
   "keywords": [],
-  "homepage": "https://github.com/solana-developers/glass#readme",
+  "homepage": "https://github.com/solana-developers/mucho#readme",
   "bugs": {
-    "url": "https://github.com/solana-developers/glass/issues"
+    "url": "https://github.com/solana-developers/mucho/issues"
   },
   "repository": {
-    "name": "solana-developers/glass",
+    "name": "solana-developers/mucho",
     "type": "git",
-    "url": "git+https://github.com/solana-developers/glass.git"
+    "url": "git+https://github.com/solana-developers/mucho.git"
   },
   "author": "nickfrosty",
   "contributors": [

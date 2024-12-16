@@ -1,4 +1,4 @@
-# Solana.toml is used to declare settings for use with `npx glass`
+# Solana.toml is used to declare settings for use with `npx mucho`
 
 [settings]
 # define the directory to store all the fixtures (accounts/programs) you want to clone
