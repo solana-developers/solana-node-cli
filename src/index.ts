@@ -6,11 +6,6 @@ import cliProgramRoot from "@/commands";
 
 import installCommand from "@/commands/install";
 import doctorCommand from "@/commands/doctor";
-import cloneCommand from "@/commands/clone";
-import testValidatorCommand from "@/commands/test-validator";
-import buildCommand from "@/commands/build";
-import coverageCommand from "@/commands/coverage";
-import deployCommand from "@/commands/deploy";
 
 // ensure the user running the cli tool is on a supported javascript runtime version
 assertRuntimeVersion();
@@ -19,14 +14,7 @@ async function main() {
   try {
     const program = cliProgramRoot();
 
-    program
-      .addCommand(installCommand())
-      .addCommand(doctorCommand())
-      .addCommand(cloneCommand())
-      .addCommand(deployCommand())
-      .addCommand(buildCommand())
-      .addCommand(coverageCommand())
-      .addCommand(testValidatorCommand());
+    program.addCommand(installCommand()).addCommand(doctorCommand());
 
     // set the default action to `help` without an error
     if (process.argv.length === 2) {

@@ -6,6 +6,7 @@ export type ToolNames =
   | "avm"
   | "anchor"
   | "yarn"
+  | "mucho"
   | "zest"
   | "verify"
   | "trident";
@@ -21,12 +22,6 @@ export type ToolCommandConfig = {
   // update: string;
   dependencies?: ToolNames[];
 };
-
-export type PlatformToolsVersions = Partial<{
-  rust: string;
-  platformTools: string;
-  buildSbf: string;
-}>;
 
 /**
  *

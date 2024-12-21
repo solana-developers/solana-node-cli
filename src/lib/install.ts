@@ -369,6 +369,42 @@ export async function installYarn({}: InstallCommandPropsBase = {}) {
 }
 
 /**
+ * Install the mucho cli
+ * note: we have to assume `npm` is already available
+ */
+export async function installMucho({}: InstallCommandPropsBase = {}) {
+  const spinner = ora("Installing the mucho cli...").start();
+  try {
+    let installedVersion = await installedToolVersion("mucho");
+    if (installedVersion) {
+      spinner.info(`mucho ${installedVersion} is already installed`);
+      return true;
+    }
+
+    spinner.text = `Installing the2 mucho cli`;
+    await shellExec(`npm install -g mucho`);
+
+    spinner.text = "Verifying mucho was installed";
+    installedVersion = await installedToolVersion("mucho");
+    if (installedVersion) {
+      spinner.succeed(`mucho ${installedVersion} installed`);
+      return installedVersion;
+    } else {
+      spinner.fail("mucho cli failed to install");
+      return false;
+    }
+  } catch (err) {
+    spinner.fail("Unable to install the mucho cli");
+    if (typeof err == "string") console.error(err);
+    else if (err instanceof Error) console.error(err.message);
+    else console.error(err.message);
+  }
+
+  // default return false
+  return false;
+}
+
+/**
  * Install the trident fuzzer
  */
 export async function installTrident({
