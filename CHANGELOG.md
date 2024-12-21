@@ -1,5 +1,12 @@
 # solana
 
+## 3.0.0
+
+### Major Changes
+
+- 0561e2b: migrate the core of the solana node cli to `mucho` -
+  https://github.com/solana-developers/mucho/
+
 ## 2.8.0
 
 ### Minor Changes
