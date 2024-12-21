@@ -1,6 +1,6 @@
 {
-  "name": "mucho",
-  "version": "0.1.0",
+  "name": "solana",
+  "version": "2.8.0",
   "description": "",
   "license": "MIT",
   "type": "module",
@@ -9,19 +9,19 @@
   },
   "main": "./bin/index.mjs",
   "scripts": {
-    "dev": "pnpm build && pnpm mucho",
+    "dev": "pnpm build && pnpm solana",
     "build": "rollup -c",
     "watch": "rollup -c --watch",
     "test": "pnpm test:unit",
     "test:unit": "jest -c ./jest-unit.config.ts --rootDir . --silent",
     "test:unit:watch": "jest -c ./jest-unit.config.ts --rootDir . --watch",
-    "mucho": "node ./bin/index.mjs",
+    "solana": "node ./bin/index.mjs",
     "changeset:version": "changeset version && git add -A && git commit -m \"chore: version\"",
     "changeset:publish": "pnpm build && changeset publish",
     "style:fix": "prettier --write '{*,**/*}.{ts,tsx,js,jsx,css,json,md}'"
   },
   "bin": {
-    "mucho": "bin/index.mjs"
+    "solana": "bin/index.mjs"
   },
   "files": [
     "/bin"
@@ -67,14 +67,14 @@
   },
   "packageManager": "pnpm@9.1.0",
   "keywords": [],
-  "homepage": "https://github.com/solana-developers/mucho#readme",
+  "homepage": "https://github.com/solana-developers/solana-node-cli#readme",
   "bugs": {
-    "url": "https://github.com/solana-developers/mucho/issues"
+    "url": "https://github.com/solana-developers/solana-node-cli/issues"
   },
   "repository": {
-    "name": "solana-developers/mucho",
+    "name": "solana-developers/solana-node-cli",
     "type": "git",
-    "url": "git+https://github.com/solana-developers/mucho.git"
+    "url": "git+https://github.com/solana-developers/solana-node-cli.git"
   },
   "author": "nickfrosty",
   "contributors": [
