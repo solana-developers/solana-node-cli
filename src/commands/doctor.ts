@@ -10,7 +10,7 @@ import { checkInstalledTools } from "@/lib/setup";
  *
  * Inspect and remedy your local machine for Solana development
  */
-export default function doctorCommand() {
+export function doctorCommand() {
   return new Command("doctor")
     .configureOutput(cliOutputConfig)
     .description("inspect and remedy your local development environment")
@@ -22,7 +22,7 @@ export default function doctorCommand() {
  *
  * List the current installed versions of Solana development tooling
  */
-export function doctorListCommand() {
+function doctorListCommand() {
   return new Command("list")
     .configureOutput(cliOutputConfig)
     .description("list the current versions of Solana development tooling")

@@ -34,7 +34,7 @@ const toolNames: Array<ToolNames> = [
  *
  * Setup your local machine for Solana development
  */
-export default function installCommand() {
+export function installCommand() {
   return (
     new Command("install")
       .configureOutput(cliOutputConfig)
