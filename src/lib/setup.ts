@@ -25,6 +25,7 @@ export async function checkInstalledTools({
     avm: false,
     anchor: false,
     yarn: false,
+    mucho: false,
     trident: false,
     zest: false,
     verify: false,

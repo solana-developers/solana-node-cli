@@ -12,6 +12,7 @@ import {
   installTrident,
   installZest,
   installSolanaVerify,
+  installMucho,
 } from "@/lib/install";
 import { checkInstalledTools, checkShellPathSource } from "@/lib/setup";
 import { PathSourceStatus, TOOL_CONFIG } from "@/const/setup";
@@ -20,6 +21,7 @@ const toolNames: Array<ToolNames> = [
   "rust",
   "solana",
   "avm",
+  "mucho",
   "anchor",
   "trident",
   "zest",
@@ -32,7 +34,7 @@ const toolNames: Array<ToolNames> = [
  *
  * Setup your local machine for Solana development
  */
-export default function installCommand() {
+export function installCommand() {
   return (
     new Command("install")
       .configureOutput(cliOutputConfig)
@@ -110,6 +112,14 @@ export default function installCommand() {
               : true,
           );
         }
+
+        if (!toolName || toolName == "mucho") {
+          await installMucho({
+            os,
+            version,
+          });
+        }
+
         if (!toolName || toolName == "avm") {
           // const version = "0.28.0"; //"latest"; // v0.29.0 has the "ahash yanked" issue
           await installAnchorVersionManager({
