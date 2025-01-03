@@ -1,5 +1,14 @@
 # solana
 
+## 3.0.1
+
+### Patch Changes
+
+- [#10](https://github.com/solana-developers/solana-node-cli/pull/10)
+  [`a4f64a4`](https://github.com/solana-developers/solana-node-cli/commit/a4f64a4d628b746d678e58c9d8c5e5c5f42a45dc)
+  Thanks [@nickfrosty](https://github.com/nickfrosty)! - fix typo and make
+  spinner fail text red
+
 ## 3.0.0
 
 ### Major Changes
